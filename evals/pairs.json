@@ -869,6 +869,18 @@
     {
       "q": "I am having trouble breathing after my new pill",
       "expect": "emergency"
+    },
+    {
+      "q": "please help me",
+      "expect": "help"
+    },
+    {
+      "q": "help me please, I feel sick",
+      "expect": "help"
+    },
+    {
+      "q": "warfarin and ibuprofen please",
+      "expect": "none"
     }
   ]
 }

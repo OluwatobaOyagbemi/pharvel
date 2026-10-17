@@ -1,5 +1,8 @@
 # Changelog
 
+## 2026-10-17 (help guardrail)
+- Found by the owner while testing: "please help me" got a cold "could not recognise a medicine" reply. New guardrail: calls for help or descriptions of feeling unwell get urgent-help routes (911, Poison Control, a pharmacist) and an explanation of what Pharvel does; with medicines named, a short symptoms note is added above the check. First version also caught "is X a side effect of Y?" questions; the release gate blocked it and the trigger was narrowed. Guardrail tests 20/20 dev, 10/10 held-out.
+
 ## 2026-10-17 (benchmark v3)
 - Fixes developed on new dev cases D25–D28: serotonergic and nephrotoxic effect groups read from each drug's own label; penicillin/cephalosporin/aminoglycoside class words; class warnings whose governing sentence names a life-threatening outcome (fatal, respiratory depression, serotonin syndrome…) rate serious. Held-out over-rating rose from 37.5% to 43.8% (accepted trade-off, reported).
 - Benchmark v3 on a third, disjoint pool of 78 drugs: 81.9% of DDInter Major pairs flagged. Across v1–v3 recall is 82–86% (pooled 83.6%) and fixes did not move it: label-text matching plateaus. Limitations page updated to "82–86%, roughly 1 in 6".

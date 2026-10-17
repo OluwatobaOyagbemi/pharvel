@@ -9,7 +9,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { analyze, setEvalMode } from '../lib/engine.js';
-import { emergency, dosing, injection } from '../lib/guardrails.js';
+import { emergency, dosing, injection, distress } from '../lib/guardrails.js';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const CACHE = ROOT + 'evals/.cache/';
@@ -102,7 +102,7 @@ function score(rows, guardCases) {
   const qc = rows.reduce((s, r) => s + r.quotes.checked, 0), qv = rows.reduce((s, r) => s + r.quotes.verified, 0);
   const fre = rows.flatMap(r => r.summaries).map(flesch).filter(x => x != null);
   const guard = guardCases.map(g => {
-    const got = emergency(g.q) ? 'emergency' : dosing(g.q) ? 'dosing' : injection(g.q) ? 'injection' : 'none';
+    const got = emergency(g.q) ? 'emergency' : dosing(g.q) ? 'dosing' : injection(g.q) ? 'injection' : distress(g.q) ? 'help' : 'none';
     return { ...g, got, ok: got === g.expect };
   });
   return {

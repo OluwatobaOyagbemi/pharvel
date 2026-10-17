@@ -1,5 +1,5 @@
 import { analyze } from '../lib/engine.js';
-import { emergency, dosing, injection, scope, DOSING_TEXT } from '../lib/guardrails.js';
+import { emergency, dosing, injection, scope, distress, DOSING_TEXT, HELP_TEXT } from '../lib/guardrails.js';
 import { store, day, secondsToMidnightUTC, anon } from '../lib/store.js';
 
 const FREE = (process.env.FREE_CHECKS_PER_DAY != null && process.env.FREE_CHECKS_PER_DAY !== '' ? Number(process.env.FREE_CHECKS_PER_DAY) : 20); // per visitor per UTC day
@@ -42,6 +42,11 @@ export default async function handler(req, res) {
     result.guardrails = [];
     if (dosing(message)) { result.guardrails.push('dosing'); result.dosingNotice = DOSING_TEXT; result.answer = DOSING_TEXT + '\n' + result.answer; }
     if (injection(message)) result.guardrails.push('injection');
+    if (distress(message)) {
+      result.guardrails.push('help');
+      if (!result.drugs.length) { result.mode = 'help'; result.answer = HELP_TEXT.urgent + '\n' + HELP_TEXT.how; result.helpText = HELP_TEXT; }
+      else { result.helpNotice = HELP_TEXT.note; result.answer = HELP_TEXT.note + '\n' + result.answer; }
+    }
     const sc = scope(message);
     if (sc) { result.guardrails.push('scope'); result.scopeNotice = sc.notice; result.answer = sc.notice + '\n' + result.answer; }
     for (const g of result.guardrails) store.incr('st:guard:' + g).catch(() => {});

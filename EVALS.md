@@ -1,6 +1,6 @@
 # Pharvel evaluation
 
-Run 2026-10-17 · extractive engine (no LLM) · cost $0 · 0 live API calls, 1274 replayed from the recorded cache · 3 s.
+Run 2026-10-17 · extractive engine (no LLM) · cost $0 · 0 live API calls, 1274 replayed from the recorded cache · 2 s.
 
 Expectations come from FDA labeling and FDA's CYP/transporter guidance (field `basis` in each case), not from Pharvel's output. **The reference sets have not yet been reviewed by a pharmacist**; a review sheet is generated at `evals/review/review-2026-10-17.csv`.
 
@@ -59,7 +59,7 @@ Caught by: FDA label text 100% · FDA CYP/transporter table 28.9% of real intera
 | False alarms on negative controls | 8.3% (1/12; 95% CI 1.5–35.4%) | Controls flagged anyway. |
 | Name resolution | 100% (78/78; 95% CI 95.3–100%) | Every expected medicine recognised. |
 | Quote integrity | 100% (199/199; 95% CI 98.1–100%) | Quotes found verbatim in the cited label section. |
-| Guardrail detection | 100% (17/17; 95% CI 81.6–100%) | Emergency, dosing, injection; includes must-not-trigger cases. |
+| Guardrail detection | 100% (20/20; 95% CI 83.9–100%) | Emergency, dosing, injection; includes must-not-trigger cases. |
 | Readability of summaries | Flesch 59.1 (67 summaries) | 60–70 is plain English; 50–60 fairly difficult. |
 
 Caught by: FDA label text 100% · FDA CYP/transporter table 27.3% of real interactions.
@@ -105,6 +105,8 @@ Caught by: FDA label text 100% · FDA CYP/transporter table 27.3% of real intera
 | 2026-10-17 | heldout | effect groups from labels (QT, seizures), enzyme-group terms, CNS-depressant and antidepressant classes (fixed on dev cases D21-D24) | 0% | 100% | 95.5% | 37.5% | 0% | 100% | 100% | 10/10 |
 | 2026-10-17 | dev | serotonergic and nephrotoxic effect groups, antibacterial class words, severe class warnings (fixed on dev cases D25-D28) | 0% | 100% | 90.9% | 22.7% | 8.3% | 100% | 100% | 17/17 |
 | 2026-10-17 | heldout | serotonergic and nephrotoxic effect groups, antibacterial class words, severe class warnings (fixed on dev cases D25-D28) | 0% | 100% | 95.5% | 43.8% | 0% | 100% | 100% | 10/10 |
+| 2026-10-17 | dev | help/distress guardrail: calls for help and symptoms get urgent-help routes | 0% | 100% | 90.9% | 22.7% | 8.3% | 100% | 100% | 20/20 |
+| 2026-10-17 | heldout | help/distress guardrail: calls for help and symptoms get urgent-help routes | 0% | 100% | 95.5% | 43.8% | 0% | 100% | 100% | 10/10 |
 
 ## Method
 

@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { emergency, dosing, injection, scope, faithfulness } from '../lib/guardrails.js';
+import { emergency, dosing, injection, scope, distress, faithfulness } from '../lib/guardrails.js';
 
 // ---- emergency: must trigger ----
 for (const [msg, type] of [
@@ -33,6 +33,10 @@ for (const msg of ['warfarin and ibuprofen', 'can I take Zoloft with tramadol?',
 assert.equal(emergency('can lisinopril cause trouble breathing?'), null);
 assert.ok(emergency('I am having trouble breathing after my new pill'), 'a symptom happening now still triggers');
 assert.ok(emergency('what should I do, I took too many of my pills'), 'overdose is never discounted by question wording');
+
+// ---- calls for help / feeling unwell ----
+for (const m of ['please help me', 'help', 'help me please, I feel sick', 'I feel dizzy after my new pill', "I'm scared about taking sertraline"]) assert.ok(distress(m), 'help should trigger: ' + m);
+for (const m of ['warfarin and ibuprofen', 'can I take Zoloft with tramadol?', 'simvastatin with clarithromycin']) assert.ok(!distress(m), 'help should not trigger: ' + m);
 
 // ---- scope ----
 assert.deepEqual(scope("I'm pregnant, can I take sertraline with tramadol").groups, ['pregnancy']);

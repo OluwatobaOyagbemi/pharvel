@@ -7,7 +7,7 @@ export default async function handler(req, res) {
     const days = [...Array(7)].map((_, i) => day(new Date(Date.now() - i * 864e5))).reverse();
     const [total, llm, cached, ...perDay] = await store.mget(['st:total', 'st:llm', 'st:cached', ...days.map(d => `st:day:${d}`)]);
     const [visitorsToday, topPairs] = await Promise.all([store.countUnique(`st:v:${day()}`), store.ztop('st:pairs', 10)]);
-    const G = ['emergency', 'dosing', 'scope', 'injection'], M = ['extractive', 'llm', 'llm-rejected'], F = ['wrong-severity', 'missed-interaction', 'wrong-medicine', 'quote-wrong', 'unclear', 'other'];
+    const G = ['emergency', 'help', 'dosing', 'scope', 'injection'], M = ['extractive', 'llm', 'llm-rejected'], F = ['wrong-severity', 'missed-interaction', 'wrong-medicine', 'quote-wrong', 'unclear', 'other'];
     const vals = await store.mget([...G.map(g => 'st:guard:' + g), ...M.map(m => 'st:mode:' + m), 'st:feedback', ...F.map(f => 'st:feedback:' + f)]);
     const guardrails = Object.fromEntries(G.map((g, i) => [g, +vals[i] || 0])), modes = Object.fromEntries(M.map((m, i) => [m, +vals[G.length + i] || 0]));
     const feedback = { total: +vals[G.length + M.length] || 0, byReason: Object.fromEntries(F.map((f, i) => [f, +vals[G.length + M.length + 1 + i] || 0])) };

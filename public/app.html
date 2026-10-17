@@ -49,7 +49,7 @@ main{display:grid;grid-template-columns:minmax(320px,440px) 1fr;height:calc(100%
 .sp dd{margin:0 0 2px;font-size:14px;line-height:1.45}
 .sp dt:first-of-type + dd{font-weight:700;font-size:15px}
 .sp.big dd{font-size:15px} .sp.big dt:first-of-type + dd{font-size:17px}
-.sos{white-space:pre-line;font-size:15px} .sos b{display:block;font-size:17px;color:var(--contraindicated);margin-bottom:6px}
+.sos{white-space:pre-line;font-size:15px} .sos.help{margin-bottom:10px;padding:10px 12px;border:2px solid var(--contraindicated);white-space:normal} .sos.help b{color:var(--contraindicated)} .sos b{display:block;font-size:17px;color:var(--contraindicated);margin-bottom:6px}
 .dosing{margin-bottom:10px;padding:8px 10px;border:2px solid var(--major);background:var(--paper);font-size:13.5px;font-weight:700}
 .msg .f .plain{font-size:15px;font-weight:700;margin:4px 0 6px}
 .msg .f .src{font-size:13px;color:var(--soft)}
@@ -273,8 +273,9 @@ async function ask(message, silent) {
     const fixed = data.corrections?.length ? `<small>Read as: ${h(data.corrections.join(', '))}</small>` : '';
     const more = data.truncated ? '<small>Only the first 6 medicines were checked.</small>' : '';
     const src = data.drugs.some(d => d.source) ? `<small>Sources: ${data.drugs.filter(d => d.source).map(d => `<a href="${h(d.source.url)}" target="_blank" rel="noopener">${h(d.display)} label</a>`).join(' · ')}</small>` : '';
+    if (data.mode === 'help') { say(`<div class="sos help"><b>If this is urgent</b>${h(data.helpText.urgent)}</div>${h(data.helpText.how)}`); busy = false; $('send').disabled = false; return; }
     if (data.mode === 'emergency') { say(`<div class="sos"><b>Get help now</b>${h(data.answer)}</div>`, 'err'); busy = false; $('send').disabled = false; return; }
-    const notice = (data.dosingNotice ? `<div class="dosing">${h(data.dosingNotice)}</div>` : '') + (data.scopeNotice ? `<div class="dosing">${h(data.scopeNotice)}</div>` : '');
+    const notice = (data.helpNotice ? `<div class="dosing">${h(data.helpNotice)}</div>` : '') + (data.dosingNotice ? `<div class="dosing">${h(data.dosingNotice)}</div>` : '') + (data.scopeNotice ? `<div class="dosing">${h(data.scopeNotice)}</div>` : '');
     const origin = data.findings?.length ? `<div class="origin">${data.mode === 'llm' ? 'AI-written explanation, checked by rules against the quoted label text below.' : 'Assembled by fixed rules from the quoted FDA label text — no AI writing.'}</div>` : '';
     say(notice + origin + (data.findings?.length ? render(data) : h(data.answer)) + fixed + more + src);
   } catch (e) { stop(); const m = say(h(e.message) + ' <button type="button" class="retry">Try again</button>', 'err'); m.querySelector('.retry').onclick = () => { m.remove(); busy = false; ask(message, true); }; }
