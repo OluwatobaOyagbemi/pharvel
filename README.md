@@ -1,5 +1,7 @@
 # Pharvel
 
+[![ci](https://github.com/OluwatobaOyagbemi/pharvel/actions/workflows/ci.yml/badge.svg)](https://github.com/OluwatobaOyagbemi/pharvel/actions/workflows/ci.yml) — tests, evaluation and safety gate run on every push.
+
 **A medicine-interaction checker where the AI is not allowed to decide.** Type medicines in plain words; Pharvel finds each one (NIH RxNorm), retrieves its FDA label (openFDA), checks every pair, and shows the exact label sentence, a fixed plain-language summary, the enzyme mechanism from FDA's CYP table, and real-world FDA adverse-event reports — each with a source link.
 
 **Live:** https://drugfacts.vercel.app · **Checker:** https://drugfacts.vercel.app/app.html · **Limitations:** https://drugfacts.vercel.app/limitations.html
