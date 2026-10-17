@@ -6,3 +6,4 @@ skills-lock.json
 .agents/
 .claude/
 evals/results/benchmark-*.json
+evals/review/pharmacist-review-key.csv
