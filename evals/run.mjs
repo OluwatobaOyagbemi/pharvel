@@ -78,7 +78,7 @@ async function pool(items, n, fn) {
 async function runCase(c) {
   const s = Date.now();
   let r, error = null;
-  try { r = await analyze({ message: c.q }, cachedFetch, {}); } catch (e) { error = e.message; r = { drugs: [], pairs: [], findings: [] }; }
+  try { r = await analyze({ message: c.q }, cachedFetch, { SKIP_FAERS: process.env.SKIP_FAERS }); } catch (e) { error = e.message; r = { drugs: [], pairs: [], findings: [] }; }
   const names = r.drugs.map(d => d.name);
   const resolved = c.drugs.every(d => names.includes(d));
   const nameOf = disp => r.drugs.find(d => d.display === disp)?.name;

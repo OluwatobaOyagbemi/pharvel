@@ -204,7 +204,7 @@
             "ok": true
           }
         ],
-        "medianLatencyMs": 40
+        "medianLatencyMs": 42
       },
       "rows": [
         {
@@ -219,7 +219,7 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 107,
+          "ms": 126,
           "levels": [
             "Simvastatin+Clarithromycin:contraindicated/CYP3A-strong"
           ],
@@ -259,7 +259,7 @@
             "itraconazole"
           ],
           "error": null,
-          "ms": 92,
+          "ms": 109,
           "levels": [
             "Simvastatin+Itraconazole:contraindicated/CYP3A-strong"
           ],
@@ -299,7 +299,7 @@
             "ketoconazole"
           ],
           "error": null,
-          "ms": 92,
+          "ms": 108,
           "levels": [
             "Lovastatin+Ketoconazole:contraindicated/CYP3A-strong"
           ],
@@ -339,7 +339,7 @@
             "nitroglycerin"
           ],
           "error": null,
-          "ms": 79,
+          "ms": 64,
           "levels": [
             "Sildenafil+Nitroglycerin:contraindicated"
           ],
@@ -379,7 +379,7 @@
             "isosorbide mononitrate"
           ],
           "error": null,
-          "ms": 76,
+          "ms": 61,
           "levels": [
             "Tadalafil+Isosorbide Mononitrate:contraindicated"
           ],
@@ -419,7 +419,7 @@
             "fluoxetine"
           ],
           "error": null,
-          "ms": 77,
+          "ms": 63,
           "levels": [
             "Phenelzine+Fluoxetine:contraindicated"
           ],
@@ -459,7 +459,7 @@
             "sertraline"
           ],
           "error": null,
-          "ms": 72,
+          "ms": 69,
           "levels": [
             "Linezolid+Sertraline:contraindicated"
           ],
@@ -499,7 +499,7 @@
             "tramadol"
           ],
           "error": null,
-          "ms": 72,
+          "ms": 69,
           "levels": [
             "Fluoxetine+Tramadol:major/CYP2D6-strong"
           ],
@@ -539,7 +539,7 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 73,
+          "ms": 69,
           "levels": [
             "Warfarin+Ibuprofen:major"
           ],
@@ -579,7 +579,7 @@
             "aspirin"
           ],
           "error": null,
-          "ms": 47,
+          "ms": 45,
           "levels": [
             "Warfarin+Aspirin:moderate"
           ],
@@ -619,7 +619,7 @@
             "fluconazole"
           ],
           "error": null,
-          "ms": 47,
+          "ms": 45,
           "levels": [
             "Warfarin+Fluconazole:moderate/CYP2C9-moderate"
           ],
@@ -659,7 +659,7 @@
             "metronidazole"
           ],
           "error": null,
-          "ms": 48,
+          "ms": 46,
           "levels": [
             "Warfarin+Metronidazole:major"
           ],
@@ -699,7 +699,7 @@
             "trimethoprim"
           ],
           "error": null,
-          "ms": 49,
+          "ms": 44,
           "levels": [
             "Methotrexate+Trimethoprim:major"
           ],
@@ -739,7 +739,7 @@
             "omeprazole"
           ],
           "error": null,
-          "ms": 48,
+          "ms": 42,
           "levels": [
             "Clopidogrel+Omeprazole:major"
           ],
@@ -779,7 +779,7 @@
             "alprazolam"
           ],
           "error": null,
-          "ms": 48,
+          "ms": 43,
           "levels": [
             "Oxycodone+Alprazolam:major"
           ],
@@ -819,7 +819,7 @@
             "diazepam"
           ],
           "error": null,
-          "ms": 53,
+          "ms": 49,
           "levels": [
             "Hydrocodone+Diazepam:major"
           ],
@@ -859,7 +859,7 @@
             "ciprofloxacin"
           ],
           "error": null,
-          "ms": 52,
+          "ms": 49,
           "levels": [
             "Tizanidine+Ciprofloxacin:contraindicated/CYP1A2-moderate"
           ],
@@ -899,7 +899,7 @@
             "fluvoxamine"
           ],
           "error": null,
-          "ms": 53,
+          "ms": 48,
           "levels": [
             "Tizanidine+Fluvoxamine:contraindicated"
           ],
@@ -939,7 +939,7 @@
             "fluvoxamine"
           ],
           "error": null,
-          "ms": 51,
+          "ms": 49,
           "levels": [
             "Ramelteon+Fluvoxamine:contraindicated"
           ],
@@ -979,7 +979,7 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 49,
+          "ms": 46,
           "levels": [
             "Colchicine+Clarithromycin:contraindicated/CYP3A-strong"
           ],
@@ -1019,7 +1019,7 @@
             "amiodarone"
           ],
           "error": null,
-          "ms": 51,
+          "ms": 49,
           "levels": [
             "Digoxin+Amiodarone:moderate/P-gp-moderate"
           ],
@@ -1059,7 +1059,7 @@
             "verapamil"
           ],
           "error": null,
-          "ms": 39,
+          "ms": 43,
           "levels": [
             "Dofetilide+Verapamil:contraindicated"
           ],
@@ -1099,7 +1099,7 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 38,
+          "ms": 41,
           "levels": [
             "Pimozide+Clarithromycin:contraindicated/CYP3A-strong"
           ],
@@ -1139,7 +1139,7 @@
             "azathioprine"
           ],
           "error": null,
-          "ms": 39,
+          "ms": 42,
           "levels": [
             "Allopurinol+Azathioprine:major"
           ],
@@ -1179,7 +1179,7 @@
             "potassium chloride"
           ],
           "error": null,
-          "ms": 33,
+          "ms": 27,
           "levels": [
             "Spironolactone+Potassium Chloride:major"
           ],
@@ -1219,7 +1219,7 @@
             "ethanol"
           ],
           "error": null,
-          "ms": 31,
+          "ms": 25,
           "levels": [
             "Metformin+Ethanol:major"
           ],
@@ -1259,7 +1259,7 @@
             "riociguat"
           ],
           "error": null,
-          "ms": 31,
+          "ms": 25,
           "levels": [
             "Sildenafil+Riociguat:contraindicated"
           ],
@@ -1419,7 +1419,7 @@
             "itraconazole"
           ],
           "error": null,
-          "ms": 55,
+          "ms": 53,
           "levels": [
             "Triazolam+Itraconazole:contraindicated/CYP3A-strong"
           ],
@@ -1459,7 +1459,7 @@
             "rifampin"
           ],
           "error": null,
-          "ms": 56,
+          "ms": 53,
           "levels": [
             "Dabigatran+Rifampin:major"
           ],
@@ -1499,7 +1499,7 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 55,
+          "ms": 53,
           "levels": [
             "Atorvastatin+Clarithromycin:major/CYP3A-strong"
           ],
@@ -1539,7 +1539,7 @@
             "sertraline"
           ],
           "error": null,
-          "ms": 40,
+          "ms": 39,
           "levels": [
             "Warfarin+Sertraline:moderate"
           ],
@@ -1579,7 +1579,7 @@
             "spironolactone"
           ],
           "error": null,
-          "ms": 40,
+          "ms": 39,
           "levels": [
             "Lisinopril+Spironolactone:moderate"
           ],
@@ -1619,7 +1619,7 @@
             "cimetidine"
           ],
           "error": null,
-          "ms": 40,
+          "ms": 39,
           "levels": [
             "Metformin+Cimetidine:moderate/OCT2/MATE-moderate"
           ],
@@ -1659,7 +1659,7 @@
             "calcium carbonate"
           ],
           "error": null,
-          "ms": 27,
+          "ms": 26,
           "levels": [
             "Levothyroxine+Calcium Carbonate:moderate"
           ],
@@ -1739,7 +1739,7 @@
             "verapamil"
           ],
           "error": null,
-          "ms": 26,
+          "ms": 24,
           "levels": [
             "Digoxin+Verapamil:moderate/P-gp-moderate"
           ],
@@ -1779,7 +1779,7 @@
             "simvastatin"
           ],
           "error": null,
-          "ms": 30,
+          "ms": 31,
           "levels": [
             "Amlodipine+Simvastatin:major"
           ],
@@ -1819,7 +1819,7 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 29,
+          "ms": 30,
           "levels": [
             "Furosemide+Ibuprofen:moderate"
           ],
@@ -1859,7 +1859,7 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 31,
+          "ms": 32,
           "levels": [
             "Lisinopril+Ibuprofen:class"
           ],
@@ -1899,7 +1899,7 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 40,
+          "ms": 42,
           "levels": [
             "Sertraline+Ibuprofen:class"
           ],
@@ -1939,7 +1939,7 @@
             "omeprazole"
           ],
           "error": null,
-          "ms": 40,
+          "ms": 41,
           "levels": [
             "Citalopram+Omeprazole:moderate"
           ],
@@ -1979,7 +1979,7 @@
             "lisinopril"
           ],
           "error": null,
-          "ms": 39,
+          "ms": 41,
           "levels": [
             "Lithium+Lisinopril:moderate"
           ],
@@ -2019,7 +2019,7 @@
             "grapefruit juice"
           ],
           "error": null,
-          "ms": 28,
+          "ms": 31,
           "levels": [
             "Atorvastatin+Grapefruit Juice:moderate/CYP3A-moderate"
           ],
@@ -2059,7 +2059,7 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 27,
+          "ms": 31,
           "levels": [
             "Prednisone+Ibuprofen:class"
           ],
@@ -2099,7 +2099,7 @@
             "warfarin"
           ],
           "error": null,
-          "ms": 40,
+          "ms": 46,
           "levels": [
             "Rifampin+Warfarin:major/CYP2C9-moderate"
           ],
@@ -2139,7 +2139,7 @@
             "tramadol"
           ],
           "error": null,
-          "ms": 39,
+          "ms": 40,
           "levels": [
             "Sertraline+Tramadol:major/CYP2D6-weak"
           ],
@@ -2179,7 +2179,7 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 42,
+          "ms": 44,
           "levels": [
             "Warfarin+Ibuprofen:major"
           ],
@@ -2219,7 +2219,7 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 48,
+          "ms": 49,
           "levels": [
             "Warfarin+Ibuprofen:major"
           ],
@@ -2260,7 +2260,7 @@
             "ethanol"
           ],
           "error": null,
-          "ms": 27,
+          "ms": 29,
           "levels": [
             "Acetaminophen+Ethanol:none",
             "Oxycodone+Ethanol:major"
@@ -2308,7 +2308,7 @@
             "sertraline"
           ],
           "error": null,
-          "ms": 22,
+          "ms": 24,
           "levels": [
             "St. John's Wort Extract+Sertraline:major"
           ],
@@ -2348,7 +2348,7 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 35,
+          "ms": 37,
           "levels": [
             "Atorvastatin+Clarithromycin:major/CYP3A-strong"
           ],
@@ -2388,7 +2388,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 31,
+          "ms": 34,
           "levels": [
             "Amoxicillin+Acetaminophen:none"
           ],
@@ -2426,7 +2426,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 21,
+          "ms": 24,
           "levels": [
             "Loratadine+Acetaminophen:none"
           ],
@@ -2464,7 +2464,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 24,
+          "ms": 25,
           "levels": [
             "Levothyroxine+Acetaminophen:none"
           ],
@@ -2502,7 +2502,7 @@
             "metformin"
           ],
           "error": null,
-          "ms": 25,
+          "ms": 27,
           "levels": [
             "Amlodipine+Metformin:class"
           ],
@@ -2542,7 +2542,7 @@
             "omeprazole"
           ],
           "error": null,
-          "ms": 23,
+          "ms": 24,
           "levels": [
             "Cetirizine+Omeprazole:none"
           ],
@@ -2580,7 +2580,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 24,
+          "ms": 28,
           "levels": [
             "Famotidine+Acetaminophen:none"
           ],
@@ -2618,7 +2618,7 @@
             "cetirizine"
           ],
           "error": null,
-          "ms": 25,
+          "ms": 29,
           "levels": [
             "Montelukast+Cetirizine:none"
           ],
@@ -2656,7 +2656,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 22,
+          "ms": 26,
           "levels": [
             "Losartan+Acetaminophen:none"
           ],
@@ -2694,7 +2694,7 @@
             "amoxicillin"
           ],
           "error": null,
-          "ms": 28,
+          "ms": 25,
           "levels": [
             "Pantoprazole+Amoxicillin:none"
           ],
@@ -2732,7 +2732,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 28,
+          "ms": 25,
           "levels": [
             "Metoprolol+Acetaminophen:none"
           ],
@@ -2770,7 +2770,7 @@
             "loratadine"
           ],
           "error": null,
-          "ms": 21,
+          "ms": 23,
           "levels": [
             "Atorvastatin+Loratadine:none"
           ],
@@ -2808,7 +2808,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 42,
+          "ms": 43,
           "levels": [
             "Sertraline+Acetaminophen:none"
           ],
@@ -2846,7 +2846,7 @@
             "tranylcypromine"
           ],
           "error": null,
-          "ms": 41,
+          "ms": 42,
           "levels": [
             "Rizatriptan+Tranylcypromine:major"
           ],
@@ -2886,7 +2886,7 @@
             "magnesium hydroxide"
           ],
           "error": null,
-          "ms": 47,
+          "ms": 43,
           "levels": [
             "Levofloxacin+Magnesium Hydroxide:class"
           ],
@@ -2966,7 +2966,7 @@
             "magnesium hydroxide"
           ],
           "error": null,
-          "ms": 34,
+          "ms": 33,
           "levels": [
             "Levothyroxine+Magnesium Hydroxide:moderate"
           ],
@@ -3006,7 +3006,7 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 25,
+          "ms": 26,
           "levels": [
             "Haloperidol+Clarithromycin:class"
           ],
@@ -3046,7 +3046,7 @@
             "haloperidol"
           ],
           "error": null,
-          "ms": 54,
+          "ms": 53,
           "levels": [
             "Bupropion+Haloperidol:major"
           ],
@@ -3086,7 +3086,7 @@
             "olanzapine"
           ],
           "error": null,
-          "ms": 55,
+          "ms": 54,
           "levels": [
             "Oxycodone+Olanzapine:major"
           ],
@@ -3126,7 +3126,7 @@
             "erythromycin"
           ],
           "error": null,
-          "ms": 56,
+          "ms": 55,
           "levels": [
             "Hydrocodone+Erythromycin:major"
           ],
@@ -3246,7 +3246,7 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 50,
+          "ms": 51,
           "levels": [
             "Cidofovir+Ibuprofen:major"
           ],
@@ -3469,7 +3469,7 @@
             "ok": true
           }
         ],
-        "medianLatencyMs": 37
+        "medianLatencyMs": 39
       },
       "rows": [
         {
@@ -3484,7 +3484,7 @@
             "erythromycin"
           ],
           "error": null,
-          "ms": 36,
+          "ms": 39,
           "levels": [
             "Lovastatin+Erythromycin:contraindicated/CYP3A-moderate"
           ],
@@ -3524,7 +3524,7 @@
             "gemfibrozil"
           ],
           "error": null,
-          "ms": 37,
+          "ms": 39,
           "levels": [
             "Simvastatin+Gemfibrozil:contraindicated/OATP1B1-moderate"
           ],
@@ -3564,7 +3564,7 @@
             "phenelzine"
           ],
           "error": null,
-          "ms": 39,
+          "ms": 41,
           "levels": [
             "Sumatriptan+Phenelzine:major"
           ],
@@ -3604,7 +3604,7 @@
             "selegiline"
           ],
           "error": null,
-          "ms": 33,
+          "ms": 35,
           "levels": [
             "Meperidine+Selegiline:contraindicated"
           ],
@@ -3644,7 +3644,7 @@
             "isosorbide dinitrate"
           ],
           "error": null,
-          "ms": 32,
+          "ms": 34,
           "levels": [
             "Sildenafil+Isosorbide Dinitrate:contraindicated"
           ],
@@ -3684,7 +3684,7 @@
             "nitroglycerin"
           ],
           "error": null,
-          "ms": 32,
+          "ms": 34,
           "levels": [
             "Vardenafil+Nitroglycerin:contraindicated"
           ],
@@ -3724,7 +3724,7 @@
             "fluoxetine"
           ],
           "error": null,
-          "ms": 44,
+          "ms": 41,
           "levels": [
             "Thioridazine+Fluoxetine:contraindicated"
           ],
@@ -3764,7 +3764,7 @@
             "sertraline"
           ],
           "error": null,
-          "ms": 44,
+          "ms": 42,
           "levels": [
             "Pimozide+Sertraline:contraindicated/CYP2D6-weak"
           ],
@@ -3804,7 +3804,7 @@
             "simvastatin"
           ],
           "error": null,
-          "ms": 44,
+          "ms": 41,
           "levels": [
             "Ketoconazole+Simvastatin:contraindicated/CYP3A-strong"
           ],
@@ -3844,7 +3844,7 @@
             "ritonavir"
           ],
           "error": null,
-          "ms": 58,
+          "ms": 60,
           "levels": [
             "Fentanyl+Ritonavir:major"
           ],
@@ -3884,7 +3884,7 @@
             "alprazolam"
           ],
           "error": null,
-          "ms": 58,
+          "ms": 61,
           "levels": [
             "Methadone+Alprazolam:major"
           ],
@@ -3924,7 +3924,7 @@
             "lorazepam"
           ],
           "error": null,
-          "ms": 59,
+          "ms": 61,
           "levels": [
             "Morphine+Lorazepam:major"
           ],
@@ -3964,7 +3964,7 @@
             "clopidogrel"
           ],
           "error": null,
-          "ms": 26,
+          "ms": 32,
           "levels": [
             "Warfarin+Clopidogrel:moderate"
           ],
@@ -4004,7 +4004,7 @@
             "hydrochlorothiazide"
           ],
           "error": null,
-          "ms": 26,
+          "ms": 32,
           "levels": [
             "Lithium+Hydrochlorothiazide:major"
           ],
@@ -4044,7 +4044,7 @@
             "potassium chloride"
           ],
           "error": null,
-          "ms": 25,
+          "ms": 32,
           "levels": [
             "Amiloride+Potassium Chloride:contraindicated"
           ],
@@ -4084,7 +4084,7 @@
             "azathioprine"
           ],
           "error": null,
-          "ms": 66,
+          "ms": 73,
           "levels": [
             "Febuxostat+Azathioprine:contraindicated"
           ],
@@ -4124,7 +4124,7 @@
             "carbamazepine"
           ],
           "error": null,
-          "ms": 67,
+          "ms": 73,
           "levels": [
             "Voriconazole+Carbamazepine:contraindicated"
           ],
@@ -4164,7 +4164,7 @@
             "rifampin"
           ],
           "error": null,
-          "ms": 67,
+          "ms": 73,
           "levels": [
             "Voriconazole+Rifampin:contraindicated/CYP2C19-strong"
           ],
@@ -4204,7 +4204,7 @@
             "ritonavir"
           ],
           "error": null,
-          "ms": 44,
+          "ms": 43,
           "levels": [
             "Ergotamine+Ritonavir:contraindicated"
           ],
@@ -4244,7 +4244,7 @@
             "ketoconazole"
           ],
           "error": null,
-          "ms": 43,
+          "ms": 42,
           "levels": [
             "Dronedarone+Ketoconazole:contraindicated/CYP3A-strong"
           ],
@@ -4284,7 +4284,7 @@
             "ketoconazole"
           ],
           "error": null,
-          "ms": 44,
+          "ms": 43,
           "levels": [
             "Lurasidone+Ketoconazole:contraindicated/CYP3A-strong"
           ],
@@ -4325,7 +4325,7 @@
             "hydrocodone"
           ],
           "error": null,
-          "ms": 64,
+          "ms": 68,
           "levels": [
             "Alprazolam+Hydrocodone:major"
           ],
@@ -4365,7 +4365,7 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 58,
+          "ms": 62,
           "levels": [
             "Digoxin+Clarithromycin:moderate/P-gp-moderate"
           ],
@@ -4405,7 +4405,7 @@
             "fluconazole"
           ],
           "error": null,
-          "ms": 63,
+          "ms": 68,
           "levels": [
             "Tacrolimus+Fluconazole:major"
           ],
@@ -4445,7 +4445,7 @@
             "fluconazole"
           ],
           "error": null,
-          "ms": 47,
+          "ms": 51,
           "levels": [
             "Phenytoin+Fluconazole:moderate/CYP2C9-moderate"
           ],
@@ -4485,7 +4485,7 @@
             "fluoxetine"
           ],
           "error": null,
-          "ms": 56,
+          "ms": 59,
           "levels": [
             "Metoprolol+Fluoxetine:moderate/CYP2D6-strong"
           ],
@@ -4525,7 +4525,7 @@
             "cimetidine"
           ],
           "error": null,
-          "ms": 50,
+          "ms": 54,
           "levels": [
             "Theophylline+Cimetidine:moderate/CYP1A2-weak"
           ],
@@ -4605,7 +4605,7 @@
             "ferrous sulfate"
           ],
           "error": null,
-          "ms": 34,
+          "ms": 32,
           "levels": [
             "Doxycycline+Ferrous Sulfate:class"
           ],
@@ -4645,7 +4645,7 @@
             "fluconazole"
           ],
           "error": null,
-          "ms": 28,
+          "ms": 27,
           "levels": [
             "Glipizide+Fluconazole:major"
           ],
@@ -4685,7 +4685,7 @@
             "spironolactone"
           ],
           "error": null,
-          "ms": 33,
+          "ms": 28,
           "levels": [
             "Enalapril+Spironolactone:moderate"
           ],
@@ -4725,7 +4725,7 @@
             "potassium chloride"
           ],
           "error": null,
-          "ms": 33,
+          "ms": 29,
           "levels": [
             "Valsartan+Potassium Chloride:class"
           ],
@@ -4765,7 +4765,7 @@
             "gentamicin"
           ],
           "error": null,
-          "ms": 32,
+          "ms": 29,
           "levels": [
             "Furosemide+Gentamicin:major"
           ],
@@ -4805,7 +4805,7 @@
             "lisinopril"
           ],
           "error": null,
-          "ms": 41,
+          "ms": 43,
           "levels": [
             "Naproxen+Lisinopril:class"
           ],
@@ -4845,7 +4845,7 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 41,
+          "ms": 43,
           "levels": [
             "Escitalopram+Ibuprofen:major"
           ],
@@ -4885,7 +4885,7 @@
             "gemfibrozil"
           ],
           "error": null,
-          "ms": 40,
+          "ms": 43,
           "levels": [
             "Rosuvastatin+Gemfibrozil:major/OATP1B1-moderate"
           ],
@@ -4925,7 +4925,7 @@
             "ketoconazole"
           ],
           "error": null,
-          "ms": 53,
+          "ms": 50,
           "levels": [
             "Quetiapine+Ketoconazole:major/CYP3A-strong"
           ],
@@ -4965,7 +4965,7 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 51,
+          "ms": 48,
           "levels": [
             "Apixaban+Ibuprofen:major"
           ],
@@ -5005,7 +5005,7 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 51,
+          "ms": 48,
           "levels": [
             "Amoxicillin+Ibuprofen:none"
           ],
@@ -5043,7 +5043,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 19,
+          "ms": 23,
           "levels": [
             "Cetirizine+Acetaminophen:none"
           ],
@@ -5081,7 +5081,7 @@
             "omeprazole"
           ],
           "error": null,
-          "ms": 18,
+          "ms": 23,
           "levels": [
             "Loratadine+Omeprazole:none"
           ],
@@ -5119,7 +5119,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 18,
+          "ms": 23,
           "levels": [
             "Metformin+Acetaminophen:none"
           ],
@@ -5157,7 +5157,7 @@
             "loratadine"
           ],
           "error": null,
-          "ms": 17,
+          "ms": 18,
           "levels": [
             "Levothyroxine+Loratadine:none"
           ],
@@ -5195,7 +5195,7 @@
             "cetirizine"
           ],
           "error": null,
-          "ms": 17,
+          "ms": 18,
           "levels": [
             "Amlodipine+Cetirizine:none"
           ],
@@ -5233,7 +5233,7 @@
             "loratadine"
           ],
           "error": null,
-          "ms": 17,
+          "ms": 18,
           "levels": [
             "Famotidine+Loratadine:none"
           ],
@@ -5271,7 +5271,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 24,
+          "ms": 26,
           "levels": [
             "Pantoprazole+Acetaminophen:none"
           ],
@@ -5309,7 +5309,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 25,
+          "ms": 26,
           "levels": [
             "Montelukast+Acetaminophen:none"
           ],
@@ -5347,7 +5347,7 @@
             "loratadine"
           ],
           "error": null,
-          "ms": 25,
+          "ms": 26,
           "levels": [
             "Losartan+Loratadine:none"
           ],
@@ -5385,7 +5385,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 16,
+          "ms": 17,
           "levels": [
             "Atorvastatin+Acetaminophen:none"
           ],
@@ -5499,7 +5499,7 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 16,
+          "ms": 13,
           "levels": [
             "Simvastatin+Acetaminophen:none"
           ],
@@ -5537,7 +5537,7 @@
             "loratadine"
           ],
           "error": null,
-          "ms": 15,
+          "ms": 12,
           "levels": [
             "Acetaminophen+Loratadine:none"
           ],

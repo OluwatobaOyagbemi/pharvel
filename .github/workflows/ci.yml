@@ -16,4 +16,6 @@ jobs:
           restore-keys: eval-cache-
       - run: npm test
       - run: npm run eval
+        env:
+          SKIP_FAERS: '1'   # adverse-event counts never affect scores; skipping keeps CI within openFDA's daily limit
       - run: npm run gate
