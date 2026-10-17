@@ -45,19 +45,6 @@ US FDA labeling only; supplements and foods only where FDA sources name them; no
 
 ---
 
-## Deploy to Vercel
-
-1. Push this folder to a GitHub repository.
-2. On vercel.com choose **Add New → Project**, import the repository, keep every default, and press **Deploy**.
-
-Or from a terminal in this folder: `npx vercel --prod`.
-
-No build step and no required environment variables. `public/` is served as the site and `api/chat.js` runs as a serverless function.
-
-Optional environment variables:
-
-- `ANTHROPIC_API_KEY` — rewrites the cited findings into plain language. The model only sees the retrieved passages. Without it, answers are assembled directly from the label evidence.
-- `ANTHROPIC_MODEL` — defaults to `claude-haiku-4-5-20251001`.
 
 ## Run locally
 
