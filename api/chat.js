@@ -26,6 +26,8 @@ export default async function handler(req, res) {
   let used = 0;
   try { used = await store.incr(`rl:${today}:${who}`, resetsIn + 60); } catch {}
   const free = { limit: FREE, remaining: Math.max(0, FREE - used), resetsIn };
+  // A call for help is never blocked by the daily limit or a pause: it gets the urgent-help routes instead.
+  if ((FREE === 0 || used > FREE) && distress(message)) return res.status(200).json({ mode: 'help', guardrails: ['help'], helpText: HELP_TEXT, answer: HELP_TEXT.urgent + '\n' + HELP_TEXT.how, drugs: [], pairs: [], findings: [], free });
   if (FREE === 0) return res.status(503).json({ error: 'Checks are paused while a problem is being fixed. Please try again later, and ask a pharmacist if you need an answer now.', free });
   if (used > FREE) {
     const h = Math.ceil(resetsIn / 3600);
