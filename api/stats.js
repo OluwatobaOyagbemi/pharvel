@@ -15,8 +15,9 @@ export default async function handler(req, res) {
       store: store.kind,
       note: store.kind === 'memory' ? 'No database connected: counters reset whenever the function restarts.' : undefined,
       checks: { total: +total || 0, today: +perDay.at(-1) || 0, last7: days.map((d, i) => ({ day: d, checks: +perDay[i] || 0 })) },
-      visitorsToday, answeredFromCache: +cached || 0, aiExplanations: +llm || 0,
-      topPairs: topPairs.map(([pair, checks]) => ({ pair, checks })), guardrails, modes, feedback,
+      visitorsToday: visitorsToday < 5 ? 'fewer than 5' : visitorsToday, answeredFromCache: +cached || 0, aiExplanations: +llm || 0,
+      // Pairs are shown only once checked at least 5 times, so a single visitor's questions are never exposed.
+      topPairs: topPairs.filter(([, checks]) => checks >= 5).map(([pair, checks]) => ({ pair, checks })), guardrails, modes, feedback,
       freeChecksPerDay: (process.env.FREE_CHECKS_PER_DAY != null && process.env.FREE_CHECKS_PER_DAY !== '' ? Number(process.env.FREE_CHECKS_PER_DAY) : 20),
     });
   } catch (e) {

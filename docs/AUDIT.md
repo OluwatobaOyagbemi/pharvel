@@ -1,5 +1,7 @@
 # Healthcare AI audit: status and evidence
 
+> Updated after the independent external audit of 2026-10-17 (`docs/EXTERNAL_AUDIT_2026-10-17.md`), which contradicted several items previously marked ✅. Each is revised below.
+
 2026-10-17. Each question from the audit checklist, with Pharvel's status and where the evidence is.
 ✅ answered with evidence · ⚠️ partly, gap stated · ❌ open, needs someone other than the developer
 
@@ -16,8 +18,8 @@
 | 3.1 | Traceability to source | ✅ | Every quote linked to DailyMed; quote integrity 100% re-verified against source text (`EVALS.md`) |
 | 3.2 | Currency and refresh | ⚠️ | Live retrieval, label date shown, 7-day cache, versioned cache key; no automated label-change monitoring |
 | 3.3 | Label selection rule | ✅ | Scored primary label plus alternates; classes from all labels and RxClass (`docs/MODEL_CARD.md`) |
-| 3.4 | Name normalisation measured | ✅ | Name resolution 100% on both sets with 95% CI (`EVALS.md`) |
-| 3.5 | Combination products and salts | ✅ | Engine handling + eval cases E04, HS22 |
+| 3.4 | Name normalisation measured | ✅ | Revised after external audit: everyday words no longer treated as medicines; confidence ranking; accents folded. |
+| 3.5 | Combination products and salts | ✅ | Revised: skipped pairs part of the cache key and explained to the user. |
 | 3.6 | FAERS presented responsibly | ✅ | Never used to flag; "not proof" on every display; `docs/RISK.md` H12 |
 | 4.1 | Reference set built and validated | ⚠️ | Every case cites its FDA labeling basis; review sheet `evals/review/review-<date>.csv`; **pharmacist review not yet done** |
 | 4.2 | False-negative rate with uncertainty | ✅ | 95% Wilson intervals on both sets (`EVALS.md`) |
@@ -28,10 +30,10 @@
 | 4.7 | Benchmark vs an independent reference | ⚠️ | Non-commercial benchmark vs DDInter 2.0 (`evals/BENCHMARK.md`): 82.5%, 86.3% and 81.9% of DDInter Major pairs flagged on three independent samples (pooled 83.6%); recall plateaus with label-text matching. A licensed clinical reference (Lexicomp, Micromedex, DrugBank) is still needed for commercial use |
 | 4.8 | Clinician review of outputs | ❌ | Review sheet ready (`evals/review/`); needs a pharmacist |
 | 5.1 | Hazard analysis | ✅ | `docs/RISK.md` (15 hazards, controls, verification, residual risk) |
-| 5.2 | Emergency handling | ✅ | Emergency guardrail before any lookup; trigger and must-not-trigger tests; guardrail metric |
+| 5.2 | Emergency handling | ✅ | Revised: rewritten detector; red-team corpus with a held-out part, gated (zero missed emergencies). |
 | 5.3 | No dosing advice | ✅ | Dosing guardrail; faithfulness rejects unsupported numbers and instructions |
 | 5.4 | Meaning of "nothing found" | ✅ | Wording states labels are incomplete and to ask a pharmacist |
-| 5.5 | Fail-safe on data outage | ✅ | Fail-safe check in every eval run: labels down → "unchecked", never "nothing found" (PASS) |
+| 5.5 | Fail-safe on data outage | ✅ | Revised: partial outages and the cache are now tested; degraded results are never cached. |
 | 5.6 | Red-teaming | ⚠️ | Injection, unsafe-claim and invented-dose cases in tests; no independent red team |
 | 6.1 | What the model decides | ✅ | Nothing safety-relevant: severity and evidence are deterministic (`docs/MODEL_CARD.md`) |
 | 6.2 | Hallucination controls | ✅ | Tagged evidence, faithfulness check, fallback to quoted answer; model layer off in production |
@@ -47,14 +49,14 @@
 | 8.2 | HIPAA / GDPR applicability | ⚠️ | Reasoned position in `docs/PRIVACY.md`; not legally reviewed |
 | 8.3 | Logs and retention | ✅ | Retention per data type in `docs/PRIVACY.md`; feedback capped at 500 |
 | 8.4 | Secrets | ✅ | Vercel environment variables; `.env*` git-ignored |
-| 8.5 | Abuse prevention | ✅ | Daily limit per hashed IP, input length limits, max six medicines |
+| 8.5 | Abuse prevention | ✅ | Revised: feedback endpoint rate-limited; malformed input returns 400; security headers. |
 | 9.1 | Explainability | ✅ | Quote, mechanism, source link and labelled summary for every finding |
 | 9.2 | Automated vs AI output labelled | ✅ | Origin line on every answer ("assembled by fixed rules" / "AI-written, checked") |
 | 9.3 | Published limitations and model card | ✅ | `/limitations.html`, `docs/MODEL_CARD.md`, `EVALS.md` |
 | 10.1 | Production monitoring | ✅ | `/stats.html` safety signals: guardrail triggers, answer modes, AI rejections, problem reports |
 | 10.2 | User error reporting | ✅ | "Report a problem" on every result; `npm run feedback` |
 | 10.3 | Incident response | ✅ | `docs/INCIDENT_RESPONSE.md` with severity levels and a tested kill switch |
-| 10.4 | Regression protection | ✅ | `npm run gate` with thresholds; `.github/workflows/ci.yml` (activates when the repo is pushed to GitHub) |
+| 10.4 | Regression protection | ⚠️ | Revised: gate checks a code fingerprint and red-team results; `npm run release` deploys only after tests, eval and gate; deploys outside that command remain possible. |
 | 10.5 | Cache after fixes | ✅ | `ENGINE_VERSION` in the cache key |
 | 11.1 | Clinical accountability | ❌ | Developer is interim owner; a pharmacist or clinician reviewer is needed |
 | 11.2 | Release review process | ✅ | `docs/RELEASE_CHECKLIST.md` |

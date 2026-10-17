@@ -181,5 +181,31 @@
     "nameResolution": 100,
     "quoteIntegrity": 100,
     "guardrails": "10/10"
+  },
+  {
+    "date": "2026-10-17",
+    "set": "dev",
+    "label": "external-audit remediation: stricter scoring (target pair, visible severity, circular cases excluded), red-team corpus, engine fixes",
+    "falseReassuranceSerious": 0,
+    "recall": 100,
+    "seriousRatedSerious": 88.9,
+    "documentedRatedSerious": 22.7,
+    "falseAlarm": 8.3,
+    "nameResolution": 100,
+    "quoteIntegrity": 100,
+    "guardrails": "20/20"
+  },
+  {
+    "date": "2026-10-17",
+    "set": "heldout",
+    "label": "external-audit remediation: stricter scoring (target pair, visible severity, circular cases excluded), red-team corpus, engine fixes",
+    "falseReassuranceSerious": 0,
+    "recall": 100,
+    "seriousRatedSerious": 95.5,
+    "documentedRatedSerious": 46.7,
+    "falseAlarm": 0,
+    "nameResolution": 100,
+    "quoteIntegrity": 100,
+    "guardrails": "10/10"
   }
 ]

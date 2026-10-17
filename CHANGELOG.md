@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-17 (external audit remediation, engine 20)
+- Independent external audit: 25 findings (1 critical, 8 high). 22 fixed, 2 partly fixed (openFDA key needs the owner; deploys outside `npm run release` still possible), 1 open (quote relevance). Full record: `docs/EXTERNAL_AUDIT_2026-10-17.md`.
+- Critical fix: emergency detection rewritten and gated by a red-team corpus with a held-out part.
+- Evaluation scoring made stricter (target pair only, visible severity, circular cases excluded, quote order); results before this date used a looser rule.
+- New visible severity "Predicted from FDA enzyme table"; duplicate-medicine and dropped-medicine notices; security headers; privacy notice corrected.
+
 ## 2026-10-17 (help guardrail)
 - Found by the owner while testing: "please help me" got a cold "could not recognise a medicine" reply. New guardrail: calls for help or descriptions of feeling unwell get urgent-help routes (911, Poison Control, a pharmacist) and an explanation of what Pharvel does; with medicines named, a short symptoms note is added above the check. First version also caught "is X a side effect of Y?" questions; the release gate blocked it and the trigger was narrowed. Guardrail tests 20/20 dev, 10/10 held-out.
 

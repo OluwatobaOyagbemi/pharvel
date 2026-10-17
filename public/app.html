@@ -9,12 +9,12 @@
 <style>
 :root{
   --paper:#f5f2ea; --card:#fffdf8; --ink:#141414; --soft:#5d5a52; --rule:#141414; --hair:#d9d4c6;
-  --contraindicated:#b3121d; --major:#c2410c; --moderate:#7a5a00; --class:#2b62a0; --none:#5f6a5f; --unknown:#6f6a5e;
+  --contraindicated:#b3121d; --major:#c2410c; --moderate:#7a5a00; --class:#2b62a0; --predicted:#6a3d9a; --none:#5f6a5f; --unknown:#6f6a5e;
   --mark:#ffe58a; --accent:#0b6b57;
 }
 @media (prefers-color-scheme:dark){:root{
   --paper:#14140f; --card:#1d1d17; --ink:#f1eee4; --soft:#a8a394; --rule:#f1eee4; --hair:#3a392f;
-  --contraindicated:#ff6b6b; --major:#ff922b; --moderate:#f2c94c; --class:#74a9e6; --none:#8f998f; --unknown:#9a9486;
+  --contraindicated:#ff6b6b; --major:#ff922b; --moderate:#f2c94c; --class:#74a9e6; --predicted:#c4a7e7; --none:#8f998f; --unknown:#9a9486;
   --mark:#6b5600; --accent:#4fd1b1;
 }}
 *{box-sizing:border-box}
@@ -31,7 +31,7 @@ main{display:grid;grid-template-columns:minmax(320px,440px) 1fr;height:calc(100%
 .chat{display:flex;flex-direction:column;border-right:2px solid var(--rule);min-height:0}
 .log{flex:1;overflow:auto;padding:18px 16px;display:flex;flex-direction:column;gap:12px}
 .msg{max-width:92%;padding:10px 13px;border:1.5px solid var(--rule);background:var(--card);white-space:pre-line;
-}.msg .f,.msg .closing{white-space:normalanimation:rise .35s cubic-bezier(.2,.8,.2,1) both}
+}.msg .f,.msg .closing{white-space:normal}
 .msg.me{align-self:flex-end;background:var(--ink);color:var(--paper)}
 .msg small{display:block;margin-top:8px;color:var(--soft);font-size:12px}
 .msg.err{border-color:var(--contraindicated)}
@@ -99,7 +99,8 @@ svg{display:block;width:100%;height:auto;max-height:56vh}
 .edge .tag text{fill:var(--c);font-size:10.5px;font-weight:900;letter-spacing:.05em;text-anchor:middle;dominant-baseline:central}
 .edge .tag{animation:pop .4s cubic-bezier(.2,1.4,.4,1) both;animation-delay:calc(var(--delay) + .5s);transform-box:fill-box;transform-origin:center}
 .edge:hover .line,.edge.sel .line{stroke-width:calc(var(--w,3) + 2.5)}
-.edge:focus-visible{outline:none}.edge:focus-visible .tag rect{stroke-width:3}
+.edge:focus-visible{outline:none}.edge:focus-visible .line{stroke-width:calc(var(--w,3) + 4)}.edge:focus-visible .tag rect{stroke-width:3.5;stroke:var(--ink)}
+.node:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 @keyframes draw{from{stroke-dasharray:0 1000;opacity:0}to{opacity:1}}
 @keyframes flow{to{stroke-dashoffset:-36}}
 @keyframes throb{50%{opacity:.45}}
@@ -187,7 +188,7 @@ a{color:inherit}
 <body>
 <header>
   <h1><canvas id="mol" width="400" height="400" role="img" aria-label="Rotating molecule"></canvas><span class="wm"><b>Phar</b><i>vel</i></span></h1>
-  <p>Ask about medicines together. Every finding is quoted from an FDA drug label.</p>
+  <p>Ask about medicines together. Each finding links to the FDA label passage it is based on; summaries are written by fixed rules.</p>
 </header>
 <main>
   <section class="chat" aria-label="Chat">
@@ -220,17 +221,16 @@ a{color:inherit}
     <p class="note">This tool searches FDA-published label text (openFDA, DailyMed) and recognises names with NIH RxNorm. It reports what the labels say; it does not know your doses, conditions or other medicines, and a pair with nothing found is not confirmed safe. Check with a pharmacist or prescriber before changing how you take anything. <a href="/limitations.html">Limitations</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a><br>"Why it can happen" uses the FDA's published table of CYP enzyme and transporter substrates, inhibitors and inducers. "Real-world reports" are counts from the FDA Adverse Event Reporting System via openFDA: spontaneous reports that do not establish cause or frequency.</p>
   </section>
 </main>
-<script defer src="/_vercel/insights/script.js"></script>
 <script src="/brand/molecule.js"></script>
 <script src="/brand/mol3d.js"></script>
 <script>
 const $ = id => document.getElementById(id);
 const h = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const SHORT = {contraindicated:'DO NOT COMBINE', major:'SERIOUS', moderate:'DOCUMENTED', class:'CLASS WARNING', none:'NONE FOUND', unknown:'UNCHECKED'};
-const STYLE = {contraindicated:{w:5,t:'.7s'}, major:{w:4.5,t:'1s'}, moderate:{w:3.5,t:'1.5s'}, class:{w:3,t:'2.2s'}, none:{w:2,d:'7 7'}, unknown:{w:2,d:'2 6'}};
+const SHORT = {contraindicated:'DO NOT COMBINE', major:'SERIOUS', moderate:'DOCUMENTED', class:'CLASS WARNING', predicted:'PREDICTED', none:'NONE FOUND', unknown:'UNCHECKED'};
+const STYLE = {contraindicated:{w:5,t:'.7s'}, major:{w:4.5,t:'1s'}, moderate:{w:3.5,t:'1.5s'}, class:{w:3,t:'2.2s'}, predicted:{w:3,d:'10 5'}, none:{w:2,d:'7 7'}, unknown:{w:2,d:'2 6'}};
 const STEPS = ['Recognising medicine names (RxNorm)', 'Retrieving FDA labels (openFDA)', 'Cross-checking every pair', 'Writing the cited answer'];
-const ICON = {contraindicated:'✕', major:'▲', moderate:'●', class:'◆', none:'○', unknown:'?'};
-const RANK = ['contraindicated','major','moderate','class','none','unknown'];
+const ICON = {contraindicated:'✕', major:'▲', moderate:'●', class:'◆', predicted:'◇', none:'○', unknown:'?'};
+const RANK = ['contraindicated','major','moderate','class','predicted','none','unknown'];
 let keep = [], last = null, busy = false, gen = 0, viewers = [];
 
 function say(html, cls = '') {
@@ -265,19 +265,22 @@ async function ask(message, silent) {
   const stop = progress();
   try {
     const r = await fetch('/api/chat', {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({message, keep})});
-    const data = await r.json();
+    let data;
+    try { data = await r.json(); } catch { data = { error: r.status === 504 ? 'The check took too long. Please try again.' : 'The server sent an unexpected reply. Please try again.' }; }
     stop();
+    if (!r.ok && data.mode === 'help') { say(`<div class="sos help" role="alert"><b>If this is urgent</b>${h(data.helpText.urgent)}</div>${h(data.helpText.how)}<br><small>${h(data.error || '')}</small>`); busy = false; $('send').disabled = false; return; }
     if (data.free) $('quota').textContent = data.free.remaining > 0 ? `${data.free.remaining} of ${data.free.limit} free checks left today.` : `No free checks left today. They reset in about ${Math.ceil(data.free.resetsIn / 3600)} h.`;
     if (!r.ok) throw new Error(data.error || 'Something went wrong.');
-    if (data.drugs.length) { last = data; keep = data.drugs.map(d => d.display); tray(); draw(data); }
+    if (data.drugs?.length) { last = data; keep = data.drugs.map(d => d.display); tray(); draw(data); }
     const fixed = data.corrections?.length ? `<small>Read as: ${h(data.corrections.join(', '))}</small>` : '';
-    const more = data.truncated ? '<small>Only the first 6 medicines were checked.</small>' : '';
-    const src = data.drugs.some(d => d.source) ? `<small>Sources: ${data.drugs.filter(d => d.source).map(d => `<a href="${h(d.source.url)}" target="_blank" rel="noopener">${h(d.display)} label</a>`).join(' · ')}</small>` : '';
-    if (data.mode === 'help') { say(`<div class="sos help"><b>If this is urgent</b>${h(data.helpText.urgent)}</div>${h(data.helpText.how)}`); busy = false; $('send').disabled = false; return; }
-    if (data.mode === 'emergency') { say(`<div class="sos"><b>Get help now</b>${h(data.answer)}</div>`, 'err'); busy = false; $('send').disabled = false; return; }
-    const notice = (data.helpNotice ? `<div class="dosing">${h(data.helpNotice)}</div>` : '') + (data.dosingNotice ? `<div class="dosing">${h(data.dosingNotice)}</div>` : '') + (data.scopeNotice ? `<div class="dosing">${h(data.scopeNotice)}</div>` : '');
+    const more = data.dropped?.length ? `<div class="dosing">Only 6 medicines can be checked at once. <b>Not checked: ${h(data.dropped.join(', '))}.</b> Please check them in a separate question.</div>` : '';
+    const src = data.drugs?.some(d => d.source) ? `<small>Sources: ${data.drugs.filter(d => d.source).map(d => `<a href="${h(d.source.url)}" target="_blank" rel="noopener">${h(d.display)} label</a>`).join(' · ')}</small>` : '';
+    if (data.mode === 'help') { say(`<div class="sos help" role="alert"><b>If this is urgent</b>${h(data.helpText.urgent)}</div>${h(data.helpText.how)}`); busy = false; $('send').disabled = false; return; }
+    if (data.mode === 'emergency') { say(`<div class="sos" role="alert"><b>Get help now</b>${h(data.answer)}</div>`, 'err'); busy = false; $('send').disabled = false; return; }
+    const dups = (data.duplicates || []).map(d => `<div class="dosing"><b>Same medicine entered more than once:</b> ${h(d.typed.map(t => '“' + t + '”').join(' and '))} ${d.typed.length > 1 ? 'are all' : 'is'} ${h(d.name)}. Taking it from two products can mean a double dose — check with a pharmacist.</div>`).join('');
+    const notice = dups + (data.helpNotice ? `<div class="dosing">${h(data.helpNotice)}</div>` : '') + (data.dosingNotice ? `<div class="dosing">${h(data.dosingNotice)}</div>` : '') + (data.scopeNotice ? `<div class="dosing">${h(data.scopeNotice)}</div>` : '');
     const origin = data.findings?.length ? `<div class="origin">${data.mode === 'llm' ? 'AI-written explanation, checked by rules against the quoted label text below.' : 'Assembled by fixed rules from the quoted FDA label text — no AI writing.'}</div>` : '';
-    say(notice + origin + (data.findings?.length ? render(data) : h(data.answer)) + fixed + more + src);
+    say(notice + origin + (data.findings?.length ? render(data) : h(data.answer.split('\n').filter(l => !/same medicine|entered twice/.test(l)).join('\n'))) + fixed + more + src);
   } catch (e) { stop(); const m = say(h(e.message) + ' <button type="button" class="retry">Try again</button>', 'err'); m.querySelector('.retry').onclick = () => { m.remove(); busy = false; ask(message, true); }; }
   busy = false; $('send').disabled = false; $('q').focus();
 }
@@ -289,7 +292,8 @@ function render(data) {
   return data.findings.map(f => `<div class="f" style="--c:var(--${f.level})"><b>${h(f.a)} + ${h(f.b)}</b><span class="lv">${ICON[f.level]} ${h(f.label)}</span>${partsHTML(f)}<div class="src">${h(f.text)}</div>${
     f.quote ? `<q>${hl(f)}</q><a href="${h(f.url)}" target="_blank" rel="noopener">${h(f.from)} label · ${h(f.section)} · open on DailyMed</a>` : ''}${f.also ? `<div class="also">${h(f.also)}</div>` : ''}</div>`).join('')
     + '<div class="closing">Confirm with a pharmacist or prescriber before changing how you take anything.</div>'
-    + (data.unresolved?.length ? `<div class="closing">Not recognised as a medicine: ${h(data.unresolved.join(', '))}.</div>` : '');
+    + (data.unresolved?.length ? `<div class="closing">Not recognised as a medicine: ${h(data.unresolved.join(', '))}.</div>` : '')
+    + (data.skipped?.length ? `<div class="closing">Not paired: ${h(data.skipped.join(', '))} — parts of the same combination product.</div>` : '');
 }
 
 function draw(data) {
@@ -317,7 +321,7 @@ function draw(data) {
   });
   data.drugs.forEach((d, i) => {
     const w = Math.max(84, d.display.length * 8.6 + 28), P = pos[i];
-    out += `<g class="node ${d.source ? '' : 'nolabel'}" data-i="${i}" style="--delay:${i * 0.09}s"><rect x="${P.x - w / 2}" y="${P.y - 19}" width="${w}" height="38" rx="19"/><text x="${P.x}" y="${P.y}">${h(d.display)}</text></g>`;
+    out += `<g class="node ${d.source ? '' : 'nolabel'}" data-i="${i}" tabindex="0" role="button" aria-label="Show 3D structure of ${h(d.display)}" style="--delay:${i * 0.09}s"><rect x="${P.x - w / 2}" y="${P.y - 19}" width="${w}" height="38" rx="19"/><text x="${P.x}" y="${P.y}">${h(d.display)}</text></g>`;
   });
   svg.innerHTML = out;
   const used = [...new Set(data.pairs.map(p => p.level))];
@@ -341,9 +345,10 @@ function ghost() {
 
 function summary(data) {
   const cnt = {}; data.pairs.forEach(p => cnt[p.level] = (cnt[p.level] || 0) + 1);
-  const warn = data.pairs.filter(p => ['contraindicated', 'major', 'moderate', 'class'].includes(p.level) || p.mechanism?.some(m => m.strength !== 'weak')).length;
+  const warn = data.pairs.filter(p => ['contraindicated', 'major', 'moderate', 'class', 'predicted'].includes(p.level)).length;
+  const unchecked = data.pairs.filter(p => p.level === 'unknown').length, checked = data.pairs.length - unchecked;
   const mech = data.pairs.filter(p => p.mechanism?.length).length, rw = data.pairs.filter(p => p.faers?.reports).length;
-  $('summary').innerHTML = `<div class="sum"><button type="button" id="report" class="rep">Print / save report</button><h2>${data.pairs.length} pair${data.pairs.length === 1 ? '' : 's'} checked · ${warn ? warn + ' with label warnings' : 'no label warnings found'}</h2><div class="badges">${
+  $('summary').innerHTML = `<div class="sum"><button type="button" id="report" class="rep">Print / save report</button><h2>${data.pairs.length ? `${checked} pair${checked === 1 ? '' : 's'} checked · ${warn ? warn + ' with warnings' : 'no label warnings found'}${unchecked ? ` · ${unchecked} could not be checked` : ''}` : 'No pairs to check'}</h2><div class="badges">${
     RANK.filter(l => cnt[l]).map((l, i) => `<span class="badge" style="--c:var(--${l});--delay:${i * .08}s">${ICON[l]} ${cnt[l]} ${h(data.levels[l])}</span>`).join('')}</div>${mech || rw ? `<p class="srcsum">${mech ? `FDA's CYP/transporter table explains ${mech} pair${mech === 1 ? '' : 's'}. ` : ''}${rw ? `FDA adverse-event reports exist for ${rw} pair${rw === 1 ? '' : 's'}.` : ''}</p>` : ''}</div>`;
 }
 
@@ -408,7 +413,7 @@ function pick(k) {
   $('fb').onsubmit = async ev => {
     ev.preventDefault(); const fd = new FormData(ev.target), msg = ev.target.querySelector('.fbmsg');
     try {
-      const r = await fetch('/api/feedback', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ pair: `${p.a} + ${p.b}`, level: p.level, engine: last.mode, reason: fd.get('reason'), comment: fd.get('comment') }) });
+      const r = await fetch('/api/feedback', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ pair: `${p.a} + ${p.b}`, level: p.level, engine: last.mode, engineVersion: last.engineVersion, sources: last.drugs.filter(d => d.source).map(d => d.source.url), reason: fd.get('reason'), comment: fd.get('comment') }) });
       msg.textContent = r.ok ? 'Thank you — the report was saved for review.' : 'Could not send the report.'; if (r.ok) ev.target.querySelector('button').disabled = true;
     } catch { msg.textContent = 'Could not send the report.'; }
   };
@@ -424,7 +429,12 @@ async function compare(p) {
   ms.forEach((m, i) => { const v = new Mol3D.Viewer(cs[i], m, {sync}); v.cmp = true; viewers.push(v); });
 }
 $('svg').addEventListener('click', e => { const g = e.target.closest('.edge'); if (g) pick(+g.dataset.k); });
-$('svg').addEventListener('keydown', e => { const g = e.target.closest('.edge'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pick(+g.dataset.k); } });
+$('svg').addEventListener('keydown', e => {
+  if (!(e.key === 'Enter' || e.key === ' ')) return;
+  const g = e.target.closest('.edge'), n = e.target.closest('.node');
+  if (g) { e.preventDefault(); pick(+g.dataset.k); }
+  else if (n && n.dataset.i) { e.preventDefault(); $('mc' + n.dataset.i)?.scrollIntoView({behavior: 'smooth', block: 'center'}); }
+});
 $('tries').onclick = e => { if (e.target.tagName === 'BUTTON') { keep = []; tray(); ask(e.target.textContent); } };
 // Autocomplete: 17k RxNorm display names (static file, cached by the CDN), matched against the word being typed.
 let NAMES = null, namesLoading = null;
@@ -442,7 +452,7 @@ $('q').addEventListener('input', () => {
 // ---- Printable report ----
 function report() {
   if (!last) return;
-  const d = new Date().toLocaleString(), lv = l => ({ contraindicated: '#b3121d', major: '#c2410c', moderate: '#7a5a00', class: '#2b62a0', none: '#5f6a5f', unknown: '#6f6a5e' })[l];
+  const d = new Date().toLocaleString(), lv = l => ({ contraindicated: '#b3121d', major: '#c2410c', moderate: '#7a5a00', class: '#2b62a0', predicted: '#6a3d9a', none: '#5f6a5f', unknown: '#6f6a5e' })[l];
   const pairs = [...(last.findings || [])].sort((x, y) => RANK.indexOf(x.level) - RANK.indexOf(y.level));
   const html = `<!doctype html><html><head><meta charset="utf-8"><title>Pharvel report — ${h(last.drugs.map(x => x.display).join(', '))}</title>
 <style>body{font:13px/1.5 "Helvetica Neue",Arial,sans-serif;color:#141414;max-width:760px;margin:28px auto;padding:0 20px}h1{font-size:22px;margin:0}h2{font-size:15px;margin:22px 0 8px;border-bottom:2px solid #141414;padding-bottom:4px}
@@ -462,7 +472,7 @@ $('summary').onclick = e => { if (e.target.id === 'report') report(); };
 
 $('form').onsubmit = e => { e.preventDefault(); const v = $('q').value.trim(); if (!v) return; $('q').value = ''; ask(v); };
 ghost();
-try { const saved = JSON.parse(localStorage.getItem('pharvel.keep') || '[]'); if (Array.isArray(saved) && saved.length) { keep = saved.slice(0, 6); tray(); ask('', true); } } catch {}
+try { const saved = JSON.parse(localStorage.getItem('pharvel.keep') || '[]'); if (Array.isArray(saved) && saved.length) { keep = saved.filter(x => typeof x === 'string').slice(0, 6); tray(); setTimeout(() => { const m = say(`Your saved medicines are back: ${h(keep.join(', '))}. <button type="button" class="retry">Check them again</button>`); m.querySelector('.retry').onclick = () => ask('', true); }, 0); } } catch {}
 say('Tell me which medicines you want checked together. I look each one up in its FDA label and show you exactly what the labels say about the others.');
 </script>
 </body>

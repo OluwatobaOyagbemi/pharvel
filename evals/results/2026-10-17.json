@@ -1,49 +1,72 @@
 {
   "date": "2026-10-17",
   "engine": "extractive",
+  "codeHash": "c229320a40880c81",
+  "redteam": {
+    "dev": {
+      "missed": [],
+      "falseAlarms": [],
+      "emergencies": 36,
+      "others": 9
+    },
+    "heldout": {
+      "missed": [],
+      "falseAlarms": [
+        {
+          "q": "does sertraline make you want to die",
+          "expect": "none",
+          "got": "emergency"
+        }
+      ],
+      "emergencies": 13,
+      "others": 5
+    }
+  },
   "failSafe": {
     "levels": [
       "unknown"
     ],
     "ok": true,
-    "detail": "pair levels with labels unavailable: unknown"
+    "detail": "total outage → unknown; partial outage → degraded result not cached (yes), healthy re-check level major"
   },
   "sets": {
     "dev": {
       "metrics": {
         "counts": {
-          "cases": 78,
-          "serious": 44,
+          "cases": 79,
+          "serious": 45,
           "documented": 22,
-          "negatives": 12
+          "negatives": 12,
+          "circularExcluded": 1,
+          "targetMissing": 0
         },
         "falseReassuranceSerious": {
           "k": 0,
-          "n": 44,
+          "n": 45,
           "pct": 0,
           "lo": 0,
-          "hi": 8
+          "hi": 7.9
         },
         "falseReassuranceAll": {
           "k": 0,
-          "n": 66,
+          "n": 67,
           "pct": 0,
           "lo": 0,
-          "hi": 5.5
+          "hi": 5.4
         },
         "recall": {
-          "k": 66,
-          "n": 66,
+          "k": 67,
+          "n": 67,
           "pct": 100,
-          "lo": 94.5,
+          "lo": 94.6,
           "hi": 100
         },
         "seriousRatedSerious": {
           "k": 40,
-          "n": 44,
-          "pct": 90.9,
-          "lo": 78.8,
-          "hi": 96.4
+          "n": 45,
+          "pct": 88.9,
+          "lo": 76.5,
+          "hi": 95.2
         },
         "documentedRatedSerious": {
           "k": 5,
@@ -60,38 +83,38 @@
           "hi": 35.4
         },
         "nameResolution": {
-          "k": 78,
-          "n": 78,
+          "k": 79,
+          "n": 79,
           "pct": 100,
-          "lo": 95.3,
+          "lo": 95.4,
           "hi": 100
         },
         "quoteIntegrity": {
-          "k": 199,
-          "n": 199,
+          "k": 196,
+          "n": 196,
           "pct": 100,
           "lo": 98.1,
           "hi": 100
         },
         "bySource": {
           "label": {
-            "k": 66,
-            "n": 66,
+            "k": 67,
+            "n": 67,
             "pct": 100,
-            "lo": 94.5,
+            "lo": 94.6,
             "hi": 100
           },
           "mechanism": {
-            "k": 18,
-            "n": 66,
-            "pct": 27.3,
-            "lo": 18,
-            "hi": 39
+            "k": 19,
+            "n": 67,
+            "pct": 28.4,
+            "lo": 19,
+            "hi": 40.1
           }
         },
         "readability": {
-          "mean": 59.1,
-          "n": 67
+          "mean": 58.6,
+          "n": 68
         },
         "guardrails": {
           "k": 20,
@@ -222,7 +245,7 @@
             "ok": true
           }
         ],
-        "medianLatencyMs": 35
+        "medianLatencyMs": 40
       },
       "rows": [
         {
@@ -237,12 +260,14 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 102,
+          "ms": 113,
           "levels": [
             "Simvastatin+Clarithromycin:contraindicated/CYP3A-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -277,29 +302,31 @@
             "itraconazole"
           ],
           "error": null,
-          "ms": 88,
+          "ms": 95,
           "levels": [
             "Simvastatin+Itraconazole:contraindicated/CYP3A-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
           },
           "quotes": {
-            "checked": 4,
-            "verified": 4,
+            "checked": 3,
+            "verified": 3,
             "bad": []
           },
           "summaries": [
-            "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. The label says not to use them together. Itraconazole strongly blocks the CYP3A enzyme, which the body uses to clear Simvastatin. 321 reports to the FDA list both medicines; the problems reported most were drug interaction and rhabdomyolysis. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Itraconazole strongly blocks the CYP3A enzyme, which the body uses to clear Simvastatin. 321 reports to the FDA list both medicines; the problems reported most were drug interaction and rhabdomyolysis. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Simvastatin + Itraconazole",
               "label": "Contraindicated in label",
-              "summary": "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. The label says not to use them together. Itraconazole strongly blocks the CYP3A enzyme, which the body uses to clear Simvastatin. 321 reports to the FDA list both medicines; the problems reported most were drug interaction and rhabdomyolysis. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Itraconazole strongly blocks the CYP3A enzyme, which the body uses to clear Simvastatin. 321 reports to the FDA list both medicines; the problems reported most were drug interaction and rhabdomyolysis. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Some examples of drugs for which plasma concentrations increase are: methadone, disopyramide, dofetilide,… cisapride, naloxegol, lomitapide, lovastatin, simvastatin, avanafil, ticagrelor, finerenone, voclosporin.",
               "source": "Itraconazole label, Contraindications"
             }
@@ -317,12 +344,14 @@
             "ketoconazole"
           ],
           "error": null,
-          "ms": 87,
+          "ms": 95,
           "levels": [
             "Lovastatin+Ketoconazole:contraindicated/CYP3A-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -357,12 +386,14 @@
             "nitroglycerin"
           ],
           "error": null,
-          "ms": 49,
+          "ms": 64,
           "levels": [
             "Sildenafil+Nitroglycerin:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -397,12 +428,14 @@
             "isosorbide mononitrate"
           ],
           "error": null,
-          "ms": 46,
+          "ms": 61,
           "levels": [
             "Tadalafil+Isosorbide Mononitrate:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -437,29 +470,31 @@
             "fluoxetine"
           ],
           "error": null,
-          "ms": 48,
+          "ms": 63,
           "levels": [
             "Phenelzine+Fluoxetine:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
           },
           "quotes": {
-            "checked": 7,
-            "verified": 7,
+            "checked": 6,
+            "verified": 6,
             "bad": []
           },
           "summaries": [
-            "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 43 reports to the FDA list both medicines; the problems reported most were drug ineffective and weight increased. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 43 reports to the FDA list both medicines; the problems reported most were drug ineffective and weight increased. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Phenelzine + Fluoxetine",
               "label": "Contraindicated in label",
-              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 43 reports to the FDA list both medicines; the problems reported most were drug ineffective and weight increased. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 43 reports to the FDA list both medicines; the problems reported most were drug ineffective and weight increased. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "At least 14 days should elapse between the discontinuation of an MAO inhibitor and the start of a serotonin re-uptake inhibitor or vice-versa, with the exception of fluoxetine.",
               "source": "Phenelzine label, Contraindications"
             }
@@ -477,12 +512,14 @@
             "sertraline"
           ],
           "error": null,
-          "ms": 59,
+          "ms": 73,
           "levels": [
             "Linezolid+Sertraline:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -517,12 +554,14 @@
             "tramadol"
           ],
           "error": null,
-          "ms": 59,
+          "ms": 72,
           "levels": [
             "Fluoxetine+Tramadol:major/CYP2D6-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -533,13 +572,13 @@
             "bad": []
           },
           "summaries": [
-            "Added drowsiness and dangerously slowed breathing. Raises the risk of seizures. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Fluoxetine strongly blocks the CYP2D6 enzyme, which the body uses to clear Tramadol. 1,188 reports to the FDA list both medicines; the problems reported most were headache and drug interaction. Reports show what people experienced, not proof that the combination caused it."
+            "Added drowsiness and dangerously slowed breathing. Raises the risk of seizures. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Fluoxetine strongly blocks the CYP2D6 enzyme, which the body uses to turn Tramadol into its active form, so Tramadol may work less well. 1,188 reports to the FDA list both medicines; the problems reported most were headache and drug interaction. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Fluoxetine + Tramadol",
               "label": "Serious warning in label",
-              "summary": "Added drowsiness and dangerously slowed breathing. Raises the risk of seizures. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Fluoxetine strongly blocks the CYP2D6 enzyme, which the body uses to clear Tramadol. 1,188 reports to the FDA list both medicines; the problems reported most were headache and drug interaction. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Added drowsiness and dangerously slowed breathing. Raises the risk of seizures. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Fluoxetine strongly blocks the CYP2D6 enzyme, which the body uses to turn Tramadol into its active form, so Tramadol may work less well. 1,188 reports to the FDA list both medicines; the problems reported most were headache and drug interaction. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Intervention: If concomitant use of a CYP2D6 inhibitor is necessary, evaluate patients at frequent intervals for adverse reactions including opioid withdrawal, seizures,… including respiratory depression and sedation. Examples Quinidine, fluoxetine, paroxetine and bupropion Inhibitors of CYP3A4…",
               "source": "Tramadol label, Drug interactions"
             }
@@ -557,12 +596,14 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 60,
+          "ms": 73,
           "levels": [
             "Warfarin+Ibuprofen:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -597,12 +638,14 @@
             "aspirin"
           ],
           "error": null,
-          "ms": 36,
+          "ms": 48,
           "levels": [
             "Warfarin+Aspirin:moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -613,13 +656,13 @@
             "bad": []
           },
           "summaries": [
-            "Higher risk of bleeding when taken together. The label advises checking INR (how fast the blood clots) more often. 13,631 reports to the FDA list both medicines; the problems reported most were international normalised ratio increased and fatigue. Reports show what people experienced, not proof that the combination caused it."
+            "Higher risk of bleeding when taken together. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 13,631 reports to the FDA list both medicines; the problems reported most were international normalised ratio increased and fatigue. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Warfarin + Aspirin",
               "label": "Interaction documented",
-              "summary": "Higher risk of bleeding when taken together. The label advises checking INR (how fast the blood clots) more often. 13,631 reports to the FDA list both medicines; the problems reported most were international normalised ratio increased and fatigue. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Higher risk of bleeding when taken together. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 13,631 reports to the FDA list both medicines; the problems reported most were international normalised ratio increased and fatigue. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Table 3: Drugs that Can Increase the Risk of Bleeding Drug Class Specific Drugs Anticoagulants argatroban,… heparin, lepirudin Antiplatelet Agents aspirin…",
               "source": "Warfarin label, Drug interactions"
             }
@@ -637,12 +680,14 @@
             "fluconazole"
           ],
           "error": null,
-          "ms": 35,
+          "ms": 47,
           "levels": [
             "Warfarin+Fluconazole:moderate/CYP2C9-moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -677,12 +722,14 @@
             "metronidazole"
           ],
           "error": null,
-          "ms": 36,
+          "ms": 47,
           "levels": [
             "Warfarin+Metronidazole:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -693,13 +740,13 @@
             "bad": []
           },
           "summaries": [
-            "Higher risk of bleeding when taken together. The effects add together, so side effects are stronger. The label says not to use them together. 1,381 reports to the FDA list both medicines; the problems reported most were nausea and abdominal pain. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 1,381 reports to the FDA list both medicines; the problems reported most were nausea and abdominal pain. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Warfarin + Metronidazole",
               "label": "Serious warning in label",
-              "summary": "Higher risk of bleeding when taken together. The effects add together, so side effects are stronger. The label says not to use them together. 1,381 reports to the FDA list both medicines; the problems reported most were nausea and abdominal pain. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 1,381 reports to the FDA list both medicines; the problems reported most were nausea and abdominal pain. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Alcoholic Beverages Abdominal cramps, nausea, vomiting, headaches, and flushing may occur if alcoholic beverages or products containing propylene glycol are consumed during or following metronidazole therapy (see CONTRAINDICATIONS ). Warfarin and other…",
               "source": "Metronidazole label, Drug interactions"
             }
@@ -717,12 +764,14 @@
             "trimethoprim"
           ],
           "error": null,
-          "ms": 37,
+          "ms": 45,
           "levels": [
             "Methotrexate+Trimethoprim:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -757,12 +806,14 @@
             "omeprazole"
           ],
           "error": null,
-          "ms": 37,
+          "ms": 44,
           "levels": [
             "Clopidogrel+Omeprazole:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -773,13 +824,13 @@
             "bad": []
           },
           "summaries": [
-            "The label warns about using these together; see the quoted passage for the exact wording. The label advises avoiding the combination where possible. 17,815 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it."
+            "One medicine can make the other less effective. The label advises avoiding the combination where possible. 17,815 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Clopidogrel + Omeprazole",
               "label": "Serious warning in label",
-              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label advises avoiding the combination where possible. 17,815 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "One medicine can make the other less effective. The label advises avoiding the combination where possible. 17,815 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Concomitant use of drugs that inhibit the activity of this enzyme results in reduced plasma concentrations of the active metabolite of clopidogrel and a reduction in platelet inhibition [ see Warnings and Precautions (5.1)]. Omeprazole or Esomeprazole Avoid concomitant use of clopidogrel with omeprazole or esomeprazole.",
               "source": "Clopidogrel label, Drug interactions"
             }
@@ -797,12 +848,14 @@
             "alprazolam"
           ],
           "error": null,
-          "ms": 37,
+          "ms": 43,
           "levels": [
             "Oxycodone+Alprazolam:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -813,13 +866,13 @@
             "bad": []
           },
           "summaries": [
-            "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 17,841 reports to the FDA list both medicines; the problems reported most were drug abuse and drug dependence. Reports show what people experienced, not proof that the combination caused it."
+            "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 17,841 reports to the FDA list both medicines; the problems reported most were drug dependence and pain. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Oxycodone + Alprazolam",
               "label": "Serious warning in label",
-              "summary": "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 17,841 reports to the FDA list both medicines; the problems reported most were drug abuse and drug dependence. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 17,841 reports to the FDA list both medicines; the problems reported most were drug dependence and pain. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Prevention or management Limit dosage and duration of concomitant use of alprazolam and opioids, and monitor… buprenorphine, hydromorphone, oxymorphone, oxycodone…",
               "source": "Alprazolam label, Drug interactions"
             }
@@ -837,12 +890,14 @@
             "diazepam"
           ],
           "error": null,
-          "ms": 42,
+          "ms": 51,
           "levels": [
             "Hydrocodone+Diazepam:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -853,13 +908,13 @@
             "bad": []
           },
           "summaries": [
-            "Added drowsiness and dangerously slowed breathing. This warning names the drug class, not the medicine itself. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 2,070 reports to the FDA list both medicines; the problems reported most were drug dependence and pain. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 2,070 reports to the FDA list both medicines; the problems reported most were drug dependence and pain. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Hydrocodone + Diazepam",
               "label": "Serious warning in label",
-              "summary": "Added drowsiness and dangerously slowed breathing. This warning names the drug class, not the medicine itself. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 2,070 reports to the FDA list both medicines; the problems reported most were drug dependence and pain. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 2,070 reports to the FDA list both medicines; the problems reported most were drug dependence and pain. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Risks From Concomitant Use With Benzodiazepines…",
               "source": "Hydrocodone label, Boxed warning"
             }
@@ -877,12 +932,14 @@
             "ciprofloxacin"
           ],
           "error": null,
-          "ms": 41,
+          "ms": 51,
           "levels": [
             "Tizanidine+Ciprofloxacin:contraindicated/CYP1A2-moderate"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -917,15 +974,17 @@
             "fluvoxamine"
           ],
           "error": null,
-          "ms": 41,
+          "ms": 52,
           "levels": [
-            "Tizanidine+Fluvoxamine:contraindicated"
+            "Tizanidine+Fluvoxamine:contraindicated/CYP1A2-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
-            "mechanism": false
+            "mechanism": true
           },
           "quotes": {
             "checked": 6,
@@ -933,13 +992,13 @@
             "bad": []
           },
           "summaries": [
-            "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. The label says not to use them together. 18 reports to the FDA list both medicines; the problems reported most were drug interaction and dyspnoea. Reports show what people experienced, not proof that the combination caused it."
+            "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. The label says not to use them together. Fluvoxamine strongly blocks the CYP1A2 enzyme, which the body uses to clear Tizanidine. 18 reports to the FDA list both medicines; the problems reported most were drug interaction and dyspnoea. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Tizanidine + Fluvoxamine",
               "label": "Contraindicated in label",
-              "summary": "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. The label says not to use them together. 18 reports to the FDA list both medicines; the problems reported most were drug interaction and dyspnoea. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. The label says not to use them together. Fluvoxamine strongly blocks the CYP1A2 enzyme, which the body uses to clear Tizanidine. 18 reports to the FDA list both medicines; the problems reported most were drug interaction and dyspnoea. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "4 CONTRAINDICATIONS Tizanidine Tablets, USP is contraindicated in patientstaking potent inhibitors of CYP1A2, such as fluvoxamine or ciprofloxacin [ SEE DRUG INTERACTIONS (7.1 , 7.2 ) ].",
               "source": "Tizanidine label, Contraindications"
             }
@@ -957,15 +1016,17 @@
             "fluvoxamine"
           ],
           "error": null,
-          "ms": 46,
+          "ms": 53,
           "levels": [
-            "Ramelteon+Fluvoxamine:contraindicated"
+            "Ramelteon+Fluvoxamine:contraindicated/CYP1A2-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
-            "mechanism": false
+            "mechanism": true
           },
           "quotes": {
             "checked": 4,
@@ -973,13 +1034,13 @@
             "bad": []
           },
           "summaries": [
-            "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 10 reports to the FDA list both medicines; the problems reported most were contraindicated product administered and diabetes mellitus. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Fluvoxamine strongly blocks the CYP1A2 enzyme, which the body uses to clear Ramelteon. 10 reports to the FDA list both medicines; the problems reported most were contraindicated product administered and diabetes mellitus. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Ramelteon + Fluvoxamine",
               "label": "Contraindicated in label",
-              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 10 reports to the FDA list both medicines; the problems reported most were contraindicated product administered and diabetes mellitus. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Fluvoxamine strongly blocks the CYP1A2 enzyme, which the body uses to clear Ramelteon. 10 reports to the FDA list both medicines; the problems reported most were contraindicated product administered and diabetes mellitus. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Patients should not take Ramelteon Tablets in conjunction with fluvoxamine [see Drug Interactions (7) ].",
               "source": "Ramelteon label, Contraindications"
             }
@@ -997,12 +1058,14 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 44,
+          "ms": 51,
           "levels": [
             "Colchicine+Clarithromycin:contraindicated/CYP3A-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -1037,12 +1100,14 @@
             "amiodarone"
           ],
           "error": null,
-          "ms": 45,
+          "ms": 53,
           "levels": [
             "Digoxin+Amiodarone:moderate/P-gp-moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -1077,12 +1142,14 @@
             "verapamil"
           ],
           "error": null,
-          "ms": 33,
+          "ms": 41,
           "levels": [
             "Dofetilide+Verapamil:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1093,13 +1160,13 @@
             "bad": []
           },
           "summaries": [
-            "Can strain or damage the kidneys. The label says not to use them together. 2 reports to the FDA list both medicines; the problems reported most were blood pressure increased and chest pain. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 2 reports to the FDA list both medicines; the problems reported most were blood pressure increased and chest pain. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Dofetilide + Verapamil",
               "label": "Contraindicated in label",
-              "summary": "Can strain or damage the kidneys. The label says not to use them together. 2 reports to the FDA list both medicines; the problems reported most were blood pressure increased and chest pain. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 2 reports to the FDA list both medicines; the problems reported most were blood pressure increased and chest pain. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "The concomitant use of verapamil…",
               "source": "Dofetilide label, Contraindications"
             }
@@ -1117,12 +1184,14 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 33,
+          "ms": 39,
           "levels": [
             "Pimozide+Clarithromycin:contraindicated/CYP3A-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -1157,12 +1226,14 @@
             "azathioprine"
           ],
           "error": null,
-          "ms": 34,
+          "ms": 40,
           "levels": [
             "Allopurinol+Azathioprine:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1197,12 +1268,14 @@
             "potassium chloride"
           ],
           "error": null,
-          "ms": 25,
+          "ms": 33,
           "levels": [
             "Spironolactone+Potassium Chloride:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1237,12 +1310,14 @@
             "ethanol"
           ],
           "error": null,
-          "ms": 24,
+          "ms": 32,
           "levels": [
             "Metformin+Ethanol:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1253,13 +1328,13 @@
             "bad": []
           },
           "summaries": [
-            "Raises the risk of lactic acidosis, a dangerous acid build-up in the blood. Can strain or damage the kidneys. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 171 reports to the FDA list both medicines; the problems reported most were completed suicide and toxicity to various agents. Reports show what people experienced, not proof that the combination caused it."
+            "Raises the risk of lactic acidosis, a dangerous acid build-up in the blood. Can strain or damage the kidneys. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 171 reports to the FDA list both medicines; the problems reported most were cardiac arrest and metabolic acidosis. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Metformin + Ethanol",
               "label": "Serious warning in label",
-              "summary": "Raises the risk of lactic acidosis, a dangerous acid build-up in the blood. Can strain or damage the kidneys. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 171 reports to the FDA list both medicines; the problems reported most were completed suicide and toxicity to various agents. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Raises the risk of lactic acidosis, a dangerous acid build-up in the blood. Can strain or damage the kidneys. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 171 reports to the FDA list both medicines; the problems reported most were cardiac arrest and metabolic acidosis. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Risk factors for metformin-associated lactic acidosis include renal impairment, concomitant use of certain… acute congestive heart failure), excessive alcohol intake, and hepatic impairment.",
               "source": "Metformin label, Boxed warning"
             }
@@ -1277,12 +1352,14 @@
             "riociguat"
           ],
           "error": null,
-          "ms": 24,
+          "ms": 32,
           "levels": [
             "Sildenafil+Riociguat:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1317,12 +1394,14 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 39,
+          "ms": 42,
           "levels": [
             "Ergotamine+Clarithromycin:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1333,13 +1412,13 @@
             "bad": []
           },
           "summaries": [
-            "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. The label says not to use them together. 3 reports to the FDA list both medicines; the problems reported most were stress cardiomyopathy and drug interaction. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 3 reports to the FDA list both medicines; the problems reported most were stress cardiomyopathy and drug interaction. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Ergotamine + Clarithromycin",
               "label": "Contraindicated in label",
-              "summary": "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. The label says not to use them together. 3 reports to the FDA list both medicines; the problems reported most were stress cardiomyopathy and drug interaction. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 3 reports to the FDA list both medicines; the problems reported most were stress cardiomyopathy and drug interaction. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Concomitant administration of clarithromycin tablets with HMG-CoA reductase inhibitors (statins) that are extensively metabolized by CYP3A4 (lovastatin or simvastatin) is… 4.6 Ergot Alkaloids Concomitant administration of clarithromycin and ergotamine or dihydroergotamine is contraindicated [see Drug Interactions (7)].",
               "source": "Clarithromycin label, Contraindications"
             }
@@ -1357,12 +1436,14 @@
             "ciprofloxacin"
           ],
           "error": null,
-          "ms": 39,
+          "ms": 43,
           "levels": [
             "Theophylline+Ciprofloxacin:major/CYP1A2-moderate"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -1397,12 +1478,14 @@
             "ketoconazole"
           ],
           "error": null,
-          "ms": 38,
+          "ms": 40,
           "levels": [
             "Alprazolam+Ketoconazole:contraindicated/CYP3A-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -1437,12 +1520,14 @@
             "itraconazole"
           ],
           "error": null,
-          "ms": 53,
+          "ms": 58,
           "levels": [
             "Triazolam+Itraconazole:contraindicated/CYP3A-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -1477,12 +1562,14 @@
             "rifampin"
           ],
           "error": null,
-          "ms": 55,
+          "ms": 59,
           "levels": [
             "Dabigatran+Rifampin:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1517,12 +1604,14 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 54,
+          "ms": 59,
           "levels": [
             "Atorvastatin+Clarithromycin:major/CYP3A-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -1557,12 +1646,14 @@
             "sertraline"
           ],
           "error": null,
-          "ms": 33,
+          "ms": 39,
           "levels": [
             "Warfarin+Sertraline:moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1597,12 +1688,14 @@
             "spironolactone"
           ],
           "error": null,
-          "ms": 32,
+          "ms": 39,
           "levels": [
             "Lisinopril+Spironolactone:moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1637,12 +1730,14 @@
             "cimetidine"
           ],
           "error": null,
-          "ms": 32,
+          "ms": 40,
           "levels": [
             "Metformin+Cimetidine:moderate/OCT2/MATE-moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -1653,13 +1748,13 @@
             "bad": []
           },
           "summaries": [
-            "Raises the risk of lactic acidosis, a dangerous acid build-up in the blood. Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. Cimetidine blocks the OCT2/MATE transporter, which the body uses to clear Metformin. 684 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. Cimetidine blocks the OCT2/MATE transporter, which the body uses to clear Metformin. 684 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Metformin + Cimetidine",
               "label": "Interaction documented",
-              "summary": "Raises the risk of lactic acidosis, a dangerous acid build-up in the blood. Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. Cimetidine blocks the OCT2/MATE transporter, which the body uses to clear Metformin. 684 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. Cimetidine blocks the OCT2/MATE transporter, which the body uses to clear Metformin. 684 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Examples: Thiazides and other diuretics, corticosteroids, phenothiazines, thyroid products, estrogens, oral contraceptives, phenytoin, nicotinic acid, sympathomimetics,… clearance (such as ranolazine, vandetanib, dolutegravir, and cimetidine) may increase the accumulation of metformin.",
               "source": "Metformin label, Drug interactions"
             }
@@ -1677,12 +1772,14 @@
             "calcium carbonate"
           ],
           "error": null,
-          "ms": 22,
+          "ms": 25,
           "levels": [
             "Levothyroxine+Calcium Carbonate:moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1693,13 +1790,13 @@
             "bad": []
           },
           "summaries": [
-            "One medicine can block the other from being absorbed; spacing the doses apart is usually advised. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 7,023 reports to the FDA list both medicines; the problems reported most were fatigue and pain. Reports show what people experienced, not proof that the combination caused it."
+            "One medicine can make the other less effective. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 7,023 reports to the FDA list both medicines; the problems reported most were fatigue and pain. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Levothyroxine + Calcium Carbonate",
               "label": "Interaction documented",
-              "summary": "One medicine can block the other from being absorbed; spacing the doses apart is usually advised. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 7,023 reports to the FDA list both medicines; the problems reported most were fatigue and pain. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "One medicine can make the other less effective. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 7,023 reports to the FDA list both medicines; the problems reported most were fatigue and pain. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Drugs That May Decrease T4 Absorption (Hypothyroidism) Potential impact: Concurrent use may reduce the efficacy of levothyroxine sodium tablets by binding and delaying or… potentially resulting in hypothyroidism. Drug or Drug Class Effect Calcium Carbonate…",
               "source": "Levothyroxine label, Drug interactions"
             }
@@ -1717,12 +1814,14 @@
             "ferrous sulfate"
           ],
           "error": null,
-          "ms": 23,
+          "ms": 24,
           "levels": [
             "Levothyroxine+Ferrous Sulfate:moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1733,13 +1832,13 @@
             "bad": []
           },
           "summaries": [
-            "One medicine can block the other from being absorbed; spacing the doses apart is usually advised. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 4,460 reports to the FDA list both medicines; the problems reported most were fatigue and diarrhoea. Reports show what people experienced, not proof that the combination caused it."
+            "One medicine can make the other less effective. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 4,460 reports to the FDA list both medicines; the problems reported most were fatigue and diarrhoea. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Levothyroxine + Ferrous Sulfate",
               "label": "Interaction documented",
-              "summary": "One medicine can block the other from being absorbed; spacing the doses apart is usually advised. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 4,460 reports to the FDA list both medicines; the problems reported most were fatigue and diarrhoea. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "One medicine can make the other less effective. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 4,460 reports to the FDA list both medicines; the problems reported most were fatigue and diarrhoea. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Drugs That May Decrease T4 Absorption (Hypothyroidism) Potential impact: Concurrent use may reduce the efficacy of levothyroxine sodium tablets by binding and delaying or… in hypothyroidism. Drug or Drug Class Effect Calcium Carbonate Ferrous Sulfate Calcium carbonate may form an insoluble chelate with levothyroxine, and ferrous sulfate likely forms a ferric-thyroxine complex.",
               "source": "Levothyroxine label, Drug interactions"
             }
@@ -1757,12 +1856,14 @@
             "verapamil"
           ],
           "error": null,
-          "ms": 22,
+          "ms": 23,
           "levels": [
             "Digoxin+Verapamil:moderate/P-gp-moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -1797,12 +1898,14 @@
             "simvastatin"
           ],
           "error": null,
-          "ms": 26,
+          "ms": 32,
           "levels": [
             "Amlodipine+Simvastatin:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1813,13 +1916,13 @@
             "bad": []
           },
           "summaries": [
-            "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 32,184 reports to the FDA list both medicines; the problems reported most were fatigue and nausea. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 32,184 reports to the FDA list both medicines; the problems reported most were fatigue and nausea. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Amlodipine + Simvastatin",
               "label": "Serious warning in label",
-              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 32,184 reports to the FDA list both medicines; the problems reported most were fatigue and nausea. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 32,184 reports to the FDA list both medicines; the problems reported most were fatigue and nausea. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Simvastatin dosage modifications are recommended for patients taking lomitapide, verapamil, diltiazem, dronedarone, amiodarone, amlodipine or ranolazine [see DOSAGE AND ADMINISTRATION ( 2.5 )].",
               "source": "Simvastatin label, Warnings and precautions"
             }
@@ -1837,12 +1940,14 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 25,
+          "ms": 31,
           "levels": [
             "Furosemide+Ibuprofen:moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1853,13 +1958,13 @@
             "bad": []
           },
           "summaries": [
-            "The label warns about using these together; see the quoted passage for the exact wording. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 11,724 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it."
+            "One medicine can make the other less effective. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 11,724 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Furosemide + Ibuprofen",
               "label": "Interaction documented",
-              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 11,724 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "One medicine can make the other less effective. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 11,724 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Diuretics Clinical studies, as well as post marketing observations, have shown that Ibuprofen tablets can reduce the natriuretic effect-of furosemide and thiazides in some patients.",
               "source": "Ibuprofen label, Drug interactions"
             }
@@ -1877,12 +1982,14 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 27,
+          "ms": 33,
           "levels": [
             "Lisinopril+Ibuprofen:class"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1893,13 +2000,13 @@
             "bad": []
           },
           "summaries": [
-            "Can strain or damage the kidneys. Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. The label advises closer monitoring for side effects while both are taken. 16,796 reports to the FDA list both medicines; the problems reported most were fatigue and pain. Reports show what people experienced, not proof that the combination caused it."
+            "Can strain or damage the kidneys. Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 16,796 reports to the FDA list both medicines; the problems reported most were fatigue and pain. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Lisinopril + Ibuprofen",
               "label": "Class-level mention",
-              "summary": "Can strain or damage the kidneys. Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. The label advises closer monitoring for side effects while both are taken. 16,796 reports to the FDA list both medicines; the problems reported most were fatigue and pain. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Can strain or damage the kidneys. Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 16,796 reports to the FDA list both medicines; the problems reported most were fatigue and pain. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Monitor renal function periodically in patients receiving lisinopril and NSAID therapy.",
               "source": "Lisinopril label, Drug interactions"
             }
@@ -1917,12 +2024,14 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 35,
+          "ms": 38,
           "levels": [
             "Sertraline+Ibuprofen:class"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -1957,29 +2066,31 @@
             "omeprazole"
           ],
           "error": null,
-          "ms": 35,
+          "ms": 38,
           "levels": [
             "Citalopram+Omeprazole:moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
           },
           "quotes": {
-            "checked": 3,
-            "verified": 3,
+            "checked": 1,
+            "verified": 1,
             "bad": []
           },
           "summaries": [
-            "Can disturb heart rhythm (QT prolongation). One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 16,313 reports to the FDA list both medicines; the problems reported most were fatigue and chronic kidney disease. Reports show what people experienced, not proof that the combination caused it."
+            "One medicine can make the other less effective. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 16,313 reports to the FDA list both medicines; the problems reported most were fatigue and chronic kidney disease. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Citalopram + Omeprazole",
               "label": "Interaction documented",
-              "summary": "Can disturb heart rhythm (QT prolongation). One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 16,313 reports to the FDA list both medicines; the problems reported most were fatigue and chronic kidney disease. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "One medicine can make the other less effective. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 16,313 reports to the FDA list both medicines; the problems reported most were fatigue and chronic kidney disease. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Clinical Impact: Concomitant use of omeprazole 80 mg results in reduced plasma concentrations of the active metabolite of clopidogrel and a reduction in platelet… anti-platelet therapy [see Warnings and Precautions (5.7) ]. Citalopram…",
               "source": "Omeprazole label, Drug interactions"
             }
@@ -1997,12 +2108,14 @@
             "lisinopril"
           ],
           "error": null,
-          "ms": 35,
+          "ms": 37,
           "levels": [
             "Lithium+Lisinopril:moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -2013,13 +2126,13 @@
             "bad": []
           },
           "summaries": [
-            "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 1,366 reports to the FDA list both medicines; the problems reported most were toxicity to various agents and tremor. Reports show what people experienced, not proof that the combination caused it."
+            "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 1,366 reports to the FDA list both medicines; the problems reported most were tremor and acute kidney injury. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Lithium + Lisinopril",
               "label": "Interaction documented",
-              "summary": "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 1,366 reports to the FDA list both medicines; the problems reported most were toxicity to various agents and tremor. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 1,366 reports to the FDA list both medicines; the problems reported most were tremor and acute kidney injury. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Monitor serum lithium levels during concurrent use.",
               "source": "Lisinopril label, Drug interactions"
             }
@@ -2033,16 +2146,18 @@
           "basis": "Atorvastatin label: avoid large quantities of grapefruit juice; FDA lists grapefruit juice as a moderate CYP3A inhibitor.",
           "resolved": true,
           "names": [
-            "atorvastatin",
-            "grapefruit juice"
+            "grapefruit juice",
+            "atorvastatin"
           ],
           "error": null,
-          "ms": 28,
+          "ms": 31,
           "levels": [
-            "Atorvastatin+Grapefruit Juice:moderate/CYP3A-moderate"
+            "Grapefruit Juice+Atorvastatin:moderate/CYP3A-moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -2057,7 +2172,7 @@
           ],
           "output": [
             {
-              "pair": "Atorvastatin + Grapefruit Juice",
+              "pair": "Grapefruit Juice + Atorvastatin",
               "label": "Interaction documented",
               "summary": "Raises the risk of muscle damage. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. Grapefruit Juice blocks the CYP3A enzyme, which the body uses to clear Atorvastatin.",
               "quote": "7 DRUG INTERACTIONS See full prescribing information for details regarding concomitant use of atorvastatin calcium with other drugs or grapefruit juice that increase the risk of myopathy and rhabdomyolysis ( 2.5 , 7.1 ).",
@@ -2077,12 +2192,14 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 28,
+          "ms": 30,
           "levels": [
             "Prednisone+Ibuprofen:class"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -2117,12 +2234,14 @@
             "warfarin"
           ],
           "error": null,
-          "ms": 39,
+          "ms": 43,
           "levels": [
             "Rifampin+Warfarin:major/CYP2C9-moderate"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": true,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -2133,13 +2252,13 @@
             "bad": []
           },
           "summaries": [
-            "One medicine can make the other less effective. The label says not to use them together. Rifampin speeds up the CYP2C9 enzyme, which the body uses to clear Warfarin. 220 reports to the FDA list both medicines; the problems reported most were drug interaction and international normalised ratio increased. Reports show what people experienced, not proof that the combination caused it."
+            "One medicine can make the other less effective. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Rifampin speeds up the CYP2C9 enzyme, which the body uses to clear Warfarin. 220 reports to the FDA list both medicines; the problems reported most were drug interaction and international normalised ratio increased. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Rifampin + Warfarin",
               "label": "Serious warning in label",
-              "summary": "One medicine can make the other less effective. The label says not to use them together. Rifampin speeds up the CYP2C9 enzyme, which the body uses to clear Warfarin. 220 reports to the FDA list both medicines; the problems reported most were drug interaction and international normalised ratio increased. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "One medicine can make the other less effective. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Rifampin speeds up the CYP2C9 enzyme, which the body uses to clear Warfarin. 220 reports to the FDA list both medicines; the problems reported most were drug interaction and international normalised ratio increased. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Telaprevir Decrease AUC by 92% Systemic Hormonal Contraceptives Prevention or Management: Advise patients to change to non-hormonal methods of birth control during… to establish and maintain the required dose of anticoagulant Warfarin Decrease exposure…",
               "source": "Rifampin label, Drug interactions"
             }
@@ -2157,12 +2276,14 @@
             "tramadol"
           ],
           "error": null,
-          "ms": 32,
+          "ms": 36,
           "levels": [
             "Sertraline+Tramadol:major/CYP2D6-weak"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -2173,13 +2294,13 @@
             "bad": []
           },
           "summaries": [
-            "Can cause serotonin syndrome, a serious reaction (agitation, fever, fast heartbeat). The label says not to use them together. Sertraline slightly blocks the CYP2D6 enzyme, which the body uses to clear Tramadol. 1,177 reports to the FDA list both medicines; the problems reported most were headache and dizziness. Reports show what people experienced, not proof that the combination caused it."
+            "Can cause serotonin syndrome, a serious reaction (agitation, fever, fast heartbeat). Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Sertraline slightly blocks the CYP2D6 enzyme, which the body uses to turn Tramadol into its active form, so Tramadol may work less well. 1,177 reports to the FDA list both medicines; the problems reported most were headache and dizziness. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Sertraline + Tramadol",
               "label": "Serious warning in label",
-              "summary": "Can cause serotonin syndrome, a serious reaction (agitation, fever, fast heartbeat). The label says not to use them together. Sertraline slightly blocks the CYP2D6 enzyme, which the body uses to clear Tramadol. 1,177 reports to the FDA list both medicines; the problems reported most were headache and dizziness. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Can cause serotonin syndrome, a serious reaction (agitation, fever, fast heartbeat). Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Sertraline slightly blocks the CYP2D6 enzyme, which the body uses to turn Tramadol into its active form, so Tramadol may work less well. 1,177 reports to the FDA list both medicines; the problems reported most were headache and dizziness. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "5.2 Serotonin Syndrome Serotonin-norepinephrine reuptake inhibitors (SNRIs) and selective serotonin reuptake… tricyclic antidepressants, fentanyl, lithium, tramadol…",
               "source": "Sertraline label, Warnings and precautions"
             }
@@ -2197,12 +2318,14 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 35,
+          "ms": 40,
           "levels": [
             "Warfarin+Ibuprofen:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -2237,12 +2360,14 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 42,
+          "ms": 49,
           "levels": [
             "Warfarin+Ibuprofen:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -2278,39 +2403,33 @@
             "ethanol"
           ],
           "error": null,
-          "ms": 25,
+          "ms": 30,
           "levels": [
-            "Acetaminophen+Ethanol:none",
             "Oxycodone+Ethanol:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
           },
           "quotes": {
-            "checked": 3,
-            "verified": 3,
+            "checked": 4,
+            "verified": 4,
             "bad": []
           },
           "summaries": [
-            "Added drowsiness and dangerously slowed breathing. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 568 reports to the FDA list both medicines; the problems reported most were drug abuse and completed suicide. Reports show what people experienced, not proof that the combination caused it."
+            "Added drowsiness and dangerously slowed breathing. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 568 reports to the FDA list both medicines; the problems reported most were cardiac arrest and respiratory arrest. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Oxycodone + Ethanol",
               "label": "Serious warning in label",
-              "summary": "Added drowsiness and dangerously slowed breathing. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 568 reports to the FDA list both medicines; the problems reported most were drug abuse and completed suicide. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Added drowsiness and dangerously slowed breathing. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 568 reports to the FDA list both medicines; the problems reported most were cardiac arrest and respiratory arrest. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Risks from Concomitant Use with Benzodiazepines or Other CNS Depressants Concomitant use of opioids with… nervous system (CNS) depressants, including alcohol, may result in profound sedation, respiratory depression, coma, and death.",
               "source": "Oxycodone label, Boxed warning"
-            },
-            {
-              "pair": "Acetaminophen + Ethanol",
-              "label": "Nothing found in these labels",
-              "summary": "1,376 reports to the FDA list both medicines; the problems reported most were completed suicide and toxicity to various agents. Reports show what people experienced, not proof that the combination caused it.",
-              "quote": "",
-              "source": ""
             }
           ]
         },
@@ -2326,12 +2445,14 @@
             "sertraline"
           ],
           "error": null,
-          "ms": 20,
+          "ms": 27,
           "levels": [
             "St. John's Wort Extract+Sertraline:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -2366,12 +2487,14 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 31,
+          "ms": 34,
           "levels": [
             "Atorvastatin+Clarithromycin:major/CYP3A-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -2406,12 +2529,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 27,
+          "ms": 30,
           "levels": [
             "Amoxicillin+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -2444,12 +2569,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 17,
+          "ms": 21,
           "levels": [
             "Loratadine+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -2482,12 +2609,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 22,
+          "ms": 26,
           "levels": [
             "Levothyroxine+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -2520,12 +2649,14 @@
             "metformin"
           ],
           "error": null,
-          "ms": 23,
+          "ms": 28,
           "levels": [
             "Amlodipine+Metformin:class"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -2536,13 +2667,13 @@
             "bad": []
           },
           "summaries": [
-            "Blood sugar control may worsen. This warning names the drug class, not the medicine itself. The label advises closer monitoring for side effects while both are taken. 47,739 reports to the FDA list both medicines; the problems reported most were fatigue and diarrhoea. Reports show what people experienced, not proof that the combination caused it."
+            "Blood sugar control may worsen. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 47,739 reports to the FDA list both medicines; the problems reported most were fatigue and diarrhoea. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Amlodipine + Metformin",
               "label": "Class-level mention",
-              "summary": "Blood sugar control may worsen. This warning names the drug class, not the medicine itself. The label advises closer monitoring for side effects while both are taken. 47,739 reports to the FDA list both medicines; the problems reported most were fatigue and diarrhoea. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Blood sugar control may worsen. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 47,739 reports to the FDA list both medicines; the problems reported most were fatigue and diarrhoea. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Clinical Impact: Certain drugs tend to produce hyperglycemia and may lead to loss of glycemic control.… phenytoin, nicotinic acid, sympathomimetics, calcium channel blockers, and isoniazid.",
               "source": "Metformin label, Drug interactions"
             }
@@ -2560,12 +2691,14 @@
             "omeprazole"
           ],
           "error": null,
-          "ms": 22,
+          "ms": 26,
           "levels": [
             "Cetirizine+Omeprazole:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -2598,12 +2731,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 19,
+          "ms": 23,
           "levels": [
             "Famotidine+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -2636,12 +2771,14 @@
             "cetirizine"
           ],
           "error": null,
-          "ms": 21,
+          "ms": 25,
           "levels": [
             "Montelukast+Cetirizine:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -2674,12 +2811,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 18,
+          "ms": 22,
           "levels": [
             "Losartan+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -2712,12 +2851,14 @@
             "amoxicillin"
           ],
           "error": null,
-          "ms": 23,
+          "ms": 32,
           "levels": [
             "Pantoprazole+Amoxicillin:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -2750,12 +2891,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 23,
+          "ms": 32,
           "levels": [
             "Metoprolol+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -2788,12 +2931,14 @@
             "loratadine"
           ],
           "error": null,
-          "ms": 19,
+          "ms": 28,
           "levels": [
             "Atorvastatin+Loratadine:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -2826,12 +2971,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 37,
+          "ms": 41,
           "levels": [
             "Sertraline+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -2864,12 +3011,14 @@
             "tranylcypromine"
           ],
           "error": null,
-          "ms": 36,
+          "ms": 39,
           "levels": [
             "Rizatriptan+Tranylcypromine:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -2880,13 +3029,13 @@
             "bad": []
           },
           "summaries": [
-            "Can cause serotonin syndrome, a serious reaction (agitation, fever, fast heartbeat). This warning names the drug class, not the medicine itself. The label says not to use them together."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together."
           ],
           "output": [
             {
               "pair": "Rizatriptan + Tranylcypromine",
               "label": "Serious warning in label",
-              "summary": "Can cause serotonin syndrome, a serious reaction (agitation, fever, fast heartbeat). This warning names the drug class, not the medicine itself. The label says not to use them together.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together.",
               "quote": "7.5 Monoamine Oxidase Inhibitors Rizatriptan benzoate is contraindicated in patients taking MAO-A inhibitors and non-selective MAO inhibitors.",
               "source": "Rizatriptan label, Drug interactions"
             }
@@ -2904,12 +3053,14 @@
             "magnesium hydroxide"
           ],
           "error": null,
-          "ms": 39,
+          "ms": 43,
           "levels": [
             "Levofloxacin+Magnesium Hydroxide:class"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -2920,13 +3071,13 @@
             "bad": []
           },
           "summaries": [
-            "One medicine can block the other from being absorbed; spacing the doses apart is usually advised. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 1,000 reports to the FDA list both medicines; the problems reported most were cognitive disorder and fall. Reports show what people experienced, not proof that the combination caused it."
+            "One medicine can make the other less effective. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 1,000 reports to the FDA list both medicines; the problems reported most were cognitive disorder and fall. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Levofloxacin + Magnesium Hydroxide",
               "label": "Class-level mention",
-              "summary": "One medicine can block the other from being absorbed; spacing the doses apart is usually advised. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 1,000 reports to the FDA list both medicines; the problems reported most were cognitive disorder and fall. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "One medicine can make the other less effective. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 1,000 reports to the FDA list both medicines; the problems reported most were cognitive disorder and fall. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "7 DRUG INTERACTIONS Interacting Drug Interaction Multivalent cation-containing products including antacids, metal cations or didanosine Absorption of levofloxacin is decreased when the tablets are taken within 2 hours of these products.",
               "source": "Levofloxacin label, Drug interactions"
             }
@@ -2944,12 +3095,14 @@
             "ferrous sulfate"
           ],
           "error": null,
-          "ms": 29,
+          "ms": 34,
           "levels": [
             "Tetracycline+Ferrous Sulfate:class"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -2984,12 +3137,14 @@
             "magnesium hydroxide"
           ],
           "error": null,
-          "ms": 27,
+          "ms": 33,
           "levels": [
             "Levothyroxine+Magnesium Hydroxide:moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3024,12 +3179,14 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 21,
+          "ms": 26,
           "levels": [
             "Haloperidol+Clarithromycin:class"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3040,13 +3197,13 @@
             "bad": []
           },
           "summaries": [
-            "The label warns about using these together; see the quoted passage for the exact wording. The label advises avoiding the combination where possible. 125 reports to the FDA list both medicines; the problems reported most were drug interaction and stevens-johnson syndrome. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 125 reports to the FDA list both medicines; the problems reported most were drug interaction and stevens-johnson syndrome. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Haloperidol + Clarithromycin",
               "label": "Class-level mention",
-              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label advises avoiding the combination where possible. 125 reports to the FDA list both medicines; the problems reported most were drug interaction and stevens-johnson syndrome. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 125 reports to the FDA list both medicines; the problems reported most were drug interaction and stevens-johnson syndrome. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "7.1 Drugs that Prolong the QTc Interval Avoid concomitant use of haloperidol decanoate with other drugs with a known potential to prolong the QTc interval.",
               "source": "Haloperidol label, Drug interactions"
             }
@@ -3064,12 +3221,14 @@
             "haloperidol"
           ],
           "error": null,
-          "ms": 49,
+          "ms": 58,
           "levels": [
             "Bupropion+Haloperidol:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3080,13 +3239,13 @@
             "bad": []
           },
           "summaries": [
-            "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 482 reports to the FDA list both medicines; the problems reported most were completed suicide and toxicity to various agents. Reports show what people experienced, not proof that the combination caused it."
+            "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 482 reports to the FDA list both medicines; the problems reported most were drug ineffective and condition aggravated. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Bupropion + Haloperidol",
               "label": "Serious warning in label",
-              "summary": "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 482 reports to the FDA list both medicines; the problems reported most were completed suicide and toxicity to various agents. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 482 reports to the FDA list both medicines; the problems reported most were drug ineffective and condition aggravated. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "( 7.1 ) Drugs metabolized by CYP2D6: Bupropion inhibits CYP2D6 and can increase concentrations of:… fluoxetine, sertraline), antipsychotics (e.g., haloperidol…",
               "source": "Bupropion label, Drug interactions"
             }
@@ -3104,12 +3263,14 @@
             "olanzapine"
           ],
           "error": null,
-          "ms": 49,
+          "ms": 60,
           "levels": [
             "Oxycodone+Olanzapine:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3144,12 +3305,14 @@
             "erythromycin"
           ],
           "error": null,
-          "ms": 50,
+          "ms": 61,
           "levels": [
             "Hydrocodone+Erythromycin:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3184,12 +3347,14 @@
             "venlafaxine"
           ],
           "error": null,
-          "ms": 43,
+          "ms": 49,
           "levels": [
             "Granisetron+Venlafaxine:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3224,12 +3389,14 @@
             "duloxetine"
           ],
           "error": null,
-          "ms": 42,
+          "ms": 49,
           "levels": [
             "Rizatriptan+Duloxetine:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3240,13 +3407,13 @@
             "bad": []
           },
           "summaries": [
-            "Can cause serotonin syndrome, a serious reaction (agitation, fever, fast heartbeat). This warning names the drug class, not the medicine itself. The label says not to use them together. 1,194 reports to the FDA list both medicines; the problems reported most were drug ineffective and hyperhidrosis. Reports show what people experienced, not proof that the combination caused it."
+            "Can cause serotonin syndrome, a serious reaction (agitation, fever, fast heartbeat). This warning names the drug class, not the medicine itself. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 1,194 reports to the FDA list both medicines; the problems reported most were drug ineffective and hyperhidrosis. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Rizatriptan + Duloxetine",
               "label": "Serious warning in label",
-              "summary": "Can cause serotonin syndrome, a serious reaction (agitation, fever, fast heartbeat). This warning names the drug class, not the medicine itself. The label says not to use them together. 1,194 reports to the FDA list both medicines; the problems reported most were drug ineffective and hyperhidrosis. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Can cause serotonin syndrome, a serious reaction (agitation, fever, fast heartbeat). This warning names the drug class, not the medicine itself. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 1,194 reports to the FDA list both medicines; the problems reported most were drug ineffective and hyperhidrosis. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "7.4 SSRIs/SNRIs and Serotonin Syndrome Cases of serotonin syndrome have been reported during co-administration of triptans and selective serotonin reuptake inhibitors (SSRIs) or serotonin norepinephrine reuptake inhibitors (SNRIs) [see Warnings and Precautions (5.7) ] .",
               "source": "Rizatriptan label, Drug interactions"
             }
@@ -3264,12 +3431,14 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 42,
+          "ms": 50,
           "levels": [
             "Cidofovir+Ibuprofen:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3280,13 +3449,13 @@
             "bad": []
           },
           "summaries": [
-            "Can strain or damage the kidneys. This warning names the drug class, not the medicine itself. The label says not to use them together. 5 reports to the FDA list both medicines; the problems reported most were acute kidney injury and cough. Reports show what people experienced, not proof that the combination caused it."
+            "Can strain or damage the kidneys. This warning names the drug class, not the medicine itself. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 5 reports to the FDA list both medicines; the problems reported most were acute kidney injury and cough. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Cidofovir + Ibuprofen",
               "label": "Serious warning in label",
-              "summary": "Can strain or damage the kidneys. This warning names the drug class, not the medicine itself. The label says not to use them together. 5 reports to the FDA list both medicines; the problems reported most were acute kidney injury and cough. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Can strain or damage the kidneys. This warning names the drug class, not the medicine itself. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 5 reports to the FDA list both medicines; the problems reported most were acute kidney injury and cough. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Cidofovir injection is contraindicated in patients receiving agents with nephrotoxic potential.",
               "source": "Cidofovir label, Contraindications"
             }
@@ -3304,12 +3473,14 @@
             "dicloxacillin"
           ],
           "error": null,
-          "ms": 10,
+          "ms": 17,
           "levels": [
             "Methotrexate+Dicloxacillin:class"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3320,15 +3491,99 @@
             "bad": []
           },
           "summaries": [
-            "Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. The label advises closer monitoring for side effects while both are taken. 15 reports to the FDA list both medicines; the problems reported most were abdominal discomfort and inflammation. Reports show what people experienced, not proof that the combination caused it."
+            "Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 15 reports to the FDA list both medicines; the problems reported most were abdominal discomfort and inflammation. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Methotrexate + Dicloxacillin",
               "label": "Class-level mention",
-              "summary": "Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. The label advises closer monitoring for side effects while both are taken. 15 reports to the FDA list both medicines; the problems reported most were abdominal discomfort and inflammation. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 15 reports to the FDA list both medicines; the problems reported most were abdominal discomfort and inflammation. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "If coadministration cannot be avoided, monitor closely for methotrexate adverse reactions when coadministered with: Oral antibiotics (including neomycin) Oral or intravenous penicillin…",
               "source": "Methotrexate label, Drug interactions"
+            }
+          ]
+        },
+        {
+          "id": "D29",
+          "q": "tylenol and alcohol",
+          "expect": "serious",
+          "edge": null,
+          "basis": "OTC acetaminophen labeling: severe liver damage may occur with 3 or more alcoholic drinks every day. Added after the 2026-10-17 external audit.",
+          "resolved": true,
+          "names": [
+            "acetaminophen",
+            "ethanol"
+          ],
+          "error": null,
+          "ms": 16,
+          "levels": [
+            "Acetaminophen+Ethanol:moderate"
+          ],
+          "flagged": true,
+          "serious": false,
+          "targetFound": true,
+          "circular": false,
+          "bySource": {
+            "label": true,
+            "mechanism": false
+          },
+          "quotes": {
+            "checked": 1,
+            "verified": 1,
+            "bad": []
+          },
+          "summaries": [
+            "Can strain or damage the liver. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 1,376 reports to the FDA list both medicines; the problems reported most were cardio-respiratory arrest and cardiac arrest. Reports show what people experienced, not proof that the combination caused it."
+          ],
+          "output": [
+            {
+              "pair": "Acetaminophen + Ethanol",
+              "label": "Interaction documented",
+              "summary": "Can strain or damage the liver. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 1,376 reports to the FDA list both medicines; the problems reported most were cardio-respiratory arrest and cardiac arrest. Reports show what people experienced, not proof that the combination caused it.",
+              "quote": "Severe Liver damage may occur if you take • more than 6 caplets in 24 hours, which is the maximum daily amount • with other drugs containing acetaminophen • 3 or more alcoholic drinks everyday while using this product Allergy alert: acetaminophen may cause severe skin reactions Symptoms may include: • skin reddening • blisters • rash If a skin…",
+              "source": "Acetaminophen label, Warnings"
+            }
+          ]
+        },
+        {
+          "id": "D30",
+          "q": "aspirin and alcohol",
+          "expect": "documented",
+          "edge": null,
+          "basis": "OTC aspirin labeling: stomach bleeding warning with 3 or more alcoholic drinks every day. Added after the external audit.",
+          "resolved": true,
+          "names": [
+            "aspirin",
+            "ethanol"
+          ],
+          "error": null,
+          "ms": 15,
+          "levels": [
+            "Aspirin+Ethanol:major"
+          ],
+          "flagged": true,
+          "serious": true,
+          "targetFound": true,
+          "circular": false,
+          "bySource": {
+            "label": true,
+            "mechanism": false
+          },
+          "quotes": {
+            "checked": 1,
+            "verified": 1,
+            "bad": []
+          },
+          "summaries": [
+            "Higher risk of bleeding when taken together. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 110 reports to the FDA list both medicines; the problems reported most were drug toxicity and cardiac arrest. Reports show what people experienced, not proof that the combination caused it."
+          ],
+          "output": [
+            {
+              "pair": "Aspirin + Ethanol",
+              "label": "Serious warning in label",
+              "summary": "Higher risk of bleeding when taken together. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 110 reports to the FDA list both medicines; the problems reported most were drug toxicity and cardiac arrest. Reports show what people experienced, not proof that the combination caused it.",
+              "quote": "The chance is higher if you: ■ are age 60 or older ■ have had stomach ulcers or bleeding problems ■ take a… ibuproben, naproxen, or others) ■ have 3 or more alcoholic…",
+              "source": "Aspirin label, Warnings"
             }
           ]
         }
@@ -3337,10 +3592,12 @@
     "heldout": {
       "metrics": {
         "counts": {
-          "cases": 53,
+          "cases": 52,
           "serious": 22,
-          "documented": 16,
-          "negatives": 15
+          "documented": 15,
+          "negatives": 15,
+          "circularExcluded": 1,
+          "targetMissing": 0
         },
         "falseReassuranceSerious": {
           "k": 0,
@@ -3351,16 +3608,16 @@
         },
         "falseReassuranceAll": {
           "k": 0,
-          "n": 38,
+          "n": 37,
           "pct": 0,
           "lo": 0,
-          "hi": 9.2
+          "hi": 9.4
         },
         "recall": {
-          "k": 38,
-          "n": 38,
+          "k": 37,
+          "n": 37,
           "pct": 100,
-          "lo": 90.8,
+          "lo": 90.6,
           "hi": 100
         },
         "seriousRatedSerious": {
@@ -3372,10 +3629,10 @@
         },
         "documentedRatedSerious": {
           "k": 7,
-          "n": 16,
-          "pct": 43.8,
-          "lo": 23.1,
-          "hi": 66.8
+          "n": 15,
+          "pct": 46.7,
+          "lo": 24.8,
+          "hi": 69.9
         },
         "falseAlarm": {
           "k": 0,
@@ -3385,38 +3642,38 @@
           "hi": 20.4
         },
         "nameResolution": {
-          "k": 53,
-          "n": 53,
+          "k": 52,
+          "n": 52,
           "pct": 100,
-          "lo": 93.2,
+          "lo": 93.1,
           "hi": 100
         },
         "quoteIntegrity": {
-          "k": 133,
-          "n": 133,
+          "k": 131,
+          "n": 131,
           "pct": 100,
           "lo": 97.2,
           "hi": 100
         },
         "bySource": {
           "label": {
-            "k": 38,
-            "n": 38,
+            "k": 37,
+            "n": 37,
             "pct": 100,
-            "lo": 90.8,
+            "lo": 90.6,
             "hi": 100
           },
           "mechanism": {
             "k": 11,
-            "n": 38,
-            "pct": 28.9,
-            "lo": 17,
-            "hi": 44.8
+            "n": 37,
+            "pct": 29.7,
+            "lo": 17.5,
+            "hi": 45.8
           }
         },
         "readability": {
-          "mean": 58.3,
-          "n": 38
+          "mean": 58.2,
+          "n": 37
         },
         "guardrails": {
           "k": 10,
@@ -3487,7 +3744,7 @@
             "ok": true
           }
         ],
-        "medianLatencyMs": 35
+        "medianLatencyMs": 41
       },
       "rows": [
         {
@@ -3502,12 +3759,14 @@
             "erythromycin"
           ],
           "error": null,
-          "ms": 35,
+          "ms": 41,
           "levels": [
             "Lovastatin+Erythromycin:contraindicated/CYP3A-moderate"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -3542,12 +3801,14 @@
             "gemfibrozil"
           ],
           "error": null,
-          "ms": 34,
+          "ms": 42,
           "levels": [
             "Simvastatin+Gemfibrozil:contraindicated/OATP1B1-moderate"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -3558,13 +3819,13 @@
             "bad": []
           },
           "summaries": [
-            "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. The label says not to use them together. Gemfibrozil blocks the OATP1B1 transporter, which the body uses to clear Simvastatin. 2,193 reports to the FDA list both medicines; the problems reported most were rhabdomyolysis and renal failure acute. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Gemfibrozil blocks the OATP1B1 transporter, which the body uses to clear Simvastatin. 2,193 reports to the FDA list both medicines; the problems reported most were rhabdomyolysis and renal failure acute. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Simvastatin + Gemfibrozil",
               "label": "Contraindicated in label",
-              "summary": "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. The label says not to use them together. Gemfibrozil blocks the OATP1B1 transporter, which the body uses to clear Simvastatin. 2,193 reports to the FDA list both medicines; the problems reported most were rhabdomyolysis and renal failure acute. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Gemfibrozil blocks the OATP1B1 transporter, which the body uses to clear Simvastatin. 2,193 reports to the FDA list both medicines; the problems reported most were rhabdomyolysis and renal failure acute. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Concomitant use of cyclosporine, danazol or gemfibrozil [see DRUG INTERACTIONS ( 7.1 )].",
               "source": "Simvastatin label, Contraindications"
             }
@@ -3582,12 +3843,14 @@
             "phenelzine"
           ],
           "error": null,
-          "ms": 36,
+          "ms": 44,
           "levels": [
             "Sumatriptan+Phenelzine:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3598,13 +3861,13 @@
             "bad": []
           },
           "summaries": [
-            "Blood pressure can rise sharply. This warning names the drug class, not the medicine itself. The label says not to use them together. 11 reports to the FDA list both medicines; the problems reported most were drug hypersensitivity and headache. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 11 reports to the FDA list both medicines; the problems reported most were drug hypersensitivity and headache. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Sumatriptan + Phenelzine",
               "label": "Serious warning in label",
-              "summary": "Blood pressure can rise sharply. This warning names the drug class, not the medicine itself. The label says not to use them together. 11 reports to the FDA list both medicines; the problems reported most were drug hypersensitivity and headache. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 11 reports to the FDA list both medicines; the problems reported most were drug hypersensitivity and headache. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "4 CONTRAINDICATIONS Sumatriptan tablets are contraindicated in patients with: • Ischemic coronary artery… inhibitor or recent (within 2 weeks) use of an MAO-A inhibitor…",
               "source": "Sumatriptan label, Contraindications"
             }
@@ -3622,12 +3885,14 @@
             "selegiline"
           ],
           "error": null,
-          "ms": 27,
+          "ms": 33,
           "levels": [
             "Meperidine+Selegiline:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3662,12 +3927,14 @@
             "isosorbide dinitrate"
           ],
           "error": null,
-          "ms": 27,
+          "ms": 34,
           "levels": [
             "Sildenafil+Isosorbide Dinitrate:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3702,12 +3969,14 @@
             "nitroglycerin"
           ],
           "error": null,
-          "ms": 27,
+          "ms": 33,
           "levels": [
             "Vardenafil+Nitroglycerin:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3742,12 +4011,14 @@
             "fluoxetine"
           ],
           "error": null,
-          "ms": 41,
+          "ms": 43,
           "levels": [
             "Thioridazine+Fluoxetine:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3758,13 +4029,13 @@
             "bad": []
           },
           "summaries": [
-            "Can disturb heart rhythm (QT prolongation). The label says not to use them together. 4 reports to the FDA list both medicines; the problems reported most were akathisia and antipsychotic drug level below therapeutic. Reports show what people experienced, not proof that the combination caused it."
+            "Can disturb heart rhythm (QT prolongation). Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 4 reports to the FDA list both medicines; the problems reported most were akathisia and antipsychotic drug level below therapeutic. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Thioridazine + Fluoxetine",
               "label": "Contraindicated in label",
-              "summary": "Can disturb heart rhythm (QT prolongation). The label says not to use them together. 4 reports to the FDA list both medicines; the problems reported most were akathisia and antipsychotic drug level below therapeutic. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Can disturb heart rhythm (QT prolongation). Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 4 reports to the FDA list both medicines; the problems reported most were akathisia and antipsychotic drug level below therapeutic. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Risk of QT interval prolongation and elevated thioridazine plasma levels.",
               "source": "Fluoxetine label, Contraindications"
             }
@@ -3782,12 +4053,14 @@
             "sertraline"
           ],
           "error": null,
-          "ms": 42,
+          "ms": 44,
           "levels": [
             "Pimozide+Sertraline:contraindicated/CYP2D6-weak"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3822,19 +4095,21 @@
             "simvastatin"
           ],
           "error": null,
-          "ms": 42,
+          "ms": 43,
           "levels": [
             "Ketoconazole+Simvastatin:contraindicated/CYP3A-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
           },
           "quotes": {
-            "checked": 4,
-            "verified": 4,
+            "checked": 3,
+            "verified": 3,
             "bad": []
           },
           "summaries": [
@@ -3862,12 +4137,14 @@
             "ritonavir"
           ],
           "error": null,
-          "ms": 53,
+          "ms": 63,
           "levels": [
             "Fentanyl+Ritonavir:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3902,12 +4179,14 @@
             "alprazolam"
           ],
           "error": null,
-          "ms": 55,
+          "ms": 63,
           "levels": [
             "Methadone+Alprazolam:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3918,13 +4197,13 @@
             "bad": []
           },
           "summaries": [
-            "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 4,065 reports to the FDA list both medicines; the problems reported most were drug abuse and toxicity to various agents. Reports show what people experienced, not proof that the combination caused it."
+            "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 4,065 reports to the FDA list both medicines; the problems reported most were drug dependence and cardiac arrest. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Methadone + Alprazolam",
               "label": "Serious warning in label",
-              "summary": "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 4,065 reports to the FDA list both medicines; the problems reported most were drug abuse and toxicity to various agents. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 4,065 reports to the FDA list both medicines; the problems reported most were drug dependence and cardiac arrest. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Prevention or management Limit dosage and duration of concomitant use of alprazolam and opioids, and monitor… hydromorphone, oxymorphone, oxycodone, fentanyl, methadone…",
               "source": "Alprazolam label, Drug interactions"
             }
@@ -3942,12 +4221,14 @@
             "lorazepam"
           ],
           "error": null,
-          "ms": 55,
+          "ms": 64,
           "levels": [
             "Morphine+Lorazepam:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -3958,13 +4239,13 @@
             "bad": []
           },
           "summaries": [
-            "Added drowsiness and dangerously slowed breathing. This warning names the drug class, not the medicine itself. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 11,462 reports to the FDA list both medicines; the problems reported most were nausea and fatigue. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 11,462 reports to the FDA list both medicines; the problems reported most were nausea and fatigue. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Morphine + Lorazepam",
               "label": "Serious warning in label",
-              "summary": "Added drowsiness and dangerously slowed breathing. This warning names the drug class, not the medicine itself. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 11,462 reports to the FDA list both medicines; the problems reported most were nausea and fatigue. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 11,462 reports to the FDA list both medicines; the problems reported most were nausea and fatigue. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Risks From Concomitant Use With Benzodiazepines…",
               "source": "Morphine label, Boxed warning"
             }
@@ -3982,12 +4263,14 @@
             "clopidogrel"
           ],
           "error": null,
-          "ms": 23,
+          "ms": 25,
           "levels": [
             "Warfarin+Clopidogrel:moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4022,12 +4305,14 @@
             "hydrochlorothiazide"
           ],
           "error": null,
-          "ms": 22,
+          "ms": 25,
           "levels": [
             "Lithium+Hydrochlorothiazide:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4038,13 +4323,13 @@
             "bad": []
           },
           "summaries": [
-            "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 747 reports to the FDA list both medicines; the problems reported most were drug interaction and toxicity to various agents. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 747 reports to the FDA list both medicines; the problems reported most were drug interaction and tremor. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Lithium + Hydrochlorothiazide",
               "label": "Serious warning in label",
-              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 747 reports to the FDA list both medicines; the problems reported most were drug interaction and toxicity to various agents. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 747 reports to the FDA list both medicines; the problems reported most were drug interaction and tremor. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Skeletal muscle relaxants, nondepolarizing (e.g., tubocurarine): possible increased responsiveness to the muscle relaxant. Lithium: generally should not be given with diuretics.",
               "source": "Hydrochlorothiazide label, Drug interactions"
             }
@@ -4062,12 +4347,14 @@
             "potassium chloride"
           ],
           "error": null,
-          "ms": 22,
+          "ms": 25,
           "levels": [
             "Amiloride+Potassium Chloride:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4102,12 +4389,14 @@
             "azathioprine"
           ],
           "error": null,
-          "ms": 61,
+          "ms": 70,
           "levels": [
             "Febuxostat+Azathioprine:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4142,12 +4431,14 @@
             "carbamazepine"
           ],
           "error": null,
-          "ms": 61,
+          "ms": 70,
           "levels": [
             "Voriconazole+Carbamazepine:contraindicated"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4182,12 +4473,14 @@
             "rifampin"
           ],
           "error": null,
-          "ms": 62,
+          "ms": 70,
           "levels": [
             "Voriconazole+Rifampin:contraindicated/CYP2C19-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -4228,6 +4521,8 @@
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4238,13 +4533,13 @@
             "bad": []
           },
           "summaries": [
-            "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 7 reports to the FDA list both medicines; the problems reported most were drug interaction and ergot poisoning. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 7 reports to the FDA list both medicines; the problems reported most were drug interaction and splenic infarction. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Ergotamine + Ritonavir",
               "label": "Contraindicated in label",
-              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 7 reports to the FDA list both medicines; the problems reported most were drug interaction and ergot poisoning. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 7 reports to the FDA list both medicines; the problems reported most were drug interaction and splenic infarction. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Ritonavir is contraindicated with drugs that are highly dependent on CYP3A for clearance and for which… pimozide Ergot Derivatives: dihydroergotamine, ergotamine…",
               "source": "Ritonavir label, Contraindications"
             }
@@ -4268,6 +4563,8 @@
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -4308,6 +4605,8 @@
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -4343,12 +4642,14 @@
             "hydrocodone"
           ],
           "error": null,
-          "ms": 66,
+          "ms": 70,
           "levels": [
             "Alprazolam+Hydrocodone:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4359,13 +4660,13 @@
             "bad": []
           },
           "summaries": [
-            "The label warns about using these together; see the quoted passage for the exact wording. The label advises a lower or capped dose of one of them; any change is decided by a prescriber. 4,152 reports to the FDA list both medicines; the problems reported most were drug dependence and overdose. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 4,152 reports to the FDA list both medicines; the problems reported most were drug dependence and pain. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Alprazolam + Hydrocodone",
               "label": "Serious warning in label",
-              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label advises a lower or capped dose of one of them; any change is decided by a prescriber. 4,152 reports to the FDA list both medicines; the problems reported most were drug dependence and overdose. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 4,152 reports to the FDA list both medicines; the problems reported most were drug dependence and pain. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "WARNING: RISKS FROM CONCOMITANT USE WITH OPIOIDS; ABUSE, MISUSE, AND ADDICTION; and DEPENDENCE AND WITHDRAWAL REACTIONS See full prescribing information for complete boxed warning.",
               "source": "Alprazolam label, Boxed warning"
             }
@@ -4383,12 +4684,14 @@
             "clarithromycin"
           ],
           "error": null,
-          "ms": 60,
+          "ms": 64,
           "levels": [
             "Digoxin+Clarithromycin:moderate/P-gp-moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -4399,13 +4702,13 @@
             "bad": []
           },
           "summaries": [
-            "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. Clarithromycin blocks the P-gp transporter, which the body uses to clear Digoxin. 554 reports to the FDA list both medicines; the problems reported most were drug interaction and toxicity to various agents. Reports show what people experienced, not proof that the combination caused it."
+            "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. Clarithromycin blocks the P-gp transporter, which the body uses to clear Digoxin. 554 reports to the FDA list both medicines; the problems reported most were drug interaction and nausea. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Digoxin + Clarithromycin",
               "label": "Interaction documented",
-              "summary": "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. Clarithromycin blocks the P-gp transporter, which the body uses to clear Digoxin. 554 reports to the FDA list both medicines; the problems reported most were drug interaction and toxicity to various agents. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "One medicine slows the breakdown of the other, so its level in the body goes up and side effects become more likely. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. Clarithromycin blocks the P-gp transporter, which the body uses to clear Digoxin. 554 reports to the FDA list both medicines; the problems reported most were drug interaction and nausea. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Digoxin Use With Caution Digoxin: Digoxin is a substrate for P-glycoprotein (Pgp) and clarithromycin is known to inhibit Pgp. When clarithromycin and digoxin are co‑administered, inhibition of Pgp by clarithromycin may lead to increased exposure of digoxin.",
               "source": "Clarithromycin label, Drug interactions"
             }
@@ -4423,15 +4726,17 @@
             "fluconazole"
           ],
           "error": null,
-          "ms": 66,
+          "ms": 70,
           "levels": [
-            "Tacrolimus+Fluconazole:major"
+            "Tacrolimus+Fluconazole:major/CYP3A-moderate"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
-            "mechanism": false
+            "mechanism": true
           },
           "quotes": {
             "checked": 4,
@@ -4439,13 +4744,13 @@
             "bad": []
           },
           "summaries": [
-            "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 4,297 reports to the FDA list both medicines; the problems reported most were drug interaction and drug ineffective. Reports show what people experienced, not proof that the combination caused it."
+            "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. Fluconazole blocks the CYP3A enzyme, which the body uses to clear Tacrolimus. 4,297 reports to the FDA list both medicines; the problems reported most were drug interaction and drug ineffective. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Tacrolimus + Fluconazole",
               "label": "Serious warning in label",
-              "summary": "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. 4,297 reports to the FDA list both medicines; the problems reported most were drug interaction and drug ineffective. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Closer monitoring is advised while both are taken. The label advises closer monitoring for side effects while both are taken. Fluconazole blocks the CYP3A enzyme, which the body uses to clear Tacrolimus. 4,297 reports to the FDA list both medicines; the problems reported most were drug interaction and drug ineffective. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Early and frequent monitoring of tacrolimus whole blood trough levels should start within 1-3 days and… Clotrimazole, antibiotics (e.g., erythromycin, fluconazole…",
               "source": "Tacrolimus label, Drug interactions"
             }
@@ -4463,12 +4768,14 @@
             "fluconazole"
           ],
           "error": null,
-          "ms": 46,
+          "ms": 48,
           "levels": [
             "Phenytoin+Fluconazole:moderate/CYP2C9-moderate"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -4503,12 +4810,14 @@
             "fluoxetine"
           ],
           "error": null,
-          "ms": 59,
+          "ms": 58,
           "levels": [
             "Metoprolol+Fluoxetine:moderate/CYP2D6-strong"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": true,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -4549,6 +4858,8 @@
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4583,12 +4894,14 @@
             "calcium carbonate"
           ],
           "error": null,
-          "ms": 42,
+          "ms": 41,
           "levels": [
             "Ciprofloxacin+Calcium Carbonate:class"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4599,13 +4912,13 @@
             "bad": []
           },
           "summaries": [
-            "One medicine can block the other from being absorbed; spacing the doses apart is usually advised. Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. The label advises closer monitoring for side effects while both are taken. 2,823 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it."
+            "Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 2,823 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Ciprofloxacin + Calcium Carbonate",
               "label": "Class-level mention",
-              "summary": "One medicine can block the other from being absorbed; spacing the doses apart is usually advised. Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. The label advises closer monitoring for side effects while both are taken. 2,823 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 2,823 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Monitor serum creatinine ( 7 ) Multivalent cation- containing products including antacids, metal cations or didanosine Decreased ciprofloxacin absorption.",
               "source": "Ciprofloxacin label, Drug interactions"
             }
@@ -4623,12 +4936,14 @@
             "ferrous sulfate"
           ],
           "error": null,
-          "ms": 34,
+          "ms": 33,
           "levels": [
             "Doxycycline+Ferrous Sulfate:class"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4639,13 +4954,13 @@
             "bad": []
           },
           "summaries": [
-            "One medicine can block the other from being absorbed; spacing the doses apart is usually advised. This warning names the drug class, not the medicine itself. The label advises avoiding the combination where possible. 1,409 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it."
+            "One medicine can block the other from being absorbed; spacing the doses apart is usually advised. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 1,409 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Doxycycline + Ferrous Sulfate",
               "label": "Class-level mention",
-              "summary": "One medicine can block the other from being absorbed; spacing the doses apart is usually advised. This warning names the drug class, not the medicine itself. The label advises avoiding the combination where possible. 1,409 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "One medicine can block the other from being absorbed; spacing the doses apart is usually advised. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 1,409 reports to the FDA list both medicines; the problems reported most were chronic kidney disease and acute kidney injury. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Absorption of tetracyclines is impaired by antacids containing aluminum, calcium, or magnesium, and iron-containing preparations.",
               "source": "Doxycycline label, Drug interactions"
             }
@@ -4663,12 +4978,14 @@
             "fluconazole"
           ],
           "error": null,
-          "ms": 27,
+          "ms": 28,
           "levels": [
             "Glipizide+Fluconazole:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4709,6 +5026,8 @@
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4743,12 +5062,14 @@
             "potassium chloride"
           ],
           "error": null,
-          "ms": 29,
+          "ms": 28,
           "levels": [
             "Valsartan+Potassium Chloride:class"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4759,13 +5080,13 @@
             "bad": []
           },
           "summaries": [
-            "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 5,879 reports to the FDA list both medicines; the problems reported most were drug ineffective and nausea. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 5,879 reports to the FDA list both medicines; the problems reported most were drug ineffective and nausea. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Valsartan + Potassium Chloride",
               "label": "Class-level mention",
-              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. 5,879 reports to the FDA list both medicines; the problems reported most were drug ineffective and nausea. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 5,879 reports to the FDA list both medicines; the problems reported most were drug ineffective and nausea. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Avoid concomitant use [see Contraindications (4) ] . 7.2 Renin-Angiotensin-Aldosterone System Inhibitors Drugs… angiotensin converting enzyme (ACE) inhibitors, angiotensin receptor blockers…",
               "source": "Potassium Chloride label, Drug interactions"
             }
@@ -4783,12 +5104,14 @@
             "gentamicin"
           ],
           "error": null,
-          "ms": 29,
+          "ms": 27,
           "levels": [
             "Furosemide+Gentamicin:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4823,12 +5146,14 @@
             "lisinopril"
           ],
           "error": null,
-          "ms": 47,
+          "ms": 43,
           "levels": [
             "Naproxen+Lisinopril:class"
           ],
           "flagged": true,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4839,13 +5164,13 @@
             "bad": []
           },
           "summaries": [
-            "Can strain or damage the kidneys. Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. The label advises closer monitoring for side effects while both are taken. 12,593 reports to the FDA list both medicines; the problems reported most were fatigue and pain. Reports show what people experienced, not proof that the combination caused it."
+            "Can strain or damage the kidneys. Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 12,593 reports to the FDA list both medicines; the problems reported most were fatigue and pain. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Naproxen + Lisinopril",
               "label": "Class-level mention",
-              "summary": "Can strain or damage the kidneys. Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. The label advises closer monitoring for side effects while both are taken. 12,593 reports to the FDA list both medicines; the problems reported most were fatigue and pain. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "Can strain or damage the kidneys. Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. Mention this combination to your pharmacist or prescriber; they can decide whether any change or monitoring is needed. 12,593 reports to the FDA list both medicines; the problems reported most were fatigue and pain. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Monitor renal function periodically in patients receiving lisinopril and NSAID therapy.",
               "source": "Lisinopril label, Drug interactions"
             }
@@ -4863,12 +5188,14 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 46,
+          "ms": 45,
           "levels": [
             "Escitalopram+Ibuprofen:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4903,12 +5230,14 @@
             "gemfibrozil"
           ],
           "error": null,
-          "ms": 46,
+          "ms": 43,
           "levels": [
             "Rosuvastatin+Gemfibrozil:major/OATP1B1-moderate"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -4943,12 +5272,14 @@
             "ketoconazole"
           ],
           "error": null,
-          "ms": 56,
+          "ms": 58,
           "levels": [
             "Quetiapine+Ketoconazole:major/CYP3A-strong"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": true
@@ -4959,13 +5290,13 @@
             "bad": []
           },
           "summaries": [
-            "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. Ketoconazole strongly blocks the CYP3A enzyme, which the body uses to clear Quetiapine. 463 reports to the FDA list both medicines; the problems reported most were pain and drug ineffective. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Ketoconazole strongly blocks the CYP3A enzyme, which the body uses to clear Quetiapine. 463 reports to the FDA list both medicines; the problems reported most were pain and drug ineffective. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Quetiapine + Ketoconazole",
               "label": "Serious warning in label",
-              "summary": "The label warns about using these together; see the quoted passage for the exact wording. The label says not to use them together. Ketoconazole strongly blocks the CYP3A enzyme, which the body uses to clear Quetiapine. 463 reports to the FDA list both medicines; the problems reported most were pain and drug ineffective. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. Ketoconazole strongly blocks the CYP3A enzyme, which the body uses to clear Quetiapine. 463 reports to the FDA list both medicines; the problems reported most were pain and drug ineffective. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Docetaxel: In the presence of ketoconazole, the clearance of docetaxel in cancer patients was shown to… buspirone, haloperidol, midazolam IV, quetiapine…",
               "source": "Ketoconazole label, Precautions"
             }
@@ -4983,12 +5314,14 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 54,
+          "ms": 56,
           "levels": [
             "Apixaban+Ibuprofen:major"
           ],
           "flagged": true,
           "serious": true,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": true,
             "mechanism": false
@@ -4999,13 +5332,13 @@
             "bad": []
           },
           "summaries": [
-            "Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. The label advises closer monitoring for side effects while both are taken. 821 reports to the FDA list both medicines; the problems reported most were medication error and nausea. Reports show what people experienced, not proof that the combination caused it."
+            "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 821 reports to the FDA list both medicines; the problems reported most were medication error and nausea. Reports show what people experienced, not proof that the combination caused it."
           ],
           "output": [
             {
               "pair": "Apixaban + Ibuprofen",
               "label": "Serious warning in label",
-              "summary": "Closer monitoring is advised while both are taken. This warning names the drug class, not the medicine itself. The label advises closer monitoring for side effects while both are taken. 821 reports to the FDA list both medicines; the problems reported most were medication error and nausea. Reports show what people experienced, not proof that the combination caused it.",
+              "summary": "The label warns about using these together; see the quoted passage for the exact wording. Do not start, stop or change either medicine on your own. Ask a pharmacist or prescriber before taking them together. 821 reports to the FDA list both medicines; the problems reported most were medication error and nausea. Reports show what people experienced, not proof that the combination caused it.",
               "quote": "Factors that can increase the risk of developing epidural or spinal hematomas in these patients include: • use of indwelling epidural catheters • concomitant use of other drugs that affect hemostasis, such as nonsteroidal anti-inflammatory drugs (NSAIDs), platelet inhibitors, other anticoagulants • a history of traumatic or repeated epidural or spinal punctures • a history of spinal deformity or spinal surgery •…",
               "source": "Apixaban label, Boxed warning"
             }
@@ -5023,12 +5356,14 @@
             "ibuprofen"
           ],
           "error": null,
-          "ms": 55,
+          "ms": 57,
           "levels": [
             "Amoxicillin+Ibuprofen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5061,12 +5396,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 19,
+          "ms": 23,
           "levels": [
             "Cetirizine+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5099,12 +5436,14 @@
             "omeprazole"
           ],
           "error": null,
-          "ms": 17,
+          "ms": 22,
           "levels": [
             "Loratadine+Omeprazole:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5137,12 +5476,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 18,
+          "ms": 22,
           "levels": [
             "Metformin+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5175,12 +5516,14 @@
             "loratadine"
           ],
           "error": null,
-          "ms": 17,
+          "ms": 21,
           "levels": [
             "Levothyroxine+Loratadine:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5213,12 +5556,14 @@
             "cetirizine"
           ],
           "error": null,
-          "ms": 17,
+          "ms": 21,
           "levels": [
             "Amlodipine+Cetirizine:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5251,12 +5596,14 @@
             "loratadine"
           ],
           "error": null,
-          "ms": 17,
+          "ms": 22,
           "levels": [
             "Famotidine+Loratadine:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5289,12 +5636,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 24,
+          "ms": 29,
           "levels": [
             "Pantoprazole+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5327,12 +5676,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 24,
+          "ms": 30,
           "levels": [
             "Montelukast+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5365,12 +5716,14 @@
             "loratadine"
           ],
           "error": null,
-          "ms": 25,
+          "ms": 29,
           "levels": [
             "Losartan+Loratadine:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5403,12 +5756,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 17,
+          "ms": 18,
           "levels": [
             "Atorvastatin+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5441,12 +5796,14 @@
             "loratadine"
           ],
           "error": null,
-          "ms": 16,
+          "ms": 18,
           "levels": [
             "Metoprolol+Loratadine:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5479,12 +5836,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 16,
+          "ms": 19,
           "levels": [
             "Fexofenadine+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5517,12 +5876,14 @@
             "acetaminophen"
           ],
           "error": null,
-          "ms": 14,
+          "ms": 15,
           "levels": [
             "Simvastatin+Acetaminophen:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false
@@ -5555,12 +5916,14 @@
             "loratadine"
           ],
           "error": null,
-          "ms": 14,
+          "ms": 15,
           "levels": [
             "Acetaminophen+Loratadine:none"
           ],
           "flagged": false,
           "serious": false,
+          "targetFound": true,
+          "circular": false,
           "bySource": {
             "label": false,
             "mechanism": false

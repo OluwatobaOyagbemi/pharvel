@@ -1,7 +1,12 @@
 # Runs on every push and pull request: unit tests, the evaluation on both sets, and the release gate.
 # Recorded API responses are cached between runs so the evaluation is reproducible and stays within openFDA limits.
 name: ci
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+  schedule:
+    - cron: '0 9 * * 1'   # weekly: re-check against today's live labels, not just recorded responses
+  workflow_dispatch:
 jobs:
   test-eval-gate:
     runs-on: ubuntu-latest
@@ -15,7 +20,7 @@ jobs:
           key: eval-cache-${{ hashFiles('evals/pairs.json', 'evals/heldout.json') }}
           restore-keys: eval-cache-
       - run: npm test
-      - run: npm run eval
+      - run: npm run eval ${{ github.event_name == 'schedule' && '-- --fresh' || '' }}
         env:
           SKIP_FAERS: '1'   # adverse-event counts never affect scores; skipping keeps CI within openFDA's daily limit
       - run: npm run gate

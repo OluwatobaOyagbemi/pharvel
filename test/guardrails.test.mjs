@@ -12,7 +12,7 @@ for (const [msg, type] of [
   ['I want to die', 'self-harm'],
   ['thinking about killing myself with my pills', 'self-harm'],
   ['she is having a seizure right now', 'seizure'],
-  ['I am having chest pain now, I take sildenafil', 'chest pain'],
+  ['I am having chest pain now, I take sildenafil', 'heart or stroke'],
 ]) {
   const r = emergency(msg);
   assert.ok(r && r.types.includes(type), `emergency should trigger (${type}): ${msg}`);
@@ -62,7 +62,7 @@ let c = await faithfulness(good, result);
 assert.ok(c.ok, 'grounded answer passes: ' + c.problems);
 
 c = await faithfulness('Warfarin and Ibuprofen are generally safe together at low doses.', result);
-assert.ok(!c.ok && c.problems.some(p => p.startsWith('never-safe')), 'calling a pair safe is rejected');
+assert.ok(!c.ok && c.problems.some(p => p.startsWith('reassurance')), 'calling a pair safe is rejected');
 
 c = await faithfulness('Warfarin + Ibuprofen: keep ibuprofen under 400 mg a day.', result);
 assert.ok(c.problems.some(p => p === 'unsupported-number: 400'), 'invented dose is rejected: ' + c.problems);
@@ -76,6 +76,13 @@ assert.ok(c.problems.some(p => p.startsWith('missing-pair')), 'answer that drops
 c = await faithfulness('Warfarin + Ibuprofen increase bleeding. Stop taking ibuprofen.', result);
 assert.ok(c.problems.some(p => p.startsWith('instruction')), 'unsupported treatment instruction is rejected');
 
+// Bypasses found by the external audit must all be rejected.
+for (const bad of ['This combination is not dangerous for most people.', 'The risk is low and it is fine to take them together.', 'It is perfectly okay to combine them.',
+  'Taking them together is not unsafe.', 'Minimal risk; no need to worry.', 'You can take up to four hundred milligrams of ibuprofen twice a day.', 'Stop warfarin for two days.',
+  'Halve your warfarin.', 'Discontinue warfarin.', 'The label says they are contraindicated and will cause death.', 'Take 2 tablets 4 times a day.']) {
+  const r = await faithfulness('Warfarin + Ibuprofen: ' + bad, result);
+  assert.ok(!r.ok, 'must reject: ' + bad);
+}
 c = await faithfulness('', result);
 assert.ok(!c.ok, 'empty output is rejected');
 

@@ -184,7 +184,7 @@ footer a{color:var(--ink)}
 <div class="facts" aria-label="Key facts">
   <div class="wrap">
     <div class="fact"><span class="num"><span data-n="3">3</span></span><span class="lbl">Public data sources: NIH RxNorm, openFDA and DailyMed</span></div>
-    <div class="fact"><span class="num"><span data-n="100">100</span><small>%</small></span><span class="lbl">Of findings are quoted from an FDA drug label</span></div>
+    <div class="fact"><span class="num"><span data-n="100">100</span><small>%</small></span><span class="lbl">Of findings link to the exact FDA label passage they are based on</span></div>
     <div class="fact"><span class="num"><span data-n="1">1</span><small>click</small></span><span class="lbl">From any finding to the source label on DailyMed</span></div>
   </div>
 </div>
@@ -194,9 +194,9 @@ footer a{color:var(--ink)}
     <p class="eyebrow rv">Features</p>
     <h2 class="rv">Evidence, not guesses.</h2>
     <div class="grid">
-      <article class="card rv tilt"><svg viewBox="0 0 48 48"><circle cx="21" cy="21" r="12"/><path d="M30 30l11 11"/></svg><h3>Plain-word search</h3><p>Brand names, generics and typos are matched to the right drug through NIH RxNorm.</p></article>
+      <article class="card rv tilt"><svg viewBox="0 0 48 48"><circle cx="21" cy="21" r="12"/><path d="M30 30l11 11"/></svg><h3>Plain-word search</h3><p>Brand names, generics and common typos are looked up in NIH RxNorm, and Pharvel shows you which medicine it recognised.</p></article>
       <article class="card rv tilt"><svg viewBox="0 0 48 48"><rect x="8" y="6" width="32" height="36" rx="4"/><path d="M15 16h18M15 24h18M15 32h10"/></svg><h3>Straight from the label</h3><p>Each finding is a passage from the FDA label, with the source and date shown.</p></article>
-      <article class="card rv tilt"><svg viewBox="0 0 48 48"><circle cx="12" cy="24" r="6"/><circle cx="36" cy="12" r="6"/><circle cx="36" cy="36" r="6"/><path d="M17 22l14-8M17 26l14 8"/></svg><h3>Every pair checked</h3><p>Add three medicines and you get all three pairings, not just the first.</p></article>
+      <article class="card rv tilt"><svg viewBox="0 0 48 48"><circle cx="12" cy="24" r="6"/><circle cx="36" cy="12" r="6"/><circle cx="36" cy="36" r="6"/><path d="M17 22l14-8M17 26l14 8"/></svg><h3>Every pair checked</h3><p>Up to six medicines at once, every pairing checked — and you are told about any that could not be.</p></article>
       <article class="card rv tilt"><svg viewBox="0 0 48 48"><path d="M24 6l16 6v12c0 10-7 16-16 18C15 40 8 34 8 24V12z"/><path d="M17 24l5 5 9-10"/></svg><h3>Why, not just what</h3><p>FDA's enzyme and transporter table explains the mechanism, and FDA adverse-event reports show what people actually reported.</p></article>
     </div>
   </div>
@@ -253,7 +253,6 @@ footer a{color:var(--ink)}
   </div>
 </footer>
 
-<script defer src="/_vercel/insights/script.js"></script>
 <script src="/brand/molecule.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>

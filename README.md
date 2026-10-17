@@ -17,10 +17,10 @@ In medicine, a confident wrong answer is the worst failure. So severity and evid
 | Serious interactions missed, internal held-out set (frozen before first run) | 1/22 on first run; 0/22 after fixes developed on separate cases (95% CI 0–14.9%) |
 | **Serious interactions flagged vs an independent curated database (DDInter 2.0), three samples** | **82.5% · 86.3% · 81.9%** (pooled 83.6%) — about 1 in 6 missed |
 | Quotes found word-for-word in the cited label | 100% |
-| Safety guardrails (emergency, dosing, injection, scope) | 27/27 test messages, incl. must-not-trigger cases |
+| Emergency detection, red-team corpus (incl. misspellings, slang, other languages) | Held-out set: 13/13 emergencies caught, 1/5 false alarm; dev set 36/36, 0/9 |
 | False alarms on harmless control pairs | 0/15 held-out, 1/12 development |
 
-The headline lesson: **internal tests said 0% missed; an independent benchmark said ~16%.** Two rounds of targeted fixes did not move the independent number, which shows label-text matching plateaus around 82–86%. Full details: [EVALS.md](EVALS.md) · [evals/BENCHMARK.md](evals/BENCHMARK.md).
+The headline lesson: **internal tests said 0% missed; an independent benchmark said ~16%.** Two rounds of targeted fixes did not move the independent number, which shows label-text matching plateaus around 82–86%. Full details: [EVALS.md](EVALS.md) · [evals/BENCHMARK.md](evals/BENCHMARK.md) · independent audit and remediation: [docs/EXTERNAL_AUDIT_2026-10-17.md](docs/EXTERNAL_AUDIT_2026-10-17.md).
 
 ## What is in the repo
 | Area | Where |
@@ -36,6 +36,9 @@ The headline lesson: **internal tests said 0% missed; an independent benchmark s
 
 ## Tech
 Vanilla JavaScript (no framework, no build step), Vercel serverless functions, Upstash Redis (answer cache, daily limits, aggregate counters), canvas 3D molecule renderer with PubChem data. Data: NIH RxNorm/RxClass, openFDA labels and FAERS, FDA CYP/transporter table, PubChem — all public domain. Running cost ≈ $0/month.
+
+## Analytics
+Vercel Web Analytics is not enabled. To enable it: turn it on in the Vercel project dashboard, then add `<script defer src="/_vercel/insights/script.js"></script>` to `public/index.html` and `public/app.html`.
 
 ## Commands
 `npm test` · `npm run eval -- --label "what changed"` · `npm run gate` · `npm run dev` · `npm run feedback`

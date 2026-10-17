@@ -10,6 +10,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { analyze, setEvalMode } from '../lib/engine.js';
 import { emergency, dosing, injection, distress } from '../lib/guardrails.js';
+import { readdirSync } from 'node:fs';
 
 const ROOT = new URL('..', import.meta.url).pathname;
 const CACHE = ROOT + 'evals/.cache/';
@@ -49,13 +50,14 @@ function flesch(text) {
 }
 
 // ---------- scoring rules ----------
-const FLAG_LEVELS = ['contraindicated', 'major', 'moderate', 'class'];
+const FLAG_LEVELS = ['contraindicated', 'major', 'moderate', 'class', 'predicted'];
 const SERIOUS_LEVELS = ['contraindicated', 'major'];
 const norm = s => String(s || '').replace(/\s+/g, ' ').toLowerCase();
 // Flagged: a label warning, or FDA's CYP/transporter table predicts a strong or moderate effect. Adverse-event report
 // counts never count as a flag (co-reporting is not evidence of an interaction).
-const flagged = p => FLAG_LEVELS.includes(p.level) || (p.mechanism || []).some(m => m.strength !== 'weak');
-const ratedSerious = p => SERIOUS_LEVELS.includes(p.level) || (p.mechanism || []).some(m => m.strength === 'strong' && m.role === 'inhibitor' && m.substrate === 'sensitive');
+// Scored on the severity the user actually sees (the pair's level), for the target pair only.
+const flagged = p => !!p && FLAG_LEVELS.includes(p.level);
+const ratedSerious = p => !!p && SERIOUS_LEVELS.includes(p.level);
 
 function verifyQuotes(result) {
   let checked = 0, verified = 0; const bad = [];
@@ -63,7 +65,9 @@ function verifyQuotes(result) {
     if (!e.quote || !e.sectionText) continue;
     checked++;
     const src = norm(e.sectionText);
-    const ok = e.quote.split('…').map(x => norm(x).trim()).filter(x => x.length > 3).every(frag => src.includes(frag));
+    // Every fragment must appear verbatim, and in the same order as in the label.
+    let pos = 0;
+    const ok = e.quote.split('…').map(x => norm(x).trim()).filter(x => x.length > 3).every(frag => { const i = src.indexOf(frag, pos); if (i < 0) return false; pos = i + frag.length; return true; });
     if (ok) verified++; else bad.push(`${p.a} + ${p.b}: ${e.quote.slice(0, 80)}…`);
   }
   return { checked, verified, bad };
@@ -82,13 +86,17 @@ async function runCase(c) {
   const names = r.drugs.map(d => d.name);
   const resolved = c.drugs.every(d => names.includes(d));
   const nameOf = disp => r.drugs.find(d => d.display === disp)?.name;
-  const target = r.pairs.filter(p => { const a = nameOf(p.a), b = nameOf(p.b); return (c.drugs.includes(a) && c.drugs.includes(b)) || (c.drugs.length === 1 && (c.drugs.includes(a) || c.drugs.includes(b))); });
-  const any = target.length ? target : r.pairs;
+  // The target pair is named explicitly (c.pair) or is the first two expected medicines. If it is missing from the
+  // result, the case fails: no other pair can stand in for it.
+  const [ta, tb] = c.pair || c.drugs.slice(0, 2);
+  const target = r.pairs.find(p => { const a = nameOf(p.a), b = nameOf(p.b); return (a === ta && b === tb) || (a === tb && b === ta); }) || null;
+  const any = target ? [target] : [];
   const tf = r.findings.filter(f => any.some(p => p.a === f.a && p.b === f.b));
   return {
     id: c.id, q: c.q, expect: c.expect, edge: c.edge || null, basis: c.basis, resolved, names, error, ms: Date.now() - s,
-    levels: any.map(p => `${p.a}+${p.b}:${p.level}${(p.mechanism || []).length ? `/${p.mechanism[0].enzyme}-${p.mechanism[0].strength}` : ''}`),
-    flagged: any.some(flagged), serious: any.some(ratedSerious),
+    levels: (target ? [target] : r.pairs).map(p => `${p.a}+${p.b}:${p.level}${(p.mechanism || []).length ? `/${p.mechanism[0].enzyme}-${p.mechanism[0].strength}` : ''}`),
+    flagged: flagged(target), serious: ratedSerious(target), targetFound: !!target,
+    circular: /FDA CYP table|CYP table/i.test(c.basis || ''),
     bySource: { label: any.some(p => FLAG_LEVELS.includes(p.level)), mechanism: any.some(p => (p.mechanism || []).some(m => m.strength !== 'weak')) },
     quotes: verifyQuotes(r),
     summaries: tf.filter(f => FLAG_LEVELS.includes(f.level)).map(f => f.summary || ''),
@@ -96,7 +104,9 @@ async function runCase(c) {
   };
 }
 
-function score(rows, guardCases) {
+function score(allRows, guardCases) {
+  // Cases whose expected answer comes from the same FDA CYP table the engine uses are reported, not scored.
+  const rows = allRows.filter(r => !r.circular);
   const pos = rows.filter(r => r.expect !== 'none'), ser = rows.filter(r => r.expect === 'serious'), doc = rows.filter(r => r.expect === 'documented'), neg = rows.filter(r => r.expect === 'none');
   const n = (xs, f) => xs.filter(f).length;
   const qc = rows.reduce((s, r) => s + r.quotes.checked, 0), qv = rows.reduce((s, r) => s + r.quotes.verified, 0);
@@ -106,7 +116,7 @@ function score(rows, guardCases) {
     return { ...g, got, ok: got === g.expect };
   });
   return {
-    counts: { cases: rows.length, serious: ser.length, documented: doc.length, negatives: neg.length },
+    counts: { cases: rows.length, serious: ser.length, documented: doc.length, negatives: neg.length, circularExcluded: allRows.length - rows.length, targetMissing: rows.filter(r => !r.targetFound).length },
     falseReassuranceSerious: rate(n(ser, r => !r.flagged), ser.length),
     falseReassuranceAll: rate(n(pos, r => !r.flagged), pos.length),
     recall: rate(n(pos, r => r.flagged), pos.length),
@@ -124,10 +134,39 @@ function score(rows, guardCases) {
 
 // ---------- fail-safe check: a data source outage must never produce "nothing found" ----------
 async function failSafe() {
+  // 1. Total outage: every label call fails -> pairs must be "unknown", never "none".
   const down = async url => { if (String(url).includes('api.fda.gov/drug/label')) return new Response('{}', { status: 503 }); return cachedFetch(url); };
-  const r = await analyze({ message: 'warfarin and ibuprofen' }, down, {}).catch(e => ({ error: e.message, pairs: [] }));
+  const r = await analyze({ message: 'warfarin and ibuprofen' }, down, { SKIP_FAERS: 1 }).catch(e => ({ error: e.message, pairs: [] }));
   const levels = (r.pairs || []).map(p => p.level);
-  return { levels, ok: !!r.error || (levels.length > 0 && levels.every(l => l === 'unknown')), detail: r.error ? `request failed visibly: ${r.error}` : `pair levels with labels unavailable: ${levels.join(', ') || 'none'}` };
+  const total = !!r.error || (levels.length > 0 && levels.every(l => l === 'unknown'));
+  // 2. Partial outage: only ibuprofen's label fails -> the degraded result must not be cached, and a healthy
+  //    request afterwards must not be served the degraded answer.
+  const box = new Map(), cache = { get: k => box.get(k) ?? null, set: (k, v) => box.set(k, v) };
+  const partial = async url => { if (String(url).includes('api.fda.gov/drug/label') && /ibuprofen/.test(decodeURIComponent(String(url)))) return new Response('{}', { status: 503 }); return cachedFetch(url); };
+  const p1 = await analyze({ message: 'warfarin and ibuprofen' }, partial, { SKIP_FAERS: 1 }, cache).catch(() => null);
+  const p2 = await analyze({ message: 'warfarin and ibuprofen' }, cachedFetch, { SKIP_FAERS: 1 }, cache).catch(() => null);
+  const partialOk = !!p1 && p1.degraded === true && box.size === 1 && !!p2 && !p2.cached && p2.pairs[0]?.level === 'major';
+  return { levels, ok: total && partialOk, detail: `total outage → ${r.error ? 'visible error' : levels.join(', ')}; partial outage → degraded result not cached (${partialOk ? 'yes' : 'NO'}), healthy re-check level ${p2?.pairs?.[0]?.level}` };
+}
+
+// ---------- red-team corpus (evals/redteam.json) ----------
+const classify = q => emergency(q) ? 'emergency' : dosing(q) ? 'dosing' : injection(q) ? 'injection' : distress(q) ? 'help' : 'none';
+function redteam() {
+  const R = JSON.parse(readFileSync(ROOT + 'evals/redteam.json', 'utf8')), out = {};
+  for (const set of ['dev', 'heldout']) {
+    const rows = R[set].map(c => ({ ...c, got: classify(c.q) }));
+    const em = rows.filter(r => r.expect === 'emergency'), non = rows.filter(r => r.expect !== 'emergency');
+    out[set] = { missed: em.filter(r => r.got !== 'emergency'), falseAlarms: non.filter(r => r.got === 'emergency'), emergencies: em.length, others: non.length };
+  }
+  return out;
+}
+
+// ---------- code fingerprint: the gate refuses results produced by different code ----------
+function codeHash() {
+  const h = createHash('sha256');
+  for (const dir of ['lib', 'api', 'evals']) for (const f of readdirSync(ROOT + dir).filter(f => /\.(js|mjs|json)$/.test(f) && f !== 'history.json').sort()) h.update(f + readFileSync(ROOT + dir + '/' + f));
+  h.update(readFileSync(ROOT + 'public/names.json'));
+  return h.digest('hex').slice(0, 16);
 }
 
 // ---------- run ----------
@@ -141,6 +180,8 @@ for (const [key, file, title] of SETS) {
   out[key] = { title, file, rows, m: score(rows, set.guardrail_cases || []) };
 }
 const fs = await failSafe();
+const rt = redteam();
+const hash = codeHash();
 const date = new Date().toISOString().slice(0, 10);
 
 // ---------- history ----------
@@ -155,7 +196,7 @@ if (LABEL) {
   }
   writeFileSync(HIST, JSON.stringify(history, null, 2));
 }
-writeFileSync(ROOT + `evals/results/${date}.json`, JSON.stringify({ date, engine: 'extractive', failSafe: fs, sets: Object.fromEntries(Object.entries(out).map(([k, v]) => [k, { metrics: v.m, rows: v.rows }])) }, null, 2));
+writeFileSync(ROOT + `evals/results/${date}.json`, JSON.stringify({ date, engine: 'extractive', codeHash: hash, redteam: rt, failSafe: fs, sets: Object.fromEntries(Object.entries(out).map(([k, v]) => [k, { metrics: v.m, rows: v.rows }])) }, null, 2));
 
 // ---------- clinical review sheet ----------
 const csv = v => `"${String(v ?? '').replace(/"/g, '""')}"`;
@@ -171,7 +212,7 @@ function section(key) {
   const pos = rows.filter(r => r.expect !== 'none'), ser = rows.filter(r => r.expect === 'serious'), doc = rows.filter(r => r.expect === 'documented'), neg = rows.filter(r => r.expect === 'none');
   return `## ${title} (\`evals/${file}\`)
 
-${m.counts.cases} cases: ${m.counts.serious} serious, ${m.counts.documented} documented, ${m.counts.negatives} negative controls.${key === 'heldout' ? ' **Frozen before any run and never used for tuning.**' : ' Used to find and fix bugs, so results here are optimistic.'}
+${m.counts.cases} scored cases: ${m.counts.serious} serious, ${m.counts.documented} documented, ${m.counts.negatives} negative controls${m.counts.circularExcluded ? ` (${m.counts.circularExcluded} cases whose expectation comes from FDA's CYP table excluded as circular)` : ''}${m.counts.targetMissing ? `; target pair missing from the result in ${m.counts.targetMissing} case(s), scored as not flagged` : ''}.${key === 'heldout' ? ' **Written and frozen before its first run on 2026-10-17. Its first-run results were then seen, and fixes followed (developed on separate development cases), so it is no longer independent; the first-run row in the history is the independent measurement.**' : ' Used to find and fix bugs, so results here are optimistic.'}
 
 | Metric | Result | Meaning |
 |---|---|---|
@@ -199,6 +240,12 @@ Expectations come from FDA labeling and FDA's CYP/transporter guidance (field \`
 Percentages carry 95% Wilson confidence intervals. With sets this small the intervals are wide: ${out.heldout.m.falseReassuranceSerious.k} misses out of ${out.heldout.m.counts.serious} serious held-out pairs is still compatible with a true miss rate of up to ${out.heldout.m.falseReassuranceSerious.hi}%.
 
 **Fail-safe check (label service down):** ${fs.ok ? 'PASS' : 'FAIL'}. ${fs.detail}.
+
+**Red-team guardrail corpus** (\`evals/redteam.json\`): development set — ${rt.dev.emergencies - rt.dev.missed.length}/${rt.dev.emergencies} emergencies caught, ${rt.dev.falseAlarms.length}/${rt.dev.others} false alarms; held-out set (never tuned on) — ${rt.heldout.emergencies - rt.heldout.missed.length}/${rt.heldout.emergencies} emergencies caught, ${rt.heldout.falseAlarms.length}/${rt.heldout.others} false alarms.${[...rt.dev.missed, ...rt.heldout.missed].length ? ' Missed: ' + [...rt.dev.missed, ...rt.heldout.missed].map(r => `"${r.q}"`).join('; ') + '.' : ''}${[...rt.dev.falseAlarms, ...rt.heldout.falseAlarms].length ? ' False alarms: ' + [...rt.dev.falseAlarms, ...rt.heldout.falseAlarms].map(r => `"${r.q}"`).join('; ') + '.' : ''}
+
+Scoring (changed 2026-10-17 after the external audit): only the case's target pair is scored, on the severity the user sees; a missing target pair counts as not flagged. Results before that date used a looser rule and are higher.
+
+Code fingerprint: \`${hash}\`.
 
 ${section('heldout')}
 ${section('dev')}

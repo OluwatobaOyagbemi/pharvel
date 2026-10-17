@@ -1,31 +1,37 @@
 # Pharvel evaluation
 
-Run 2026-10-17 · extractive engine (no LLM) · cost $0 · 0 live API calls, 1274 replayed from the recorded cache · 2 s.
+Run 2026-10-17 · extractive engine (no LLM) · cost $0 · 0 live API calls, 1303 replayed from the recorded cache · 4 s.
 
 Expectations come from FDA labeling and FDA's CYP/transporter guidance (field `basis` in each case), not from Pharvel's output. **The reference sets have not yet been reviewed by a pharmacist**; a review sheet is generated at `evals/review/review-2026-10-17.csv`.
 
 Percentages carry 95% Wilson confidence intervals. With sets this small the intervals are wide: 0 misses out of 22 serious held-out pairs is still compatible with a true miss rate of up to 14.9%.
 
-**Fail-safe check (label service down):** PASS. pair levels with labels unavailable: unknown.
+**Fail-safe check (label service down):** PASS. total outage → unknown; partial outage → degraded result not cached (yes), healthy re-check level major.
+
+**Red-team guardrail corpus** (`evals/redteam.json`): development set — 36/36 emergencies caught, 0/9 false alarms; held-out set (never tuned on) — 13/13 emergencies caught, 1/5 false alarms. False alarms: "does sertraline make you want to die".
+
+Scoring (changed 2026-10-17 after the external audit): only the case's target pair is scored, on the severity the user sees; a missing target pair counts as not flagged. Results before that date used a looser rule and are higher.
+
+Code fingerprint: `c229320a40880c81`.
 
 ## Held-out set (`evals/heldout.json`)
 
-53 cases: 22 serious, 16 documented, 15 negative controls. **Frozen before any run and never used for tuning.**
+52 scored cases: 22 serious, 15 documented, 15 negative controls (1 cases whose expectation comes from FDA's CYP table excluded as circular). **Written and frozen before its first run on 2026-10-17. Its first-run results were then seen, and fixes followed (developed on separate development cases), so it is no longer independent; the first-run row in the history is the independent measurement.**
 
 | Metric | Result | Meaning |
 |---|---|---|
 | **False reassurance, serious pairs** | **0% (0/22; 95% CI 0–14.9%)** | Serious interactions shown as "nothing found". |
-| False reassurance, all real interactions | 0% (0/38; 95% CI 0–9.2%) | Including documented interactions. |
-| Recall | 100% (38/38; 95% CI 90.8–100%) | Real interactions flagged by at least one source. |
+| False reassurance, all real interactions | 0% (0/37; 95% CI 0–9.4%) | Including documented interactions. |
+| Recall | 100% (37/37; 95% CI 90.6–100%) | Real interactions flagged by at least one source. |
 | Serious pairs rated serious | 95.5% (21/22; 95% CI 78.2–99.2%) | Flagged at the right severity. |
-| Documented pairs rated serious | 43.8% (7/16; 95% CI 23.1–66.8%) | Over-rating. |
+| Documented pairs rated serious | 46.7% (7/15; 95% CI 24.8–69.9%) | Over-rating. |
 | False alarms on negative controls | 0% (0/15; 95% CI 0–20.4%) | Controls flagged anyway. |
-| Name resolution | 100% (53/53; 95% CI 93.2–100%) | Every expected medicine recognised. |
-| Quote integrity | 100% (133/133; 95% CI 97.2–100%) | Quotes found verbatim in the cited label section. |
+| Name resolution | 100% (52/52; 95% CI 93.1–100%) | Every expected medicine recognised. |
+| Quote integrity | 100% (131/131; 95% CI 97.2–100%) | Quotes found verbatim in the cited label section. |
 | Guardrail detection | 100% (10/10; 95% CI 72.2–100%) | Emergency, dosing, injection; includes must-not-trigger cases. |
-| Readability of summaries | Flesch 58.3 (38 summaries) | 60–70 is plain English; 50–60 fairly difficult. |
+| Readability of summaries | Flesch 58.2 (37 summaries) | 60–70 is plain English; 50–60 fairly difficult. |
 
-Caught by: FDA label text 100% · FDA CYP/transporter table 28.9% of real interactions.
+Caught by: FDA label text 100% · FDA CYP/transporter table 29.7% of real interactions.
 
 **Serious pairs rated below serious**
 
@@ -37,7 +43,7 @@ Caught by: FDA label text 100% · FDA CYP/transporter table 28.9% of real intera
 
 | Case | Query | Expected | Got |
 |---|---|---|---|
-| HD02 | tacrolimus and fluconazole | documented | Tacrolimus+Fluconazole:major |
+| HD02 | tacrolimus and fluconazole | documented | Tacrolimus+Fluconazole:major/CYP3A-moderate |
 | HD08 | glipizide and fluconazole | documented | Glipizide+Fluconazole:major |
 | HD11 | furosemide and gentamicin | documented | Furosemide+Gentamicin:major |
 | HD13 | escitalopram and ibuprofen | documented | Escitalopram+Ibuprofen:major |
@@ -47,22 +53,22 @@ Caught by: FDA label text 100% · FDA CYP/transporter table 28.9% of real intera
 
 ## Development set (`evals/pairs.json`)
 
-78 cases: 44 serious, 22 documented, 12 negative controls. Used to find and fix bugs, so results here are optimistic.
+79 scored cases: 45 serious, 22 documented, 12 negative controls (1 cases whose expectation comes from FDA's CYP table excluded as circular). Used to find and fix bugs, so results here are optimistic.
 
 | Metric | Result | Meaning |
 |---|---|---|
-| **False reassurance, serious pairs** | **0% (0/44; 95% CI 0–8%)** | Serious interactions shown as "nothing found". |
-| False reassurance, all real interactions | 0% (0/66; 95% CI 0–5.5%) | Including documented interactions. |
-| Recall | 100% (66/66; 95% CI 94.5–100%) | Real interactions flagged by at least one source. |
-| Serious pairs rated serious | 90.9% (40/44; 95% CI 78.8–96.4%) | Flagged at the right severity. |
+| **False reassurance, serious pairs** | **0% (0/45; 95% CI 0–7.9%)** | Serious interactions shown as "nothing found". |
+| False reassurance, all real interactions | 0% (0/67; 95% CI 0–5.4%) | Including documented interactions. |
+| Recall | 100% (67/67; 95% CI 94.6–100%) | Real interactions flagged by at least one source. |
+| Serious pairs rated serious | 88.9% (40/45; 95% CI 76.5–95.2%) | Flagged at the right severity. |
 | Documented pairs rated serious | 22.7% (5/22; 95% CI 10.1–43.4%) | Over-rating. |
 | False alarms on negative controls | 8.3% (1/12; 95% CI 1.5–35.4%) | Controls flagged anyway. |
-| Name resolution | 100% (78/78; 95% CI 95.3–100%) | Every expected medicine recognised. |
-| Quote integrity | 100% (199/199; 95% CI 98.1–100%) | Quotes found verbatim in the cited label section. |
+| Name resolution | 100% (79/79; 95% CI 95.4–100%) | Every expected medicine recognised. |
+| Quote integrity | 100% (196/196; 95% CI 98.1–100%) | Quotes found verbatim in the cited label section. |
 | Guardrail detection | 100% (20/20; 95% CI 83.9–100%) | Emergency, dosing, injection; includes must-not-trigger cases. |
-| Readability of summaries | Flesch 59.1 (67 summaries) | 60–70 is plain English; 50–60 fairly difficult. |
+| Readability of summaries | Flesch 58.6 (68 summaries) | 60–70 is plain English; 50–60 fairly difficult. |
 
-Caught by: FDA label text 100% · FDA CYP/transporter table 27.3% of real interactions.
+Caught by: FDA label text 100% · FDA CYP/transporter table 28.4% of real interactions.
 
 **Serious pairs rated below serious**
 
@@ -72,6 +78,7 @@ Caught by: FDA label text 100% · FDA CYP/transporter table 27.3% of real intera
 | S11 | warfarin and fluconazole | serious | Warfarin+Fluconazole:moderate/CYP2C9-moderate |
 | S21 | digoxin and amiodarone | serious | Digoxin+Amiodarone:moderate/P-gp-moderate |
 | D21 | haloperidol and clarithromycin | serious | Haloperidol+Clarithromycin:class |
+| D29 | tylenol and alcohol | serious | Acetaminophen+Ethanol:moderate |
 
 **Documented pairs rated serious**
 
@@ -82,6 +89,7 @@ Caught by: FDA label text 100% · FDA CYP/transporter table 27.3% of real intera
 | D16 | rifampin and warfarin | documented | Rifampin+Warfarin:major/CYP2C9-moderate |
 | E06 | can I take Lipitor with Biaxin? | documented | Atorvastatin+Clarithromycin:major/CYP3A-strong |
 | D22 | bupropion and haloperidol | documented | Bupropion+Haloperidol:major |
+| D30 | aspirin and alcohol | documented | Aspirin+Ethanol:major |
 
 **False alarms on negative controls**
 
@@ -107,6 +115,8 @@ Caught by: FDA label text 100% · FDA CYP/transporter table 27.3% of real intera
 | 2026-10-17 | heldout | serotonergic and nephrotoxic effect groups, antibacterial class words, severe class warnings (fixed on dev cases D25-D28) | 0% | 100% | 95.5% | 43.8% | 0% | 100% | 100% | 10/10 |
 | 2026-10-17 | dev | help/distress guardrail: calls for help and symptoms get urgent-help routes | 0% | 100% | 90.9% | 22.7% | 8.3% | 100% | 100% | 20/20 |
 | 2026-10-17 | heldout | help/distress guardrail: calls for help and symptoms get urgent-help routes | 0% | 100% | 95.5% | 43.8% | 0% | 100% | 100% | 10/10 |
+| 2026-10-17 | dev | external-audit remediation: stricter scoring (target pair, visible severity, circular cases excluded), red-team corpus, engine fixes | 0% | 100% | 88.9% | 22.7% | 8.3% | 100% | 100% | 20/20 |
+| 2026-10-17 | heldout | external-audit remediation: stricter scoring (target pair, visible severity, circular cases excluded), red-team corpus, engine fixes | 0% | 100% | 95.5% | 46.7% | 0% | 100% | 100% | 10/10 |
 
 ## Method
 

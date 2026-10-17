@@ -4,12 +4,16 @@ import { store, day, secondsToMidnightUTC, anon } from '../lib/store.js';
 
 const FREE = (process.env.FREE_CHECKS_PER_DAY != null && process.env.FREE_CHECKS_PER_DAY !== '' ? Number(process.env.FREE_CHECKS_PER_DAY) : 20); // per visitor per UTC day
 const CACHE_TTL = 7 * 24 * 3600; // same medicines -> same labels; reuse the finished result for a week
+const DEADLINE_MS = 22000;       // finish well inside the 30 s function limit (vercel.json)
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'POST a JSON body: { "message": "warfarin and ibuprofen" }' });
-  const body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : req.body || {};
-  const message = String(body.message || '').slice(0, 500);
-  const keep = Array.isArray(body.keep) ? body.keep.slice(0, 6).map(k => String(k).slice(0, 60)) : [];
+  let body;
+  try { body = typeof req.body === 'string' ? JSON.parse(req.body || '{}') : (req.body && typeof req.body === 'object' ? req.body : {}); }
+  catch { return res.status(400).json({ error: 'The request was not valid JSON.' }); }
+  if (typeof body !== 'object' || body === null || Array.isArray(body)) return res.status(400).json({ error: 'Send a JSON object.' });
+  const message = typeof body.message === 'string' ? body.message.slice(0, 500) : '';
+  const keep = Array.isArray(body.keep) ? body.keep.filter(k => typeof k === 'string').slice(0, 6).map(k => k.slice(0, 60)) : [];
   if (!message.trim() && !keep.length) return res.status(400).json({ error: 'Type the medicines you want checked.' });
   res.setHeader('Cache-Control', 'no-store');
 
@@ -37,7 +41,11 @@ export default async function handler(req, res) {
   const t0 = Date.now();
   const cache = { get: k => store.get('ans:' + k), set: (k, v) => store.set('ans:' + k, v, CACHE_TTL) };
   try {
-    const result = await analyze({ message, keep }, fetch, process.env, cache);
+    const env = { ...process.env, OPENFDA_API_KEY: process.env.OPENFDA_API_KEY };
+    const result = await Promise.race([
+      analyze({ message, keep }, fetch, env, cache),
+      new Promise((_, reject) => setTimeout(() => reject(new Error('the data sources took too long to answer')), DEADLINE_MS)),
+    ]);
     result.free = free;
     // Guardrails 2 and 3: dose questions get a fixed reply on top of the check; injection attempts are only flagged,
     // because user text never reaches anything that follows instructions except as tagged data.
@@ -57,7 +65,9 @@ export default async function handler(req, res) {
     console.log(JSON.stringify({ t: new Date().toISOString(), drugs: result.drugs.map(d => d.name), pairs: result.pairs.length, mode: result.mode, guardrails: result.guardrails, rejected: result.rejected, cached: !!result.cached, ms: Date.now() - t0 }));
     res.status(200).json(result);
   } catch (e) {
-    res.status(502).json({ error: `A data source did not answer (${e.message}). Try again in a moment.` });
+    // Even when the check fails, someone who sounds unwell still gets the urgent-help routes.
+    const help = distress(message) ? { mode: 'help', helpText: HELP_TEXT, answer: HELP_TEXT.urgent + '\n' + HELP_TEXT.how } : {};
+    res.status(502).json({ error: `The check could not be completed (${e.message}). Please try again in a moment.`, ...help });
   }
 }
 

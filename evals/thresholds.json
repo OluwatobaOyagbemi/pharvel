@@ -4,5 +4,6 @@
   "minRecallPct": 95,
   "maxFalseAlarmPct": 10,
   "minQuoteIntegrityPct": 100,
-  "minNameResolutionPct": 95
+  "minNameResolutionPct": 95,
+  "maxDocumentedRatedSeriousPct": 50
 }

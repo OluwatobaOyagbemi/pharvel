@@ -17,13 +17,20 @@ nav{font-size:14px;margin-bottom:24px} nav a{margin-right:14px}
 </head>
 <body><div class="wrap">
 <nav><a href="/">Pharvel</a><a href="/app.html">Checker</a><a href="/limitations.html">Limitations</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></nav>
-<h1>Privacy</h1><p class="sub">Last updated 17 October 2026</p>
+<h1>Privacy</h1><p class="sub">Last updated 17 October 2026 (revised after an external audit)</p>
 <h2>Summary</h2>
 <p>Pharvel has no accounts and does not store your questions. It keeps only counts that cannot identify you.</p>
 <h2>What is processed</h2>
-<ul><li><b>Your question</b> is used to look up the medicines and is not stored.</li><li><b>Your IP address</b> is converted into a one-way code to apply the daily limit of free checks and to count distinct visitors. The address itself is not stored. These codes expire within about two days.</li><li><b>Counts</b>: how many checks were run, which pairs of medicines are checked most, and how often safety notices are shown. These contain no personal information.</li><li><b>Problem reports</b>: if you send one, we keep the reason, the medicines and result shown, and your optional comment (up to 300 characters). Please do not include personal information. The newest 500 reports are kept.</li><li><b>Your saved medicine list</b> stays in your own browser and is never sent to us except when you run a check.</li></ul>
+<ul>
+<li><b>Your question</b> is used to look up the medicines. The wording you type is not stored. The medicines found and the label results are kept for up to 7 days so the same check is faster next time; that copy contains no information about you.</li>
+<li><b>Your IP address</b> is turned into a code using a secret key and today's date, to apply the daily limit of free checks and count distinct visitors. The code changes every day, cannot be turned back into your address without the secret key, and is deleted within about two days.</li>
+<li><b>Counts</b>: how many checks were run, how often safety notices were shown, and which pairs of medicines are checked most. Pairs are only shown publicly once they have been checked at least 5 times, and visitor numbers below 5 are not shown.</li>
+<li><b>Problem reports</b>: if you send one, we keep the reason, the medicines and result shown, the version of the checker and the label links, and your optional comment (up to 300 characters). Please do not include personal information.</li>
+<li><b>Your saved medicine list</b> stays in your own browser. When you come back, it is restored on your device; nothing is sent until you choose to check again.</li>
+<li><b>Server logs</b>: our hosting provider (Vercel) keeps standard request logs, which include your IP address, for a short period. Our own log lines record the time, the medicines checked and how long the check took.</li>
+</ul>
 <h2>Who else receives data</h2>
-<p>To answer, medicine names (not your identity) are sent to the US National Library of Medicine (RxNorm), the US Food and Drug Administration (openFDA) and the National Center for Biotechnology Information (PubChem). The site is hosted by Vercel and counts are stored with Upstash. If AI-written explanations are enabled in future, the label passages and your question would be sent to Anthropic to produce them; this page will be updated first.</p>
+<p>To answer, medicine names are sent from our server to the US National Library of Medicine (RxNorm) and the US Food and Drug Administration (openFDA); these requests do not include your identity. <b>The 3D molecules and 2D drawings are loaded by your own browser directly from PubChem (US National Center for Biotechnology Information)</b>, so PubChem receives your IP address and the names of the medicines shown, under NCBI's privacy policy. The site is hosted by Vercel, and counts are stored with Upstash. If AI-written explanations are enabled in future, the label passages and your question would be sent to Anthropic to produce them; this page will be updated first.</p>
 <h2>Your choices</h2>
 <p>You can clear your saved medicine list by removing the medicines or clearing your browser's site data. Because we store nothing that identifies you, we cannot look up or delete records about a specific person.</p>
 <h2>Contact</h2>

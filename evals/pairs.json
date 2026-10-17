@@ -525,13 +525,18 @@
         "ethanol"
       ],
       "basis": "Combination product (oxycodone + acetaminophen); opioid labeling warns against alcohol.",
-      "edge": "combination"
+      "edge": "combination",
+      "pair": [
+        "oxycodone",
+        "ethanol"
+      ]
     },
     {
       "id": "E05",
       "q": "St John's wort and sertraline",
       "expect": "serious",
       "drugs": [
+        "st. john's wort extract",
         "sertraline"
       ],
       "basis": "Sertraline label lists St John's wort among serotonergic drugs; supplement coverage is a known gap.",
@@ -798,6 +803,28 @@
         "dicloxacillin"
       ],
       "basis": "Methotrexate labeling: penicillins may reduce methotrexate clearance. Reproduces benchmark v2 pattern: 'penicillins' class wording.",
+      "added": "2026-10-17"
+    },
+    {
+      "id": "D29",
+      "q": "tylenol and alcohol",
+      "expect": "serious",
+      "drugs": [
+        "acetaminophen",
+        "ethanol"
+      ],
+      "basis": "OTC acetaminophen labeling: severe liver damage may occur with 3 or more alcoholic drinks every day. Added after the 2026-10-17 external audit.",
+      "added": "2026-10-17"
+    },
+    {
+      "id": "D30",
+      "q": "aspirin and alcohol",
+      "expect": "documented",
+      "drugs": [
+        "aspirin",
+        "ethanol"
+      ],
+      "basis": "OTC aspirin labeling: stomach bleeding warning with 3 or more alcoholic drinks every day. Added after the external audit.",
       "added": "2026-10-17"
     }
   ],
