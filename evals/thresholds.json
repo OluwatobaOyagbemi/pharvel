@@ -1,0 +1,8 @@
+{
+  "about": "Safety thresholds checked by `npm run gate`. Loosening any value requires a dated reason in CHANGELOG.md.",
+  "maxFalseReassuranceSeriousPct": 0,
+  "minRecallPct": 95,
+  "maxFalseAlarmPct": 10,
+  "minQuoteIntegrityPct": 100,
+  "minNameResolutionPct": 95
+}

@@ -1,0 +1,19 @@
+# Runs on every push and pull request: unit tests, the evaluation on both sets, and the release gate.
+# Recorded API responses are cached between runs so the evaluation is reproducible and stays within openFDA limits.
+name: ci
+on: [push, pull_request]
+jobs:
+  test-eval-gate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/cache@v4
+        with:
+          path: evals/.cache
+          key: eval-cache-${{ hashFiles('evals/pairs.json', 'evals/heldout.json') }}
+          restore-keys: eval-cache-
+      - run: npm test
+      - run: npm run eval
+      - run: npm run gate

@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pharvel — check medicines together</title>
+<meta name="description" content="Pharvel checks medicines together and quotes the evidence straight from FDA drug labels, with a source link for every finding.">
+<meta property="og:title" content="Pharvel — check medicines together">
+<meta property="og:description" content="Every finding is quoted from an FDA drug label, with a source link.">
+<meta property="og:type" content="website">
+<link rel="icon" href="/brand/logo-mark.svg" type="image/svg+xml">
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"Pharvel","applicationCategory":"HealthApplication","description":"Drug interaction lookup that quotes FDA drug labels.","offers":{"@type":"Offer","price":"0","priceCurrency":"USD"}}</script>
+<style>
+/* ---- Tokens (light / dark) ---- */
+:root{
+  --paper:#f5f2ea; --card:#fffdf8; --ink:#141414; --soft:#5d5a52; --hair:#d9d4c6;
+  --accent:#0b6b57; --accent-ink:#fffdf8; --mark:#ffe58a;
+  --bad:#b3121d; --warn:#d9480f; --ok:#0b6b57;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+@media (prefers-color-scheme:dark){:root{
+  --paper:#14140f; --card:#1d1d17; --ink:#f1eee4; --soft:#a8a394; --hair:#3a392f;
+  --accent:#4fd1b1; --accent-ink:#14140f; --mark:#6b5600;
+  --bad:#ff6b6b; --warn:#ff922b; --ok:#4fd1b1;
+}}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);font:17px/1.55 "Helvetica Neue",Arial,sans-serif}
+h1,h2,h3{line-height:1.05;letter-spacing:-.025em;margin:0}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 20px}
+section{padding:96px 0}
+.eyebrow{font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:14px}
+h2{font-size:clamp(30px,5vw,52px);font-weight:900;max-width:16ch}
+.lede{color:var(--soft);font-size:19px;max-width:52ch;margin:18px 0 0}
+
+/* ---- Loader ---- */
+#loader{position:fixed;inset:0;background:var(--paper);display:grid;place-items:center;z-index:100;transition:opacity .5s var(--ease),visibility .5s}
+#loader.done{opacity:0;visibility:hidden}
+#loader i{width:46px;height:46px;border:5px solid var(--ink);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ---- Nav ---- */
+nav{position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--hair);transition:padding .25s var(--ease)}
+nav .wrap{display:flex;align-items:center;gap:20px;padding-top:14px;padding-bottom:14px;transition:padding .25s var(--ease)}
+nav.compact .wrap{padding-top:6px;padding-bottom:6px}
+.brand{display:flex;align-items:center;gap:10px;font-size:24px;font-weight:900;letter-spacing:-.03em;text-decoration:none}
+.brand img{width:34px;height:34px}
+.brand i{font-style:normal;font-weight:400;color:var(--accent)}
+nav ul{display:flex;gap:26px;list-style:none;margin:0 0 0 auto;padding:0}
+nav ul a{text-decoration:none;font-size:15px;background:linear-gradient(var(--accent),var(--accent)) 0 100%/0 2px no-repeat;transition:background-size .25s var(--ease)}
+nav ul a:hover{background-size:100% 2px}
+.btn{display:inline-block;background:var(--ink);color:var(--paper);padding:13px 24px;font-weight:700;text-decoration:none;border:2px solid var(--ink);border-radius:999px;transition:transform .2s var(--ease),background .2s;will-change:transform}
+.btn:hover{transform:translateY(-2px)}
+.btn:active{transform:translateY(0) scale(.97)}
+.btn.ghost{background:transparent;color:var(--ink)}
+.burger{display:none;margin-left:auto;background:none;border:2px solid var(--ink);border-radius:8px;width:44px;height:40px;color:var(--ink);font-size:20px;cursor:pointer}
+@media(max-width:760px){
+  .burger{display:block}
+  nav ul{position:absolute;left:0;right:0;top:100%;background:var(--paper);flex-direction:column;gap:0;margin:0;border-bottom:2px solid var(--ink);transform:translateY(-8px);opacity:0;visibility:hidden;transition:transform .3s var(--ease),opacity .3s,visibility .3s}
+  nav ul.open{transform:none;opacity:1;visibility:visible}
+  nav ul a{display:block;padding:16px 20px}
+  nav .btn.cta{display:none}
+}
+
+/* ---- Hero ---- */
+.hero{padding:56px 0 80px;position:relative;overflow:hidden}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:30px;align-items:center}
+.hero h1{font-size:clamp(40px,7vw,84px);font-weight:900}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .cta{display:flex;gap:12px;flex-wrap:wrap;margin-top:30px}
+.stage{position:relative;aspect-ratio:1;max-width:460px;justify-self:center;width:100%}
+.stage canvas{width:100%;height:100%;cursor:grab;touch-action:none;position:relative;z-index:1}
+.blob{position:absolute;inset:8%;border-radius:50%;background:radial-gradient(circle at 30% 30%,color-mix(in srgb,var(--accent) 35%,transparent),transparent 65%);animation:drift 14s ease-in-out infinite alternate;will-change:transform}
+@keyframes drift{to{transform:translate(8%,6%) scale(1.15)}}
+.chip{position:absolute;z-index:2;background:var(--card);border:1px solid var(--hair);box-shadow:0 6px 18px -8px rgba(0,0,0,.3);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:700;animation:float 6s ease-in-out infinite alternate;will-change:transform}
+.chip:nth-of-type(1){top:8%;left:0}.chip:nth-of-type(2){top:48%;right:-2%;animation-delay:-2s}.chip:nth-of-type(3){bottom:8%;left:8%;animation-delay:-4s}
+@keyframes float{to{transform:translateY(-12px)}}
+@media(max-width:860px){.hero .wrap{grid-template-columns:1fr}.stage{max-width:320px}}
+
+/* ---- Facts strip ---- */
+.facts{background:var(--card);border-block:1px solid var(--hair)}
+.facts .wrap{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));text-align:left}
+.fact{padding:36px 28px;border-left:1px solid var(--hair);display:flex;flex-direction:column;gap:10px}
+.fact:first-child{border-left:0;padding-left:0}
+.fact .num{display:block;font-size:clamp(40px,5.4vw,64px);font-weight:900;letter-spacing:-.04em;line-height:1;color:var(--ink)}
+.fact .num small{font-size:.5em;font-weight:700;letter-spacing:-.02em;color:var(--accent);margin-left:6px}
+.fact .lbl{display:block;color:var(--soft);font-size:15px;line-height:1.45;max-width:30ch}
+@media(max-width:640px){.facts .wrap{grid-template-columns:1fr}.fact{border-left:0;border-top:1px solid var(--hair);padding:24px 0}.fact:first-child{border-top:0}}
+
+/* ---- Features ---- */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin-top:44px}
+.card{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:28px;box-shadow:0 1px 2px rgba(0,0,0,.04);transition:transform .2s var(--ease);will-change:transform;transform-style:preserve-3d}
+.card svg{width:44px;height:44px;margin-bottom:16px;stroke:var(--accent);fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.card h3{font-size:22px;font-weight:800;margin-bottom:8px}
+.card p{margin:0;color:var(--soft);font-size:16px}
+
+/* ---- How it works (scroll-pinned) ---- */
+#how{padding:0}
+.pin{min-height:100vh;display:grid;align-items:center;padding:64px 0}
+.pin .wrap{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.steps{list-style:none;margin:30px 0 0;padding:0}
+.steps li{padding:16px 0 16px 22px;border-left:5px solid var(--hair);transition:border-color .3s}
+.steps li.on{border-color:var(--accent)}
+.steps b{display:block;font-size:22px;color:var(--soft);transition:color .3s}
+.steps li.on b{color:var(--ink)}
+.steps span{color:var(--soft)}
+.mock{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:22px;min-height:300px;box-shadow:0 18px 50px -20px rgba(0,0,0,.25)}
+.mock .scene{display:none}.mock .scene.on{display:block;animation:in .5s var(--ease)}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+.msg{background:var(--paper);border:1px solid var(--hair);border-radius:12px;padding:12px 14px;font-size:15px;margin-bottom:10px}
+.pill{display:inline-block;border:2px solid var(--ink);border-radius:999px;padding:3px 12px;font-weight:700;font-size:14px;margin:0 6px 8px 0}
+.pill.g{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.bar{height:8px;border-radius:4px;background:var(--hair);margin:12px 0;overflow:hidden}.bar i{display:block;height:100%;width:100%;background:var(--accent);transform-origin:left;animation:fill 1.2s var(--ease) both}
+@keyframes fill{from{transform:scaleX(0)}}
+.q{border-left:5px solid var(--warn);padding:6px 12px;font-size:15px;background:var(--paper)}
+.q mark{background:var(--mark);color:inherit}
+.q small{display:block;color:var(--soft);margin-top:6px}
+@media(max-width:860px){.pin .wrap{grid-template-columns:1fr}.pin{min-height:auto}}
+
+/* ---- FAQ ---- */
+details{border-bottom:1px solid var(--hair);padding:22px 0}
+details summary{font-size:21px;font-weight:800;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:20px}
+details summary::after{content:"+";transition:transform .25s var(--ease);font-size:26px;line-height:1}
+details[open] summary::after{transform:rotate(45deg)}
+details p{color:var(--soft);margin:12px 0 0;max-width:62ch}
+.faq{max-width:780px;margin-top:36px;border-top:1px solid var(--hair)}
+
+/* ---- Final CTA / footer ---- */
+.final{background:var(--ink);color:var(--paper);text-align:center}
+.final h2{margin:0 auto;max-width:18ch}
+.final .btn{background:var(--paper);color:var(--ink);border-color:var(--paper);margin-top:30px;font-size:19px;padding:16px 32px}
+footer{padding:44px 0;font-size:14px;color:var(--soft)}
+footer .wrap{display:grid;gap:14px}
+footer a{color:var(--ink)}
+.disc{border:2px solid var(--ink);border-radius:10px;padding:14px 16px;background:var(--card);color:var(--ink)}
+
+/* ---- Reveal (set by JS; static without it) ---- */
+.js .rv{opacity:0;transform:translateY(28px)}
+@media(prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .rv{opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div id="loader" aria-hidden="true"><i></i></div>
+
+<nav id="nav">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/brand/logo-mark.svg" alt=""><span>Phar<i>vel</i></span></a>
+    <button class="burger" id="burger" aria-label="Menu" aria-expanded="false">☰</button>
+    <ul id="menu">
+      <li><a href="#features">Features</a></li>
+      <li><a href="#how">How it works</a></li>
+      <li><a href="#faq">FAQ</a></li>
+    </ul>
+    <a class="btn cta" href="/app.html">Open the checker</a>
+  </div>
+</nav>
+
+<main>
+<header class="hero">
+  <div class="wrap">
+    <div>
+      <p class="eyebrow">Medicine interaction checker</p>
+      <h1><span class="rv">Check medicines together.</span> <em class="rv">Read the label.</em></h1>
+      <p class="lede rv">Type the medicines you take, in plain words. Pharvel finds each one, compares every pair, and quotes the evidence straight from the FDA label.</p>
+      <div class="cta rv">
+        <a class="btn magnet" href="/app.html">Try the checker</a>
+        <a class="btn ghost" href="#how">See how it works</a>
+      </div>
+    </div>
+    <div class="stage" aria-label="Rotating molecule you can drag">
+      <div class="blob"></div>
+      <canvas id="mol" width="400" height="400" role="img" aria-label="Rotating 3D molecule"></canvas>
+      <span class="chip">Warfarin</span><span class="chip">Ibuprofen</span><span class="chip">Sertraline</span>
+    </div>
+  </div>
+</header>
+
+<div class="facts" aria-label="Key facts">
+  <div class="wrap">
+    <div class="fact"><span class="num"><span data-n="3">3</span></span><span class="lbl">Public data sources: NIH RxNorm, openFDA and DailyMed</span></div>
+    <div class="fact"><span class="num"><span data-n="100">100</span><small>%</small></span><span class="lbl">Of findings are quoted from an FDA drug label</span></div>
+    <div class="fact"><span class="num"><span data-n="1">1</span><small>click</small></span><span class="lbl">From any finding to the source label on DailyMed</span></div>
+  </div>
+</div>
+
+<section id="features">
+  <div class="wrap">
+    <p class="eyebrow rv">Features</p>
+    <h2 class="rv">Evidence, not guesses.</h2>
+    <div class="grid">
+      <article class="card rv tilt"><svg viewBox="0 0 48 48"><circle cx="21" cy="21" r="12"/><path d="M30 30l11 11"/></svg><h3>Plain-word search</h3><p>Brand names, generics and typos are matched to the right drug through NIH RxNorm.</p></article>
+      <article class="card rv tilt"><svg viewBox="0 0 48 48"><rect x="8" y="6" width="32" height="36" rx="4"/><path d="M15 16h18M15 24h18M15 32h10"/></svg><h3>Straight from the label</h3><p>Each finding is a passage from the FDA label, with the source and date shown.</p></article>
+      <article class="card rv tilt"><svg viewBox="0 0 48 48"><circle cx="12" cy="24" r="6"/><circle cx="36" cy="12" r="6"/><circle cx="36" cy="36" r="6"/><path d="M17 22l14-8M17 26l14 8"/></svg><h3>Every pair checked</h3><p>Add three medicines and you get all three pairings, not just the first.</p></article>
+      <article class="card rv tilt"><svg viewBox="0 0 48 48"><path d="M24 6l16 6v12c0 10-7 16-16 18C15 40 8 34 8 24V12z"/><path d="M17 24l5 5 9-10"/></svg><h3>Why, not just what</h3><p>FDA's enzyme and transporter table explains the mechanism, and FDA adverse-event reports show what people actually reported.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="how">
+  <div class="pin">
+    <div class="wrap">
+      <div>
+        <p class="eyebrow">How it works</p>
+        <h2>Three steps, one answer.</h2>
+        <ol class="steps" id="steps">
+          <li class="on"><b>1. Ask</b><span>Type your medicines the way you'd say them.</span></li>
+          <li><b>2. Match</b><span>Pharvel identifies each drug and pulls its FDA label.</span></li>
+          <li><b>3. Read</b><span>See label quotes for every pair, with source links.</span></li>
+        </ol>
+      </div>
+      <div class="mock" aria-hidden="true">
+        <div class="scene on"><div class="msg">Can I take warfarin with ibuprofen and Zoloft?</div><div class="msg" style="opacity:.6">Checking…</div></div>
+        <div class="scene"><span class="pill g">Warfarin</span><span class="pill g">Ibuprofen</span><span class="pill g">Sertraline (Zoloft)</span><div class="bar"><i></i></div><div class="msg">Labels found for all 3. Comparing 3 pairs…</div></div>
+        <div class="scene"><b>Ibuprofen + Sertraline</b><div class="q">“…<mark>Increased Risk of Bleeding</mark>: Concomitant use of aspirin, nonsteroidal anti-inflammatory drugs…”<small>Example · quoted from the sertraline label</small></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <p class="eyebrow">FAQ</p>
+    <h2>Good questions.</h2>
+    <div class="faq">
+      <details><summary>Is this medical advice?</summary><p>No. Pharvel shows what drug labels say. It can't know your doses, conditions or other treatments. Ask a pharmacist or doctor before changing anything.</p></details>
+      <details><summary>Where does the information come from?</summary><p>Drug names come from NIH RxNorm. Label text comes from openFDA, and each finding links to the DailyMed label it was quoted from.</p></details>
+      <details><summary>What if it finds nothing for a pair?</summary><p>That only means the labels checked don't mention it. It does not prove the combination is safe.</p></details>
+      <details><summary>Does it cost anything?</summary><p>Not right now. It's free to use.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2 class="rv">See what the labels say.</h2>
+    <a class="btn magnet" href="/app.html">Open the checker</a>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="disc"><b>Not medical advice.</b> Pharvel quotes FDA drug labels for information only. In an emergency call your local emergency number.</p>
+    <p><a href="/limitations.html">Limitations</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a></p>
+    <p>Data: <a href="https://rxnav.nlm.nih.gov/">RxNorm</a> · <a href="https://open.fda.gov/">openFDA</a> · <a href="https://dailymed.nlm.nih.gov/">DailyMed</a></p>
+    <p>© Pharvel</p>
+  </div>
+</footer>
+
+<script defer src="/_vercel/insights/script.js"></script>
+<script src="/brand/molecule.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+(() => {
+  const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const nav = document.getElementById('nav'), menu = document.getElementById('menu'), burger = document.getElementById('burger');
+  const hideLoader = () => document.getElementById('loader').classList.add('done');
+  addEventListener('load', () => setTimeout(hideLoader, still ? 0 : 350));
+  setTimeout(hideLoader, 2500);
+
+  addEventListener('scroll', () => nav.classList.toggle('compact', scrollY > 40), { passive: true });
+  burger.onclick = () => { const o = menu.classList.toggle('open'); burger.setAttribute('aria-expanded', o); };
+  menu.onclick = e => { if (e.target.tagName === 'A') { menu.classList.remove('open'); burger.setAttribute('aria-expanded', false); } };
+
+  // Steps mock: also works without GSAP
+  const lis = [...document.querySelectorAll('#steps li')], scenes = [...document.querySelectorAll('.mock .scene')];
+  const show = i => { lis.forEach((l, k) => l.classList.toggle('on', k === i)); scenes.forEach((s, k) => s.classList.toggle('on', k === i)); };
+  lis.forEach((l, i) => { l.tabIndex = 0; l.onclick = () => show(i); });
+
+  if (still || !window.gsap) return;
+  document.documentElement.classList.add('js');
+  gsap.registerPlugin(ScrollTrigger);
+  const ease = 'power3.out';
+
+  // Hero entrance (staggered)
+  gsap.to('.hero .rv', { opacity: 1, y: 0, duration: .8, ease, stagger: .12, delay: .3 });
+  // Section reveals
+  document.querySelectorAll('section .rv, .final .rv').forEach(el =>
+    gsap.to(el, { opacity: 1, y: 0, duration: .7, ease, scrollTrigger: { trigger: el, start: 'top 88%' } }));
+  // Counters
+  document.querySelectorAll('[data-n]').forEach(el => {
+    const n = +el.dataset.n, o = { v: 0 };
+    ScrollTrigger.create({ trigger: el, start: 'top 90%', once: true, onEnter: () =>
+      gsap.to(o, { v: n, duration: 1.4, ease: 'power2.out', onUpdate: () => el.textContent = Math.round(o.v) }) });
+  });
+  // Scroll-pinned steps
+  if (innerWidth > 860) {
+    ScrollTrigger.create({ trigger: '.pin', start: 'top top', end: '+=1500', pin: true, scrub: true,
+      onUpdate: s => show(Math.min(2, Math.floor(s.progress * 3))) });
+  }
+  // Card tilt + magnetic CTAs (transform only)
+  document.querySelectorAll('.tilt').forEach(c => {
+    c.addEventListener('pointermove', e => { const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+      gsap.to(c, { rotateY: x * 10, rotateX: -y * 10, duration: .25, ease, transformPerspective: 700 }); });
+    c.addEventListener('pointerleave', () => gsap.to(c, { rotateX: 0, rotateY: 0, duration: .4, ease }));
+  });
+  document.querySelectorAll('.magnet').forEach(b => {
+    b.addEventListener('pointermove', e => { const r = b.getBoundingClientRect();
+      gsap.to(b, { x: (e.clientX - r.left - r.width / 2) * .25, y: (e.clientY - r.top - r.height / 2) * .35, duration: .25, ease }); });
+    b.addEventListener('pointerleave', () => gsap.to(b, { x: 0, y: 0, duration: .4, ease }));
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pharvel — drug interaction check</title>
+<meta name="description" content="Ask about medicines together. Answers are quoted from FDA drug labels, with sources.">
+<link rel="icon" href="/brand/logo-mark.svg" type="image/svg+xml">
+<style>
+:root{
+  --paper:#f5f2ea; --card:#fffdf8; --ink:#141414; --soft:#5d5a52; --rule:#141414; --hair:#d9d4c6;
+  --contraindicated:#b3121d; --major:#c2410c; --moderate:#7a5a00; --class:#2b62a0; --none:#5f6a5f; --unknown:#6f6a5e;
+  --mark:#ffe58a; --accent:#0b6b57;
+}
+@media (prefers-color-scheme:dark){:root{
+  --paper:#14140f; --card:#1d1d17; --ink:#f1eee4; --soft:#a8a394; --rule:#f1eee4; --hair:#3a392f;
+  --contraindicated:#ff6b6b; --major:#ff922b; --moderate:#f2c94c; --class:#74a9e6; --none:#8f998f; --unknown:#9a9486;
+  --mark:#6b5600; --accent:#4fd1b1;
+}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{background:var(--paper);color:var(--ink);font:15px/1.5 "Helvetica Neue",Helvetica,Arial,sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit;color:inherit}
+header{display:flex;align-items:baseline;gap:14px;padding:14px 20px;border-bottom:6px solid var(--rule)}
+header h1{margin:0;font-size:26px;font-weight:900;letter-spacing:-.02em;display:flex;align-items:center;gap:4px}
+header h1 canvas{width:64px;height:64px;margin:-16px -2px -16px -10px}
+header h1 i{font-style:normal;font-weight:400;color:var(--accent)}
+header p{margin:0;color:var(--soft);font-size:13px}
+main{display:grid;grid-template-columns:minmax(320px,440px) 1fr;height:calc(100% - 66px)}
+/* chat */
+.chat{display:flex;flex-direction:column;border-right:2px solid var(--rule);min-height:0}
+.log{flex:1;overflow:auto;padding:18px 16px;display:flex;flex-direction:column;gap:12px}
+.msg{max-width:92%;padding:10px 13px;border:1.5px solid var(--rule);background:var(--card);white-space:pre-line;
+}.msg .f,.msg .closing{white-space:normalanimation:rise .35s cubic-bezier(.2,.8,.2,1) both}
+.msg.me{align-self:flex-end;background:var(--ink);color:var(--paper)}
+.msg small{display:block;margin-top:8px;color:var(--soft);font-size:12px}
+.msg.err{border-color:var(--contraindicated)}
+.msg .retry{margin-left:8px;border:1.5px solid var(--rule);background:var(--ink);color:var(--paper);font:inherit;font-weight:700;font-size:12.5px;padding:3px 10px;cursor:pointer}
+.msg .f{margin:0 0 12px;padding:0 0 10px;border-bottom:1px solid var(--hair)}
+.msg .f:last-of-type{border:0;margin-bottom:0;padding-bottom:0}
+.msg .f b{display:block;font-size:15px}
+.origin{font-size:11.5px;color:var(--soft);margin-bottom:8px;padding-bottom:6px;border-bottom:1px dashed var(--hair)}
+.report{margin-top:14px;font-size:13px} .report summary{cursor:pointer;color:var(--soft);text-decoration:underline}
+.report form{display:grid;gap:8px;margin-top:8px;max-width:520px} .report label{display:grid;gap:3px;font-size:12.5px}
+.report select,.report textarea{font:inherit;padding:5px;border:1.5px solid var(--rule);background:var(--card);color:var(--ink)}
+.report button{justify-self:start;border:2px solid var(--rule);background:var(--ink);color:var(--paper);font-weight:700;padding:5px 12px;cursor:pointer}
+.sp{margin:6px 0 8px;display:grid;gap:6px}
+.sp dt{font-size:10.5px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--c,var(--soft))}
+.sp dd{margin:0 0 2px;font-size:14px;line-height:1.45}
+.sp dt:first-of-type + dd{font-weight:700;font-size:15px}
+.sp.big dd{font-size:15px} .sp.big dt:first-of-type + dd{font-size:17px}
+.sos{white-space:pre-line;font-size:15px} .sos b{display:block;font-size:17px;color:var(--contraindicated);margin-bottom:6px}
+.dosing{margin-bottom:10px;padding:8px 10px;border:2px solid var(--major);background:var(--paper);font-size:13.5px;font-weight:700}
+.msg .f .plain{font-size:15px;font-weight:700;margin:4px 0 6px}
+.msg .f .src{font-size:13px;color:var(--soft)}
+.msg .f .lv{display:inline-block;font-size:11px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--c);border:1.5px solid var(--c);border-radius:999px;padding:1px 8px;margin:4px 0 6px}
+.msg .f q{display:block;margin:6px 0 0;padding:6px 10px;border-left:3px solid var(--c);background:var(--paper);font-size:13.5px;quotes:"“" "”"}
+.msg .f q mark{font-weight:900}
+.msg .f a{font-size:12px;color:var(--soft)}
+.mech,.rw{margin-top:8px;font-size:13px;padding:7px 10px;border-radius:6px;background:var(--paper);border:1px solid var(--hair)}
+.mech{border-left:4px solid var(--class)} .rw{border-left:4px solid var(--unknown)}
+.mech b,.rw b{display:block;font-size:11px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:2px}
+.mech small,.rw small{display:block;color:var(--soft);font-size:11.5px;margin-top:3px}
+.msg .f .also{font-size:13px;color:var(--soft);margin-top:4px}
+.msg .closing{font-size:13px;color:var(--soft);margin-top:10px}
+@keyframes rise{from{opacity:0;transform:translateY(8px)}}
+.steps{display:flex;flex-direction:column;gap:6px;font-size:13px}
+.step{display:flex;align-items:center;gap:8px;color:var(--soft);transition:color .3s}
+.step i{width:10px;height:10px;border:1.5px solid currentColor;border-radius:50%;flex:none}
+.step.on{color:var(--ink);font-weight:700}
+.step.on i{background:var(--accent);border-color:var(--accent);animation:pulse 1s ease-in-out infinite}
+.step.done{color:var(--ink)} .step.done i{background:var(--ink)}
+@keyframes pulse{50%{transform:scale(1.6);opacity:.5}}
+.tray{padding:8px 16px 0;display:flex;flex-wrap:wrap;gap:6px;min-height:0}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--rule);background:var(--card);padding:2px 4px 2px 9px;font-size:13px;font-weight:700;animation:rise .3s both}
+.chip button{border:0;background:none;cursor:pointer;font-size:15px;line-height:1;padding:2px 5px}
+.tries{padding:8px 16px 0;display:flex;flex-wrap:wrap;gap:6px}
+.tries button{border:1px dashed var(--soft);background:none;padding:3px 9px;font-size:12.5px;cursor:pointer;color:var(--soft)}
+.tries button:hover{color:var(--ink);border-color:var(--ink)}
+form{display:flex;gap:8px;padding:12px 16px 16px}
+form input{flex:1;min-width:0;padding:11px 12px;border:2px solid var(--rule);background:var(--card);outline-offset:2px}
+form button{padding:0 18px;border:2px solid var(--rule);background:var(--ink);color:var(--paper);font-weight:800;cursor:pointer}
+form button:disabled{opacity:.45;cursor:wait}
+.quota{margin:-8px 16px 12px;font-size:12px;color:var(--soft)}
+/* stage */
+.stage{overflow:auto;padding:18px 22px 40px;min-width:0}
+.map{border:2px solid var(--rule);background:var(--card);position:relative}
+.map h2,.facts h2{margin:0;padding:6px 12px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid var(--rule)}
+svg{display:block;width:100%;height:auto;max-height:56vh}
+[hidden]{display:none!important}
+.empty{position:absolute;inset:36px 0 0;display:grid;place-items:center;color:var(--soft);text-align:center;padding:20px;pointer-events:none}
+.edge{cursor:pointer}
+.edge .line{fill:none;stroke:var(--c);stroke-width:var(--w,3);stroke-linecap:round;stroke-dasharray:var(--d,none);stroke-dashoffset:0;animation:draw .7s ease-out both;animation-delay:var(--delay)}
+.edge .hit{fill:none;stroke:transparent;stroke-width:22}
+.edge .flow{fill:none;stroke:var(--card);stroke-width:calc(var(--w,3) - 1.5);stroke-linecap:round;stroke-dasharray:1 17;animation:flow var(--t,1.4s) linear infinite;opacity:.9}
+.edge.none .flow,.edge.unknown .flow{display:none}
+.edge.contraindicated .line{animation:draw .7s ease-out both,throb 1.1s ease-in-out .7s infinite}
+.edge .tag rect{fill:var(--card);stroke:var(--c);stroke-width:1.5}
+.edge .tag text{fill:var(--c);font-size:10.5px;font-weight:900;letter-spacing:.05em;text-anchor:middle;dominant-baseline:central}
+.edge .tag{animation:pop .4s cubic-bezier(.2,1.4,.4,1) both;animation-delay:calc(var(--delay) + .5s);transform-box:fill-box;transform-origin:center}
+.edge:hover .line,.edge.sel .line{stroke-width:calc(var(--w,3) + 2.5)}
+.edge:focus-visible{outline:none}.edge:focus-visible .tag rect{stroke-width:3}
+@keyframes draw{from{stroke-dasharray:0 1000;opacity:0}to{opacity:1}}
+@keyframes flow{to{stroke-dashoffset:-36}}
+@keyframes throb{50%{opacity:.45}}
+@keyframes pop{from{opacity:0;transform:scale(.4)}}
+.node{animation:pop .5s cubic-bezier(.2,1.4,.4,1) both;animation-delay:var(--delay);transform-box:fill-box;transform-origin:center}
+.node rect{fill:var(--ink)} .node text{fill:var(--paper);font-size:14px;font-weight:800;text-anchor:middle;dominant-baseline:central}
+.node.nolabel rect{fill:var(--unknown)}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;padding:8px 12px;border-top:1.5px solid var(--hair);font-size:12px;color:var(--soft)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.legend b{width:22px;height:0;border-top:3px solid var(--c)}
+.legend .none b{border-top-style:dashed}.legend .unknown b{border-top-style:dotted}
+.detail{border:2px solid var(--rule);border-top:0;background:var(--card);padding:12px 14px;animation:rise .3s both}
+.detail h3{margin:0 0 2px;font-size:17px;font-weight:900}
+.detail .plainBig{margin:6px 0 10px;font-size:17px;font-weight:700;line-height:1.35}
+.detail .lv{font-size:12px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--c)}
+blockquote{margin:10px 0 0;padding:8px 12px;border-left:4px solid var(--c);background:var(--paper);font-size:14px}
+blockquote footer{margin-top:6px;font-size:12px;color:var(--soft)}
+mark{background:var(--mark);color:inherit;padding:0 2px;font-weight:700}
+a{color:inherit}
+.facts{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-top:18px}
+.fact{border:2px solid var(--rule);background:var(--card);animation:rise .45s both;animation-delay:var(--delay)}
+.fact h2{font-size:20px;text-transform:none;letter-spacing:-.01em;border-bottom-width:6px;padding:6px 10px}
+.fact h2 small{display:block;font-size:11px;font-weight:400;color:var(--soft);letter-spacing:0}
+.fact dl{margin:0;padding:0 10px}
+.fact dt{font-weight:900;font-size:13px;padding-top:6px}
+.fact dd{margin:0;padding-bottom:6px;border-bottom:1px solid var(--rule);font-size:13px;line-height:1.4}
+.fact p{margin:0;padding:7px 10px;font-size:12px;color:var(--soft)}
+.note{margin-top:18px;font-size:12.5px;color:var(--soft);max-width:70ch}
+
+/* summary, cards, 3D */
+.sum{border:2px solid var(--rule);background:var(--card);padding:12px 14px;margin-bottom:14px;animation:rise .4s both}
+.sum .rep{float:right;border:2px solid var(--rule);background:var(--ink);color:var(--paper);font:inherit;font-weight:800;font-size:13px;padding:6px 12px;cursor:pointer;margin-left:10px}
+.sum h2{margin:0 0 8px;font-size:22px;font-weight:900;letter-spacing:-.02em}
+.srcsum{margin:10px 0 0;font-size:13px;color:var(--soft)}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.badge{display:inline-flex;gap:6px;align-items:center;border:2px solid var(--c);color:var(--c);padding:2px 10px;font-size:12.5px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;animation:pop .4s cubic-bezier(.2,1.4,.4,1) both;animation-delay:var(--delay,0s)}
+.sec{margin:22px 0 10px;font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:.06em}
+.pairs{display:grid;gap:8px}
+.pc{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;text-align:left;border:2px solid var(--rule);border-left:8px solid var(--c);background:var(--card);padding:10px 12px;cursor:pointer;font:inherit;color:inherit;animation:rise .4s both;animation-delay:var(--delay)}
+.pc:hover,.pc.sel{background:var(--paper)}
+.pc .ic{grid-row:span 2;align-self:center;font-size:20px;font-weight:900;color:var(--c);width:26px;text-align:center}
+.pc b{font-size:15px}.pc .lv{font-size:11.5px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--c);margin-left:8px}
+.mtag{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;border:1.5px solid var(--class);color:var(--class);border-radius:999px;padding:1px 7px;margin-left:8px}
+.pc span.t{font-size:13px;color:var(--soft);grid-column:2}
+.mols{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:14px}
+.mc{border:2px solid var(--rule);background:var(--card);animation:rise .45s both;animation-delay:var(--delay)}
+.mc h3{margin:0;padding:6px 10px;font-size:17px;font-weight:900;border-bottom:2px solid var(--rule)}
+.mc canvas{aspect-ratio:1}.cmp canvas{aspect-ratio:3/2}.mc canvas,.cmp canvas{display:block;width:100%;cursor:grab;touch-action:none;background:radial-gradient(circle,var(--paper),var(--card))}
+.mc canvas:active,.cmp canvas:active{cursor:grabbing}
+.ctl{display:flex;flex-wrap:wrap;gap:6px;padding:8px 10px;border-top:1.5px solid var(--hair);align-items:center;font-size:12.5px}
+.ctl button{border:1.5px solid var(--rule);background:none;color:var(--ink);padding:2px 9px;font-size:12.5px;cursor:pointer;font-weight:700}
+.ctl button[aria-pressed=true]{background:var(--ink);color:var(--paper)}
+.ctl label{display:inline-flex;gap:5px;align-items:center;margin-left:auto;cursor:pointer}
+.s2d{margin:0;padding:8px 10px;border-top:1.5px solid var(--hair);display:flex;align-items:center;gap:10px}
+.s2d img{background:#fff;border-radius:6px;width:150px;height:150px}
+.s2d figcaption{font-size:11.5px;color:var(--soft)}
+.ex{padding:0 10px 8px;font-size:12.5px} .ex summary{cursor:pointer;font-weight:700;color:var(--accent)} .ex ul{margin:6px 0 0;padding-left:18px;color:var(--soft)}
+.mc dl{margin:0;padding:6px 10px 8px;display:grid;grid-template-columns:auto 1fr;gap:2px 12px;font-size:13px;border-top:1.5px solid var(--hair)}
+.mc dt{font-weight:900}.mc dd{margin:0;text-align:right}
+.mc .note2,.cmp .note2{margin:0;padding:6px 10px 8px;font-size:11.5px;color:var(--soft)}
+.cmp{display:grid;grid-template-columns:1fr 1fr;margin-top:12px;border:2px solid var(--rule)}
+.cmp>div+div{border-left:2px solid var(--rule)}.cmp h4{margin:0;padding:4px 10px;font-size:13px;font-weight:900;border-bottom:1.5px solid var(--hair)}
+.cmp .note2{grid-column:1/-1;border-top:1.5px solid var(--hair)}
+.ghost{opacity:.14}.ghost .node{animation:none;cursor:default}
+.empty{pointer-events:none}.empty>div{pointer-events:auto;background:var(--card);border:2px solid var(--rule);padding:18px 22px 16px;max-width:520px;box-shadow:0 14px 40px -18px rgba(0,0,0,.35)}
+.empty .try{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}.empty .try button{border:1.5px solid var(--rule);background:none;color:var(--ink);padding:5px 12px;font-weight:700;cursor:pointer;font-size:13px}
+.empty .try button:hover{background:var(--ink);color:var(--paper)}
+.empty p{margin:0 0 12px;color:var(--ink);font-weight:700}.empty p small{display:block;font-weight:400;color:var(--soft);margin-top:4px}
+.node{cursor:pointer}
+@media (max-width:820px){
+  .cmp{grid-template-columns:1fr}.cmp>div+div{border-left:0;border-top:2px solid var(--rule)}
+  main{grid-template-columns:minmax(0,1fr);height:auto}
+  .chat{border-right:0;border-bottom:2px solid var(--rule)} .log{max-height:40vh;min-height:120px;padding:12px}
+  .tries{flex-wrap:nowrap;overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:4px} .tries button{white-space:nowrap;flex:none}
+  form{padding:10px 12px 12px} form input{font-size:16px} .quota{margin:-6px 12px 10px}
+  header{flex-direction:column;gap:2px;padding:10px 14px} header p{display:none} .stage{padding:12px}
+  svg{max-height:44vh} .sum h2{font-size:18px} .sum .rep{float:none;display:block;width:100%;margin:0 0 10px}
+  .mols{grid-template-columns:1fr} .mc canvas{aspect-ratio:4/3} .cmp canvas{aspect-ratio:4/3}
+  .facts{grid-template-columns:1fr} .pc{grid-template-columns:auto 1fr} .mtag{display:inline-block;font-size:10.5px;font-weight:900;letter-spacing:.04em;text-transform:uppercase;border:1.5px solid var(--class);color:var(--class);border-radius:999px;padding:1px 7px;margin-left:8px}
+.pc span.t{font-size:12.5px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important}.edge .flow{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1><canvas id="mol" width="400" height="400" role="img" aria-label="Rotating molecule"></canvas><span class="wm"><b>Phar</b><i>vel</i></span></h1>
+  <p>Ask about medicines together. Every finding is quoted from an FDA drug label.</p>
+</header>
+<main>
+  <section class="chat" aria-label="Chat">
+    <div class="log" id="log" aria-live="polite"></div>
+    <div class="tray" id="tray" role="group" aria-label="Medicines being checked"></div>
+    <div class="tries" id="tries">
+      <button type="button">Can I take warfarin with ibuprofen?</button>
+      <button type="button">Zoloft, tramadol and aspirin</button>
+      <button type="button">simvastatin with clarithromycin</button>
+    </div>
+    <form id="form" autocomplete="off">
+      <input id="q" aria-label="Your question" placeholder="e.g. Is Zoloft OK with tramadol?" maxlength="500" list="names" autocapitalize="off" spellcheck="false" required>
+      <datalist id="names"></datalist>
+      <button id="send">Check</button>
+    </form>
+    <p class="quota" id="quota" aria-live="polite"></p>
+  </section>
+  <section class="stage">
+    <div id="summary"></div>
+    <div class="map">
+      <h2>Interaction map</h2>
+      <svg id="svg" viewBox="0 0 640 420" role="group" aria-label="Interaction map"></svg>
+      <div class="empty" id="empty"><div><p>Add two or more medicines to build the map.<small>Each medicine becomes a node. Lines show what their FDA labels say about each other.</small></p><div class="try" id="try"><button type="button">warfarin, ibuprofen and Zoloft</button><button type="button">simvastatin with clarithromycin</button><button type="button">Zoloft, tramadol and aspirin</button></div></div></div>
+      <div class="legend" id="legend"></div>
+    </div>
+    <div id="detail"></div>
+    <div id="cards"></div>
+    <div id="mols"></div>
+    <div class="facts" id="facts"></div>
+    <p class="note">This tool searches FDA-published label text (openFDA, DailyMed) and recognises names with NIH RxNorm. It reports what the labels say; it does not know your doses, conditions or other medicines, and a pair with nothing found is not confirmed safe. Check with a pharmacist or prescriber before changing how you take anything. <a href="/limitations.html">Limitations</a> · <a href="/privacy.html">Privacy</a> · <a href="/terms.html">Terms</a><br>"Why it can happen" uses the FDA's published table of CYP enzyme and transporter substrates, inhibitors and inducers. "Real-world reports" are counts from the FDA Adverse Event Reporting System via openFDA: spontaneous reports that do not establish cause or frequency.</p>
+  </section>
+</main>
+<script defer src="/_vercel/insights/script.js"></script>
+<script src="/brand/molecule.js"></script>
+<script src="/brand/mol3d.js"></script>
+<script>
+const $ = id => document.getElementById(id);
+const h = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const SHORT = {contraindicated:'DO NOT COMBINE', major:'SERIOUS', moderate:'DOCUMENTED', class:'CLASS WARNING', none:'NONE FOUND', unknown:'UNCHECKED'};
+const STYLE = {contraindicated:{w:5,t:'.7s'}, major:{w:4.5,t:'1s'}, moderate:{w:3.5,t:'1.5s'}, class:{w:3,t:'2.2s'}, none:{w:2,d:'7 7'}, unknown:{w:2,d:'2 6'}};
+const STEPS = ['Recognising medicine names (RxNorm)', 'Retrieving FDA labels (openFDA)', 'Cross-checking every pair', 'Writing the cited answer'];
+const ICON = {contraindicated:'✕', major:'▲', moderate:'●', class:'◆', none:'○', unknown:'?'};
+const RANK = ['contraindicated','major','moderate','class','none','unknown'];
+let keep = [], last = null, busy = false, gen = 0, viewers = [];
+
+function say(html, cls = '') {
+  const d = document.createElement('div');
+  d.className = 'msg ' + cls; d.innerHTML = html;
+  $('log').append(d); $('log').scrollTop = $('log').scrollHeight;
+  return d;
+}
+
+function progress() {
+  const box = say('<div class="steps">' + STEPS.map(s => `<div class="step"><i></i>${s}</div>`).join('') + '</div>');
+  const rows = [...box.querySelectorAll('.step')]; let i = 0;
+  const tick = () => { rows.forEach((r, k) => r.className = 'step ' + (k < i ? 'done' : k === i ? 'on' : '')); if (i < rows.length - 1) i++; };
+  tick(); const timer = setInterval(tick, 900);
+  const slow = setTimeout(() => box.insertAdjacentHTML('beforeend', '<small>The FDA label service is slow right now; still waiting…</small>'), 12000);
+  return () => { clearInterval(timer); clearTimeout(slow); box.remove(); };
+}
+
+function tray() {
+  try { localStorage.setItem('pharvel.keep', JSON.stringify(keep)); } catch {}
+  $('tray').innerHTML = keep.map((n, i) => `<span class="chip">${h(n)}<button type="button" data-i="${i}" aria-label="Remove ${h(n)}">×</button></span>`).join('');
+}
+$('tray').onclick = e => {
+  const i = e.target.dataset?.i; if (i === undefined || busy) return;
+  keep.splice(+i, 1); tray();
+  keep.length ? ask('', true) : (last = null, draw({drugs: [], pairs: []}));
+};
+
+async function ask(message, silent) {
+  if (busy) return; busy = true; $('send').disabled = true;
+  if (!silent) say(h(message), 'me');
+  const stop = progress();
+  try {
+    const r = await fetch('/api/chat', {method: 'POST', headers: {'content-type': 'application/json'}, body: JSON.stringify({message, keep})});
+    const data = await r.json();
+    stop();
+    if (data.free) $('quota').textContent = data.free.remaining > 0 ? `${data.free.remaining} of ${data.free.limit} free checks left today.` : `No free checks left today. They reset in about ${Math.ceil(data.free.resetsIn / 3600)} h.`;
+    if (!r.ok) throw new Error(data.error || 'Something went wrong.');
+    if (data.drugs.length) { last = data; keep = data.drugs.map(d => d.display); tray(); draw(data); }
+    const fixed = data.corrections?.length ? `<small>Read as: ${h(data.corrections.join(', '))}</small>` : '';
+    const more = data.truncated ? '<small>Only the first 6 medicines were checked.</small>' : '';
+    const src = data.drugs.some(d => d.source) ? `<small>Sources: ${data.drugs.filter(d => d.source).map(d => `<a href="${h(d.source.url)}" target="_blank" rel="noopener">${h(d.display)} label</a>`).join(' · ')}</small>` : '';
+    if (data.mode === 'emergency') { say(`<div class="sos"><b>Get help now</b>${h(data.answer)}</div>`, 'err'); busy = false; $('send').disabled = false; return; }
+    const notice = (data.dosingNotice ? `<div class="dosing">${h(data.dosingNotice)}</div>` : '') + (data.scopeNotice ? `<div class="dosing">${h(data.scopeNotice)}</div>` : '');
+    const origin = data.findings?.length ? `<div class="origin">${data.mode === 'llm' ? 'AI-written explanation, checked by rules against the quoted label text below.' : 'Assembled by fixed rules from the quoted FDA label text — no AI writing.'}</div>` : '';
+    say(notice + origin + (data.findings?.length ? render(data) : h(data.answer)) + fixed + more + src);
+  } catch (e) { stop(); const m = say(h(e.message) + ' <button type="button" class="retry">Try again</button>', 'err'); m.querySelector('.retry').onclick = () => { m.remove(); busy = false; ask(message, true); }; }
+  busy = false; $('send').disabled = false; $('q').focus();
+}
+
+const partsHTML = f => (f.summaryParts || []).length ? `<dl class="sp">${f.summaryParts.map(x => `<dt>${h(x.k)}</dt><dd>${h(x.v)}</dd>`).join('')}</dl>` : '';
+// One block per pair: severity, what the label says, the exact sentence with the matched name highlighted, and the source.
+function render(data) {
+  const hl = f => { if (!f.match) return h(f.quote); const i = f.quote.toLowerCase().indexOf(f.match.toLowerCase()); return i < 0 ? h(f.quote) : h(f.quote.slice(0, i)) + '<mark>' + h(f.quote.slice(i, i + f.match.length)) + '</mark>' + h(f.quote.slice(i + f.match.length)); };
+  return data.findings.map(f => `<div class="f" style="--c:var(--${f.level})"><b>${h(f.a)} + ${h(f.b)}</b><span class="lv">${ICON[f.level]} ${h(f.label)}</span>${partsHTML(f)}<div class="src">${h(f.text)}</div>${
+    f.quote ? `<q>${hl(f)}</q><a href="${h(f.url)}" target="_blank" rel="noopener">${h(f.from)} label · ${h(f.section)} · open on DailyMed</a>` : ''}${f.also ? `<div class="also">${h(f.also)}</div>` : ''}</div>`).join('')
+    + '<div class="closing">Confirm with a pharmacist or prescriber before changing how you take anything.</div>'
+    + (data.unresolved?.length ? `<div class="closing">Not recognised as a medicine: ${h(data.unresolved.join(', '))}.</div>` : '');
+}
+
+function draw(data) {
+  const svg = $('svg'), n = data.drugs.length;
+  $('empty').hidden = n > 0; $('detail').innerHTML = '';
+  viewers.forEach(v => v.destroy()); viewers = []; gen++;
+  if (!n) { ghost(); $('summary').innerHTML = $('cards').innerHTML = $('mols').innerHTML = $('facts').innerHTML = $('legend').innerHTML = ''; return; }
+  const cx = 320, cy = 210, rx = n < 3 ? 190 : 225, ry = n < 3 ? 0 : 150;
+  const pos = data.drugs.map((d, i) => {
+    const a = -Math.PI / 2 + (n === 2 ? Math.PI / 2 : 0) + i * 2 * Math.PI / Math.max(n, 1);
+    return n === 1 ? {x: cx, y: cy} : {x: cx + rx * Math.cos(a), y: cy + ry * Math.sin(a)};
+  });
+  const idx = Object.fromEntries(data.drugs.map((d, i) => [d.display, i]));
+  let out = '';
+  data.pairs.forEach((p, k) => {
+    const A = pos[idx[p.a]], B = pos[idx[p.b]], s = STYLE[p.level];
+    const mx = (A.x + B.x) / 2, my = (A.y + B.y) / 2, bend = n > 3 ? 0.12 : 0;
+    const qx = mx + (cx - mx) * bend * 2, qy = my + (cy - my) * bend * 2;
+    const path = `M${A.x} ${A.y} Q${qx} ${qy} ${B.x} ${B.y}`;
+    const tx = (A.x + 2 * qx + B.x) / 4, ty = (A.y + 2 * qy + B.y) / 4, tw = SHORT[p.level].length * 7.2 + 16;
+    out += `<g class="edge ${p.level}" data-k="${k}" tabindex="0" role="button" aria-label="${h(p.a)} and ${h(p.b)}: ${h(data.levels[p.level])}"
+      style="--c:var(--${p.level});--w:${s.w};--t:${s.t || '0s'};--delay:${0.25 + k * 0.12}s${s.d ? `;--d:${s.d}` : ''}">
+      <path class="line" d="${path}"/><path class="flow" d="${path}"/><path class="hit" d="${path}"/>
+      <g class="tag"><rect x="${tx - tw / 2}" y="${ty - 10}" width="${tw}" height="20" rx="10"/><text x="${tx}" y="${ty}">${SHORT[p.level]}</text></g></g>`;
+  });
+  data.drugs.forEach((d, i) => {
+    const w = Math.max(84, d.display.length * 8.6 + 28), P = pos[i];
+    out += `<g class="node ${d.source ? '' : 'nolabel'}" data-i="${i}" style="--delay:${i * 0.09}s"><rect x="${P.x - w / 2}" y="${P.y - 19}" width="${w}" height="38" rx="19"/><text x="${P.x}" y="${P.y}">${h(d.display)}</text></g>`;
+  });
+  svg.innerHTML = out;
+  const used = [...new Set(data.pairs.map(p => p.level))];
+  $('legend').innerHTML = used.map(l => `<span class="${l}" style="--c:var(--${l})"><b></b>${h(data.levels[l])}</span>`).join('') + (used.length ? '<span>Select a line to read the label text.</span>' : '');
+  $('facts').innerHTML = data.drugs.map((d, i) => `<article class="fact" style="--delay:${0.3 + i * 0.1}s">
+    <h2>${h(d.display)}<small>${h([d.brands.filter(b => b.toLowerCase() !== d.name).join(', '), d.classes.join(', ')].filter(Boolean).join(' · ') || 'Drug facts')}</small></h2>
+    ${d.facts.length ? '<dl>' + d.facts.map(([k, v]) => `<dt>${h(k)}</dt><dd>${h(v)}</dd>`).join('') + '</dl>' : ''}
+    <p>${d.source ? `Source: <a href="${h(d.source.url)}" target="_blank" rel="noopener">${h(d.source.title)}</a>${d.source.date ? ', label dated ' + h(d.source.date) : ''}` : 'No FDA label found for this name.'}</p></article>`).join('');
+  summary(data); cards(data); molecules(data);
+  if (innerWidth <= 820) setTimeout(() => $('summary').scrollIntoView({ behavior: 'smooth', block: 'start' }), 150);
+  const first = data.pairs.findIndex(p => p.evidence.length);
+  if (first >= 0) pick(first);
+}
+
+// Faint example map shown before any medicines are added.
+function ghost() {
+  const pts = [[320, 70], [150, 330], [490, 330]], names = ['Medicine A', 'Medicine B', 'Medicine C'];
+  $('svg').innerHTML = '<g class="ghost">' + [[0, 1], [1, 2], [0, 2]].map(([a, b], i) => `<path d="M${pts[a]} L${pts[b]}" fill="none" stroke="var(--ink)" stroke-width="3" stroke-dasharray="${['0','8 8','2 7'][i]}"/>`).join('') +
+    pts.map((p, i) => `<g class="node"><rect x="${p[0] - 50}" y="${p[1] - 19}" width="100" height="38" rx="19"/><text x="${p[0]}" y="${p[1]}">${names[i]}</text></g>`).join('') + '</g>';
+}
+
+function summary(data) {
+  const cnt = {}; data.pairs.forEach(p => cnt[p.level] = (cnt[p.level] || 0) + 1);
+  const warn = data.pairs.filter(p => ['contraindicated', 'major', 'moderate', 'class'].includes(p.level) || p.mechanism?.some(m => m.strength !== 'weak')).length;
+  const mech = data.pairs.filter(p => p.mechanism?.length).length, rw = data.pairs.filter(p => p.faers?.reports).length;
+  $('summary').innerHTML = `<div class="sum"><button type="button" id="report" class="rep">Print / save report</button><h2>${data.pairs.length} pair${data.pairs.length === 1 ? '' : 's'} checked · ${warn ? warn + ' with label warnings' : 'no label warnings found'}</h2><div class="badges">${
+    RANK.filter(l => cnt[l]).map((l, i) => `<span class="badge" style="--c:var(--${l});--delay:${i * .08}s">${ICON[l]} ${cnt[l]} ${h(data.levels[l])}</span>`).join('')}</div>${mech || rw ? `<p class="srcsum">${mech ? `FDA's CYP/transporter table explains ${mech} pair${mech === 1 ? '' : 's'}. ` : ''}${rw ? `FDA adverse-event reports exist for ${rw} pair${rw === 1 ? '' : 's'}.` : ''}</p>` : ''}</div>`;
+}
+
+// Severity-sorted pair list; each card selects its line on the map.
+function cards(data) {
+  const order = data.pairs.map((p, k) => k).sort((a, b) => RANK.indexOf(data.pairs[a].level) - RANK.indexOf(data.pairs[b].level));
+  $('cards').innerHTML = '<h2 class="sec">Interactions, most serious first</h2><div class="pairs">' + order.map((k, i) => {
+    const p = data.pairs[k], e = p.evidence[0], f = data.findings?.find(x => x.a === p.a && x.b === p.b);
+    return `<button class="pc" data-k="${k}" style="--c:var(--${p.level});--delay:${i * .07}s"><span class="ic" aria-hidden="true">${ICON[p.level]}</span><span><b>${h(p.a)} + ${h(p.b)}</b><span class="lv">${h(data.levels[p.level])}</span>${p.mechanism?.length ? `<span class="mtag">${h(p.mechanism[0].enzyme)} · ${h(p.mechanism[0].strength)}</span>` : ''}</span><span class="t">${f && f.summaryParts?.length ? h(f.summaryParts[0].v) : e ? h(e.text.slice(0, 150)) + '…' : 'No mention in either label’s warning sections.'}</span></button>`;
+  }).join('') + '</div>';
+}
+$('cards').onclick = e => { const b = e.target.closest('.pc'); if (b) { pick(+b.dataset.k); $('detail').scrollIntoView({behavior: 'smooth', block: 'nearest'}); } };
+
+// Real PubChem structures. Rotation is illustrative of the molecule only, not of any binding pose.
+// Plain-English reading of PubChem's computed properties (general rules of thumb, not clinical claims).
+function explain(P) {
+  const out = [], w = +P.MolecularWeight, logp = P.XLogP, tpsa = P.TPSA;
+  if (logp != null) out.push(logp >= 3 ? `logP ${logp}: dissolves far better in fat than in water, so it crosses cell membranes easily.` : logp < 0 ? `logP ${logp}: prefers water to fat, so it crosses membranes less easily.` : `logP ${logp}: balanced between water and fat.`);
+  if (tpsa != null) out.push(tpsa < 60 ? `Polar surface ${tpsa} Å²: small, typical of medicines that can reach the brain.` : tpsa > 140 ? `Polar surface ${tpsa} Å²: large, so it is absorbed from the gut less easily.` : `Polar surface ${tpsa} Å²: moderate.`);
+  if (w) out.push(w <= 500 ? `Weight ${w} g/mol: a typical size for a tablet medicine.` : `Weight ${w} g/mol: larger than most tablet medicines.`);
+  return out;
+}
+function props(m) {
+  const P = m.props || {}, rows = [['Formula', P.MolecularFormula], ['Weight', P.MolecularWeight && P.MolecularWeight + ' g/mol'], ['logP', P.XLogP], ['Polar surface', P.TPSA != null && P.TPSA + ' Å²'], ['H-bond donors', P.HBondDonorCount], ['H-bond acceptors', P.HBondAcceptorCount]].filter(r => r[1] != null && r[1] !== false);
+  const ex = explain(P);
+  return (rows.length ? '<dl>' + rows.map(([k, v]) => `<dt>${k}</dt><dd>${h(v)}</dd>`).join('') + '</dl>' : '')
+    + (ex.length ? `<details class="ex"><summary>What these numbers mean</summary><ul>${ex.map(x => `<li>${h(x)}</li>`).join('')}</ul></details>` : '');
+}
+const img2d = name => `<figure class="s2d"><img src="https://pubchem.ncbi.nlm.nih.gov/rest/pug/compound/name/${encodeURIComponent(name)}/PNG?image_size=300x300" alt="2D skeletal structure of ${h(name)}" loading="lazy" width="150" height="150" onerror="this.parentNode.remove()"><figcaption>2D structure</figcaption></figure>`;
+function molecules(data) {
+  const my = gen;
+  $('mols').innerHTML = '<h2 class="sec">3D molecules · drag to rotate, double-click to pause</h2><div class="mols">' + data.drugs.map((d, i) => `<article class="mc" id="mc${i}" style="--delay:${i * .1}s"><h3>${h(d.display)}</h3><canvas width="520" height="520" aria-label="3D structure of ${h(d.display)}"></canvas><p class="note2">Loading structure from PubChem…</p></article>`).join('') + '</div>';
+  data.drugs.forEach(async (d, i) => {
+    const card = $('mc' + i), m = await Mol3D.load(d.name);
+    if (my !== gen) return;
+    if (!m) { card.querySelector('canvas').remove(); card.querySelector('.note2').textContent = 'No structure found in PubChem for this name.'; return; }
+    const v = new Mol3D.Viewer(card.querySelector('canvas'), m); viewers.push(v);
+    card.querySelector('.note2').outerHTML = `<div class="ctl"><button type="button" aria-pressed="true" data-m="stick">Ball &amp; stick</button><button type="button" aria-pressed="false" data-m="fill">Space-filling</button><label><input type="checkbox"> Hydrogens</label></div>${img2d(d.name)}${props(m)}<p class="note2">${m.flat ? '2D layout only: PubChem has no 3D conformer for this compound. ' : 'Computed 3D conformer. '}Source: PubChem.</p>`;
+    card.querySelectorAll('[data-m]').forEach(b => b.onclick = () => { v.mode = b.dataset.m; card.querySelectorAll('[data-m]').forEach(x => x.setAttribute('aria-pressed', x === b)); v.draw(); });
+    card.querySelector('input').onchange = e => { v.hydrogens = e.target.checked; v.draw(); };
+  });
+}
+$('svg').addEventListener('click', e => { const g = e.target.closest('.node'); if (g && g.dataset.i) $('mc' + g.dataset.i)?.scrollIntoView({behavior: 'smooth', block: 'center'}); });
+$('try').onclick = e => { if (e.target.tagName === 'BUTTON') { keep = []; tray(); ask(e.target.textContent); } };
+
+function pick(k) {
+  const p = last.pairs[k];
+  document.querySelectorAll('.edge').forEach(e => e.classList.toggle('sel', +e.dataset.k === k));
+  document.querySelectorAll('.pc').forEach(e => e.classList.toggle('sel', +e.dataset.k === k));
+  const quote = e => {
+    const re = new RegExp(e.match.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+    const m = re.exec(e.text), t = m ? h(e.text.slice(0, m.index)) + '<mark>' + h(m[0]) + '</mark>' + h(e.text.slice(m.index + m[0].length)) : h(e.text);
+    return `<blockquote>${t}<footer>${h(e.from)} label · ${h(e.section)}${e.kind === 'class' ? ` · matches ${h(e.about)}'s drug class` : ''} · <a href="${h(e.url)}" target="_blank" rel="noopener">open on DailyMed</a></footer></blockquote>`;
+  };
+  $('detail').innerHTML = `<div class="detail" style="--c:var(--${p.level})"><div class="lv">${h(last.levels[p.level])}</div><h3>${h(p.a)} + ${h(p.b)}</h3>${(() => { const f = last.findings?.find(x => x.a === p.a && x.b === p.b); return f ? partsHTML(f).replace('class="sp"', 'class="sp big"') : ''; })()}<div id="cmpHost"></div>${
+    p.evidence.length ? p.evidence.map(quote).join('') : `<p>${p.level === 'unknown' ? 'A label could not be retrieved for at least one of these, so this pair was not checked.' : 'Neither FDA label mentions the other medicine or its drug class in its contraindication, warning or interaction sections. Labels are not complete lists of interactions, and supplements, herbal products and foods are not covered, so this is not proof the pair is safe. Ask a pharmacist.'}</p>`}</div>`;
+  compare(p);
+  $('detail').querySelector('.detail').insertAdjacentHTML('beforeend', `<details class="report"><summary>Report a problem with this answer</summary>
+    <form id="fb"><label>What is wrong? <select name="reason"><option value="wrong-severity">Severity looks wrong</option><option value="missed-interaction">An interaction is missing</option><option value="wrong-medicine">Wrong medicine recognised</option><option value="quote-wrong">Quote or source is wrong</option><option value="unclear">Hard to understand</option><option value="other">Something else</option></select></label>
+    <label>Details (optional, no personal information) <textarea name="comment" maxlength="300" rows="2"></textarea></label>
+    <button type="submit">Send report</button> <span class="fbmsg" aria-live="polite"></span></form></details>`);
+  $('fb').onsubmit = async ev => {
+    ev.preventDefault(); const fd = new FormData(ev.target), msg = ev.target.querySelector('.fbmsg');
+    try {
+      const r = await fetch('/api/feedback', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ pair: `${p.a} + ${p.b}`, level: p.level, engine: last.mode, reason: fd.get('reason'), comment: fd.get('comment') }) });
+      msg.textContent = r.ok ? 'Thank you — the report was saved for review.' : 'Could not send the report.'; if (r.ok) ev.target.querySelector('button').disabled = true;
+    } catch { msg.textContent = 'Could not send the report.'; }
+  };
+}
+
+async function compare(p) {
+  const my = gen, host = $('cmpHost'); if (!host) return;
+  const ds = [p.a, p.b].map(n => last.drugs.find(d => d.display === n)), ms = await Promise.all(ds.map(d => Mol3D.load(d.name)));
+  if (my !== gen || !ms[0] || !ms[1] || !$('cmpHost')) return;
+  host.innerHTML = `<div class="cmp">${ds.map(d => `<div><h4>${h(d.display)}</h4><canvas width="420" height="420" aria-label="3D structure of ${h(d.display)}"></canvas></div>`).join('')}<p class="note2">Side by side with linked rotation. Structures are computed conformers from PubChem. This does not show how the medicines interact.</p></div>`;
+  const sync = {ay: 0, ax: -.35}, cs = host.querySelectorAll('canvas');
+  viewers = viewers.filter(v => !v.cmp);
+  ms.forEach((m, i) => { const v = new Mol3D.Viewer(cs[i], m, {sync}); v.cmp = true; viewers.push(v); });
+}
+$('svg').addEventListener('click', e => { const g = e.target.closest('.edge'); if (g) pick(+g.dataset.k); });
+$('svg').addEventListener('keydown', e => { const g = e.target.closest('.edge'); if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); pick(+g.dataset.k); } });
+$('tries').onclick = e => { if (e.target.tagName === 'BUTTON') { keep = []; tray(); ask(e.target.textContent); } };
+// Autocomplete: 17k RxNorm display names (static file, cached by the CDN), matched against the word being typed.
+let NAMES = null, namesLoading = null;
+const loadNames = () => namesLoading || (namesLoading = fetch('/names.json').then(r => r.json()).then(n => NAMES = n).catch(() => NAMES = []));
+$('q').addEventListener('focus', loadNames, { once: true });
+$('q').addEventListener('input', () => {
+  if (!NAMES) return;
+  const v = $('q').value, m = /([a-z][a-z0-9'-]*)$/i.exec(v);
+  if (!m || m[1].length < 2) { $('names').innerHTML = ''; return; }
+  const head = v.slice(0, m.index), t = m[1].toLowerCase(), out = [];
+  for (const n of NAMES) { if (n.startsWith(t) && n !== t) { out.push(n); if (out.length === 8) break; } }
+  $('names').innerHTML = out.map(n => `<option value="${h(head + n)}">`).join('');
+});
+
+// ---- Printable report ----
+function report() {
+  if (!last) return;
+  const d = new Date().toLocaleString(), lv = l => ({ contraindicated: '#b3121d', major: '#c2410c', moderate: '#7a5a00', class: '#2b62a0', none: '#5f6a5f', unknown: '#6f6a5e' })[l];
+  const pairs = [...(last.findings || [])].sort((x, y) => RANK.indexOf(x.level) - RANK.indexOf(y.level));
+  const html = `<!doctype html><html><head><meta charset="utf-8"><title>Pharvel report — ${h(last.drugs.map(x => x.display).join(', '))}</title>
+<style>body{font:13px/1.5 "Helvetica Neue",Arial,sans-serif;color:#141414;max-width:760px;margin:28px auto;padding:0 20px}h1{font-size:22px;margin:0}h2{font-size:15px;margin:22px 0 8px;border-bottom:2px solid #141414;padding-bottom:4px}
+.meta{color:#5d5a52;font-size:12px}.pair{border-left:6px solid var(--c);padding:8px 12px;margin:10px 0;break-inside:avoid}.pair b{font-size:14px}.lv{font-size:11px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--c);margin-left:8px}
+.plain{font-weight:700;margin:4px 0}.part{margin:3px 0}.part:first-of-type{font-weight:700}q{display:block;margin:6px 0;padding:6px 10px;background:#f5f2ea;border-left:3px solid var(--c)}.src{font-size:11.5px;color:#5d5a52}.drug{margin:6px 0;break-inside:avoid}.box{border:2px solid #141414;padding:10px 12px;margin-top:24px;font-size:12px}
+@media print{a{color:inherit;text-decoration:none}.noprint{display:none}}</style></head><body>
+<div class="noprint" style="margin-bottom:14px"><button onclick="print()" style="padding:8px 16px;font-weight:700">Print / save as PDF</button></div>
+<h1>Pharvel medicine check</h1><div class="meta">Prepared ${h(d)} · Medicines: ${h(last.drugs.map(x => x.display).join(', '))} · Sources: FDA labels (openFDA / DailyMed), FDA CYP/transporter interaction table, FDA Adverse Event Reporting System (openFDA)</div>
+<h2>Interactions, most serious first</h2>${pairs.map(f => `<div class="pair" style="--c:${lv(f.level)}"><b>${h(f.a)} + ${h(f.b)}</b><span class="lv">${h(f.label)}</span>${(f.summaryParts || []).map(x => `<div class="part"><b>${h(x.k)}:</b> ${h(x.v)}</div>`).join('')}<div class="src" style="margin-top:6px">${h(f.text)}</div>${f.quote ? `<q>${h(f.quote)}</q><div class="src">${h(f.from)} label · ${h(f.section)} · ${h(f.url)}</div>` : ''}${f.also ? `<div class="src">${h(f.also)}</div>` : ''}</div>`).join('')}
+<h2>Medicines</h2>${last.drugs.map(x => `<div class="drug"><b>${h(x.display)}</b>${x.brands.length ? ' · ' + h(x.brands.join(', ')) : ''}${x.classes.length ? ' · ' + h(x.classes.join(', ')) : ''}<div class="src">${x.source ? h(x.source.title) + (x.source.date ? ', label dated ' + h(x.source.date) : '') + ' · ' + h(x.source.url) : 'No FDA label found.'}</div></div>`).join('')}
+<div class="box"><b>Not medical advice.</b> This report quotes FDA drug labels only. It does not know your doses, conditions or other medicines, and supplements, herbal products and foods are not covered. A pair with nothing found is not confirmed safe. Please review it with a pharmacist or prescriber.</div>
+</body></html>`;
+  const w = window.open('', '_blank'); if (!w) return alert('Allow pop-ups to open the report.');
+  w.document.open(); w.document.write(html); w.document.close();
+}
+$('summary').onclick = e => { if (e.target.id === 'report') report(); };
+
+$('form').onsubmit = e => { e.preventDefault(); const v = $('q').value.trim(); if (!v) return; $('q').value = ''; ask(v); };
+ghost();
+try { const saved = JSON.parse(localStorage.getItem('pharvel.keep') || '[]'); if (Array.isArray(saved) && saved.length) { keep = saved.slice(0, 6); tray(); ask('', true); } } catch {}
+say('Tell me which medicines you want checked together. I look each one up in its FDA label and show you exactly what the labels say about the others.');
+</script>
+</body>
+</html>

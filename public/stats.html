@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pharvel — usage</title>
+<meta name="robots" content="noindex">
+<link rel="icon" href="/brand/logo-mark.svg" type="image/svg+xml">
+<style>
+:root{--paper:#f5f2ea;--card:#fffdf8;--ink:#141414;--soft:#5d5a52;--hair:#d9d4c6;--accent:#0b6b57}
+@media (prefers-color-scheme:dark){:root{--paper:#14140f;--card:#1d1d17;--ink:#f1eee4;--soft:#a8a394;--hair:#3a392f;--accent:#4fd1b1}}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.5 "Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:28px 20px 60px}
+a{color:inherit}
+h1{font-size:28px;font-weight:900;letter-spacing:-.02em;margin:0 0 4px}
+.sub{color:var(--soft);margin:0 0 24px;font-size:14px}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.tile{background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:16px}
+.tile b{display:block;font-size:34px;font-weight:900;letter-spacing:-.03em;line-height:1.1}
+.tile span{color:var(--soft);font-size:13px}
+h2{font-size:13px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);margin:30px 0 10px}
+.bars{display:flex;gap:8px;align-items:flex-end;height:120px;background:var(--card);border:1px solid var(--hair);border-radius:12px;padding:14px}
+.bar{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px;font-size:11px;color:var(--soft);height:100%}
+.bar i{display:block;width:100%;background:var(--accent);border-radius:4px 4px 0 0;min-height:2px}
+table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--hair);border-radius:12px;overflow:hidden}
+td{padding:9px 14px;border-top:1px solid var(--hair);font-size:14px}
+td:last-child{text-align:right;font-weight:700}
+.note{color:var(--soft);font-size:13px;margin-top:20px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Pharvel usage</h1>
+  <p class="sub">Aggregate counts only. No questions, addresses or personal data are stored. <a href="/">Back to site</a></p>
+  <div class="tiles" id="tiles"></div>
+  <h2>Checks, last 7 days</h2>
+  <div class="bars" id="bars"></div>
+  <h2>Safety signals</h2>
+  <table id="safety"></table>
+  <h2>Most-checked pairs</h2>
+  <table id="pairs"></table>
+  <p class="note" id="note"></p>
+</div>
+<script>
+const h = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+fetch('/api/stats').then(r => r.json()).then(s => {
+  if (s.error) throw new Error(s.error);
+  const tile = (n, l) => `<div class="tile"><b>${h(n)}</b><span>${h(l)}</span></div>`;
+  document.getElementById('tiles').innerHTML = tile(s.checks.today, 'checks today') + tile(s.visitorsToday, 'visitors today') + tile(s.checks.total, 'checks all time')
+    + tile(s.answeredFromCache, 'answered from cache') + tile(s.aiExplanations, 'AI explanations (billed)');
+  const max = Math.max(1, ...s.checks.last7.map(d => d.checks));
+  document.getElementById('bars').innerHTML = s.checks.last7.map(d => `<div class="bar" title="${h(d.day)}: ${d.checks}"><i style="height:${Math.round(d.checks / max * 100)}%"></i>${h(d.day.slice(5))}<br>${d.checks}</div>`).join('');
+  document.getElementById('pairs').innerHTML = s.topPairs.length ? s.topPairs.map(p => `<tr><td>${h(p.pair)}</td><td>${p.checks}</td></tr>`).join('') : '<tr><td>No checks yet.</td><td></td></tr>';
+  const g = s.guardrails || {}, md = s.modes || {}, fb = s.feedback || { byReason: {} };
+  document.getElementById('safety').innerHTML = [['Emergency messages answered with emergency guidance', g.emergency], ['Dosing questions given the ask-a-pharmacist notice', g.dosing], ['Out-of-scope notices (pregnancy, children, kidney, liver, older adults)', g.scope], ['Prompt-injection attempts flagged', g.injection],
+    ['Answers assembled by rules (no AI)', md.extractive], ['AI explanations shown', md.llm], ['AI explanations rejected by the faithfulness check', md['llm-rejected']], ['User problem reports', fb.total],
+    ...Object.entries(fb.byReason).filter(([, v]) => v).map(([k, v]) => ['  · ' + k.replace(/-/g, ' '), v])].map(([k, v]) => `<tr><td>${h(k)}</td><td>${v ?? 0}</td></tr>`).join('');
+  document.getElementById('note').textContent = (s.note ? s.note + ' ' : '') + `Each visitor gets ${s.freeChecksPerDay} free checks per day. Counter store: ${s.store}.`;
+}).catch(e => document.getElementById('note').textContent = 'Could not load stats: ' + e.message);
+</script>
+</body>
+</html>

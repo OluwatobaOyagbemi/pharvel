@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Limitations — Pharvel</title>
+<link rel="icon" href="/brand/logo-mark.svg" type="image/svg+xml">
+<style>
+:root{--paper:#f5f2ea;--card:#fffdf8;--ink:#141414;--soft:#5d5a52;--hair:#d9d4c6;--accent:#0b6b57}
+@media (prefers-color-scheme:dark){:root{--paper:#14140f;--card:#1d1d17;--ink:#f1eee4;--soft:#a8a394;--hair:#3a392f;--accent:#4fd1b1}}
+body{margin:0;background:var(--paper);color:var(--ink);font:16px/1.6 "Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:760px;margin:0 auto;padding:32px 20px 64px}
+a{color:inherit} h1{font-size:32px;letter-spacing:-.02em;margin:0 0 6px} h2{font-size:19px;margin:28px 0 8px}
+.sub{color:var(--soft);margin:0 0 20px} li{margin:4px 0} .box{border:2px solid var(--ink);padding:12px 16px;background:var(--card);margin:18px 0}
+nav{font-size:14px;margin-bottom:24px} nav a{margin-right:14px}
+</style>
+</head>
+<body><div class="wrap">
+<nav><a href="/">Pharvel</a><a href="/app.html">Checker</a><a href="/limitations.html">Limitations</a><a href="/privacy.html">Privacy</a><a href="/terms.html">Terms</a></nav>
+<h1>Limitations</h1><p class="sub">Last updated 17 October 2026</p>
+<div class="box"><b>Pharvel is not medical advice.</b> It shows what US FDA drug labels and FDA tables say. Always ask a pharmacist or prescriber before starting, stopping or changing a medicine. In an emergency, call your local emergency number.</div>
+<h2>What Pharvel does</h2>
+<ul><li>Finds each medicine you name (brand or generic) using NIH RxNorm.</li><li>Quotes the passage in each FDA label that mentions the other medicine or its drug class, with a link to the label.</li><li>Adds a fixed plain-language summary, the enzyme mechanism listed by FDA where one applies, and how many FDA adverse-event reports list both medicines.</li></ul>
+<h2>What it does not cover</h2>
+<ul><li><b>Doses</b> — it never gives or adjusts doses.</li><li><b>Your situation</b> — pregnancy, breastfeeding, children, older age, kidney or liver disease, allergies and genetics can all change the risk. Labels have separate warnings for these that this check does not apply.</li><li><b>Supplements, herbal products and foods</b> — only where an FDA label or FDA table names them.</li><li><b>Medicines outside the US</b> — products and labels in other countries can differ.</li><li><b>Completeness</b> — labels do not list every interaction. "Nothing found" means the labels checked do not mention it; it does not mean the combination is safe.</li></ul>
+<h2>How well it works</h2>
+<p>Pharvel is tested against reference drug pairs with known answers, including a held-out set written before its first run, and compared with an independent research database of drug interactions. <b>Across three separate comparisons, Pharvel flagged 82–86% of the interactions that database rates as major, so roughly 1 in 6 serious interactions was shown as "nothing found".</b> This is the main reason a "nothing found" result must never be taken as safe. The reference sets have not yet been reviewed by a pharmacist.</p>
+<h2>Severity labels</h2>
+<p>"Contraindicated" and "Serious warning" come from the label's contraindication and boxed-warning sections or serious wording; "Interaction documented" means the label mentions the combination; "Class-level mention" means the label names the drug class, not the medicine. These follow label wording, which is not a clinical severity scale.</p>
+<h2>Something wrong?</h2>
+<p>Use "Report a problem with this answer" under any result. Reports are reviewed weekly; serious errors the same day.</p>
+</div></body></html>

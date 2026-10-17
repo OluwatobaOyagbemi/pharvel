@@ -1,0 +1,8 @@
+node_modules
+.vercel
+.env*
+evals/.cache
+skills-lock.json
+.agents/
+.claude/
+evals/results/benchmark-*.json

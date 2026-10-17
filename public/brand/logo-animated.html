@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pharvel — animated logo</title>
+<style>
+  :root { --paper:#f5f2ea; --ink:#141414; --accent:#0b6b57; }
+  @media (prefers-color-scheme: dark) { :root { --paper:#14140f; --ink:#f1eee4; --accent:#4fd1b1; } }
+  html,body { margin:0; height:100%; background:var(--paper); }
+  body { display:grid; place-items:center; font-family:"Helvetica Neue",Arial,sans-serif; }
+  .logo { display:flex; align-items:center; gap:8px; }
+  canvas { width:200px; height:200px; cursor:grab; touch-action:none; }
+  canvas:active { cursor:grabbing; }
+  .word { color:var(--ink); font-size:64px; line-height:1; letter-spacing:-1px; }
+  .word b { font-weight:800; }
+  .word span { color:var(--accent); font-weight:400; }
+  .rule { height:7px; background:var(--ink); margin-top:10px; transform-origin:left; animation:rule 1s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes rule { from { transform:scaleX(0); } }
+  @media (prefers-reduced-motion: reduce) { .rule { animation:none; } }
+  @media (max-width:560px) { .word { font-size:40px; } canvas { width:130px; height:130px; } }
+</style>
+</head>
+<body>
+<div class="logo" role="img" aria-label="Pharvel">
+  <canvas id="mol" width="400" height="400"></canvas>
+  <div><div class="word"><b>Phar</b><span>vel</span></div><div class="rule"></div></div>
+</div>
+<script src="molecule.js"></script>
+</body>
+</html>
