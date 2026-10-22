@@ -54,8 +54,9 @@ export default async function handler(req, res) {
     if (injection(message)) result.guardrails.push('injection');
     if (distress(message)) {
       result.guardrails.push('help');
-      if (!result.drugs.length) { result.mode = 'help'; result.answer = HELP_TEXT.urgent + '\n' + HELP_TEXT.how; result.helpText = HELP_TEXT; }
-      else { result.helpNotice = HELP_TEXT.note; result.answer = HELP_TEXT.note + '\n' + result.answer; }
+      // Someone describing symptoms without naming a medicine gets help, not a re-check of their saved list.
+      if (!result.messageDrugs) { store.incr('st:guard:help').catch(() => {}); return res.status(200).json({ mode: 'help', guardrails: result.guardrails, helpText: HELP_TEXT, answer: HELP_TEXT.urgent + '\n' + HELP_TEXT.how, drugs: [], pairs: [], findings: [], free, engineVersion: result.engineVersion }); }
+      result.helpNotice = HELP_TEXT.urgent; result.answer = HELP_TEXT.urgent + '\n' + result.answer;
     }
     const sc = scope(message);
     if (sc) { result.guardrails.push('scope'); result.scopeNotice = sc.notice; result.answer = sc.notice + '\n' + result.answer; }

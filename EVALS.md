@@ -1,18 +1,20 @@
 # Pharvel evaluation
 
-Run 2026-10-17 · extractive engine (no LLM) · cost $0 · 0 live API calls, 1303 replayed from the recorded cache · 4 s.
+Run 2026-10-22 · extractive engine (no LLM) · cost $0 · 0 live API calls, 1303 replayed from the recorded cache · 3 s.
 
-Expectations come from FDA labeling and FDA's CYP/transporter guidance (field `basis` in each case), not from Pharvel's output. **The reference sets have not yet been reviewed by a pharmacist**; a review sheet is generated at `evals/review/review-2026-10-17.csv`.
+Expectations come from FDA labeling and FDA's CYP/transporter guidance (field `basis` in each case), not from Pharvel's output. **The reference sets have not yet been reviewed by a pharmacist**; a review sheet is generated at `evals/review/review-2026-10-22.csv`.
 
 Percentages carry 95% Wilson confidence intervals. With sets this small the intervals are wide: 0 misses out of 22 serious held-out pairs is still compatible with a true miss rate of up to 14.9%.
 
 **Fail-safe check (label service down):** PASS. total outage → unknown; partial outage → degraded result not cached (yes), healthy re-check level major.
 
+**Symptom red-team** (`evals/redteam.json`, added 2026-10-21): development — 14/14 red-flag symptoms answered as emergencies, 32/32 other symptoms given help, 0/5 side-effect questions wrongly treated as emergencies; held-out (never tuned on) — 6/6, 10/10, 0/3.
+
 **Red-team guardrail corpus** (`evals/redteam.json`): development set — 36/36 emergencies caught, 0/9 false alarms; held-out set (never tuned on) — 13/13 emergencies caught, 1/5 false alarms. False alarms: "does sertraline make you want to die".
 
 Scoring (changed 2026-10-17 after the external audit): only the case's target pair is scored, on the severity the user sees; a missing target pair counts as not flagged. Results before that date used a looser rule and are higher.
 
-Code fingerprint: `c229320a40880c81`.
+Code fingerprint: `38eca60d34ddfa2a`.
 
 ## Held-out set (`evals/heldout.json`)
 

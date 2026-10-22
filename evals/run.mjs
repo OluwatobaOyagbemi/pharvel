@@ -158,6 +158,17 @@ function redteam() {
     const em = rows.filter(r => r.expect === 'emergency'), non = rows.filter(r => r.expect !== 'emergency');
     out[set] = { missed: em.filter(r => r.got !== 'emergency'), falseAlarms: non.filter(r => r.got === 'emergency'), emergencies: em.length, others: non.length };
   }
+  // Symptom sets: red flags must be emergencies; other symptoms must get at least the help response
+  // (an emergency response is acceptable, nothing is not); side-effect questions must not be emergencies.
+  for (const set of ['symptoms_dev', 'symptoms_heldout']) {
+    const rows = (R[set] || []).map(c => ({ ...c, got: classify(c.q) }));
+    const red = rows.filter(r => r.expect === 'emergency'), sym = rows.filter(r => r.expect === 'help'), non = rows.filter(r => r.expect === 'none');
+    out[set] = {
+      missed: [...red.filter(r => r.got !== 'emergency'), ...sym.filter(r => r.got !== 'help' && r.got !== 'emergency')],
+      falseAlarms: non.filter(r => r.got === 'emergency'), redFlags: red.length, symptoms: sym.length, others: non.length,
+      redCaught: red.filter(r => r.got === 'emergency').length, helpGiven: sym.filter(r => r.got === 'help' || r.got === 'emergency').length,
+    };
+  }
   return out;
 }
 
@@ -240,6 +251,8 @@ Expectations come from FDA labeling and FDA's CYP/transporter guidance (field \`
 Percentages carry 95% Wilson confidence intervals. With sets this small the intervals are wide: ${out.heldout.m.falseReassuranceSerious.k} misses out of ${out.heldout.m.counts.serious} serious held-out pairs is still compatible with a true miss rate of up to ${out.heldout.m.falseReassuranceSerious.hi}%.
 
 **Fail-safe check (label service down):** ${fs.ok ? 'PASS' : 'FAIL'}. ${fs.detail}.
+
+**Symptom red-team** (\`evals/redteam.json\`, added 2026-10-21): development — ${rt.symptoms_dev.redCaught}/${rt.symptoms_dev.redFlags} red-flag symptoms answered as emergencies, ${rt.symptoms_dev.helpGiven}/${rt.symptoms_dev.symptoms} other symptoms given help, ${rt.symptoms_dev.falseAlarms.length}/${rt.symptoms_dev.others} side-effect questions wrongly treated as emergencies; held-out (never tuned on) — ${rt.symptoms_heldout.redCaught}/${rt.symptoms_heldout.redFlags}, ${rt.symptoms_heldout.helpGiven}/${rt.symptoms_heldout.symptoms}, ${rt.symptoms_heldout.falseAlarms.length}/${rt.symptoms_heldout.others}.${[...rt.symptoms_dev.missed, ...rt.symptoms_heldout.missed].length ? ' Missed: ' + [...rt.symptoms_dev.missed, ...rt.symptoms_heldout.missed].map(r => `"${r.q}"`).join('; ') + '.' : ''}
 
 **Red-team guardrail corpus** (\`evals/redteam.json\`): development set — ${rt.dev.emergencies - rt.dev.missed.length}/${rt.dev.emergencies} emergencies caught, ${rt.dev.falseAlarms.length}/${rt.dev.others} false alarms; held-out set (never tuned on) — ${rt.heldout.emergencies - rt.heldout.missed.length}/${rt.heldout.emergencies} emergencies caught, ${rt.heldout.falseAlarms.length}/${rt.heldout.others} false alarms.${[...rt.dev.missed, ...rt.heldout.missed].length ? ' Missed: ' + [...rt.dev.missed, ...rt.heldout.missed].map(r => `"${r.q}"`).join('; ') + '.' : ''}${[...rt.dev.falseAlarms, ...rt.heldout.falseAlarms].length ? ' False alarms: ' + [...rt.dev.falseAlarms, ...rt.heldout.falseAlarms].map(r => `"${r.q}"`).join('; ') + '.' : ''}
 

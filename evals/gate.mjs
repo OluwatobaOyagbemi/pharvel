@@ -18,6 +18,11 @@ const hash = h.digest('hex').slice(0, 16);
 check(R.codeHash === hash, `results in ${latest} were produced by different code (${R.codeHash || 'none'} vs ${hash}); run npm run eval`);
 if (R.redteam) for (const set of ['dev', 'heldout']) check(R.redteam[set].missed.length === 0, `red-team ${set}: ${R.redteam[set].missed.length} emergency message(s) missed`);
 if (R.redteam) check(R.redteam.dev.falseAlarms.length === 0, `red-team dev: ${R.redteam.dev.falseAlarms.length} false alarm(s)`);
+if (R.redteam) for (const set of ['symptoms_dev', 'symptoms_heldout']) {
+  check(!!R.redteam[set], `symptom red-team set ${set} missing from results`);
+  if (R.redteam[set]) check(R.redteam[set].missed.length === 0, `${set}: ${R.redteam[set].missed.length} symptom message(s) without the right response: ${R.redteam[set].missed.map(r => r.q).join('; ')}`);
+}
+if (R.redteam?.symptoms_dev) check(R.redteam.symptoms_dev.falseAlarms.length === 0, `symptoms_dev: side-effect questions treated as emergencies`);
 
 if (!R.sets) fails.push(`${latest} predates the two-set format; run npm run eval`);
 else for (const set of ['dev', 'heldout']) {

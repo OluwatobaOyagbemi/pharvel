@@ -38,6 +38,14 @@ assert.ok(emergency('what should I do, I took too many of my pills'), 'overdose 
 for (const m of ['please help me', 'help', 'help me please, I feel sick', 'I feel dizzy after my new pill', "I'm scared about taking sertraline"]) assert.ok(distress(m), 'help should trigger: ' + m);
 for (const m of ['warfarin and ibuprofen', 'can I take Zoloft with tramadol?', 'simvastatin with clarithromycin']) assert.ok(!distress(m), 'help should not trigger: ' + m);
 
+// ---- symptoms (owner's report 2026-10-21: "I am feeling weak" got labels instead of help) ----
+for (const m of ['I am feeling weak', 'i feel weak', 'I feel tired all the time', 'my ankles are swollen', "I'm not feeling well", 'my ankles are swollen, could amlodipine do that?', 'I feel dizzy, does lisinopril cause that?'])
+  assert.ok(distress(m) || emergency(m), 'symptom must get help: ' + m);
+for (const m of ['can metformin make you tired? I also take lisinopril', 'does lisinopril cause dizziness, my mom takes it', 'is weakness a side effect of statins', 'warfarin and ibuprofen'])
+  assert.ok(!distress(m) && !emergency(m), 'side-effect question must check normally: ' + m);
+for (const [m, type] of [['my face is drooping on one side', 'stroke signs'], ['my speech is slurred', 'stroke signs'], ['my tongue is swelling', 'allergic reaction'], ['I fainted after taking my pills', 'fainting'], ['worst headache of my life', 'severe headache'], ['my stool is black and tarry', 'internal bleeding'], ["I can't stay awake after my oxycodone", 'over-sedation']])
+  assert.ok(emergency(m)?.types.includes(type), `red flag must be an emergency (${type}): ${m}`);
+
 // ---- scope ----
 assert.deepEqual(scope("I'm pregnant, can I take sertraline with tramadol").groups, ['pregnancy']);
 assert.deepEqual(scope('my 4-year-old has amoxicillin and ibuprofen').groups, ['child']);

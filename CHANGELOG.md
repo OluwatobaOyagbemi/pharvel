@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-21 (symptom guardrails)
+- Found by the owner: "I am feeling weak" got no help response, and the saved medicines were re-checked instead. Two fixes:
+  1. Symptoms: red-flag symptoms are now emergencies (stroke signs, severe allergic reaction, fainting, worst-ever headache, internal bleeding, over-sedation); everyday symptoms (weak, tired, dizzy, nauseous, rash, fever, numbness, "not feeling well"…) get urgent-help routes. Questions about side effects ("can metformin make you tired?") still get a normal check.
+  2. A message describing symptoms without naming a medicine returns help only and does not re-check the saved list; with medicines named, a prominent help box appears above the check.
+- New symptom red-team sets (dev 51, held-out 19, held-out written before the fix): baseline 9/51 and 7/19; after the fix 51/51 and 19/19. Both sets are gated in the release.
+
 ## 2026-10-17 (external audit remediation, engine 20)
 - Independent external audit: 25 findings (1 critical, 8 high). 22 fixed, 2 partly fixed (openFDA key needs the owner; deploys outside `npm run release` still possible), 1 open (quote relevance). Full record: `docs/EXTERNAL_AUDIT_2026-10-17.md`.
 - Critical fix: emergency detection rewritten and gated by a red-team corpus with a held-out part.
