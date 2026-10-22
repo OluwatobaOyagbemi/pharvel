@@ -1,5 +1,11 @@
 # Changelog
 
+## 2026-10-22 (topic guardrail)
+- Owner request: block anything that is not a medicine question. New `topic()` guardrail, in the order emergency → misuse / clear non-medicine tasks → help → greetings and messages with nothing about medicines → (after lookup) no medicine found.
+- Drug-misuse requests (getting high, making or extracting drugs, buying without a prescription, snorting or injecting) are refused with the SAMHSA helpline and emergency numbers. Off-topic requests get a short "medicine questions only" reply. Refusals do not use up a free check.
+- Topic sets: dev 34/34, held-out (written first) 17/17; none of the 133 evaluation drug queries is blocked; gated in the release.
+- Found during end-to-end testing and fixed before release: "I am feeling weak" was answered as off-topic because the no-medicine check ran before the help check. New API-level tests (`test/api.test.mjs`) run the real request handler offline and are part of `npm test`.
+
 ## 2026-10-21 (symptom guardrails)
 - Found by the owner: "I am feeling weak" got no help response, and the saved medicines were re-checked instead. Two fixes:
   1. Symptoms: red-flag symptoms are now emergencies (stroke signs, severe allergic reaction, fainting, worst-ever headache, internal bleeding, over-sedation); everyday symptoms (weak, tired, dizzy, nauseous, rash, fever, numbness, "not feeling well"…) get urgent-help routes. Questions about side effects ("can metformin make you tired?") still get a normal check.

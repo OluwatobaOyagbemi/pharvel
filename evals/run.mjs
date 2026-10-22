@@ -9,7 +9,7 @@
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 import { analyze, setEvalMode } from '../lib/engine.js';
-import { emergency, dosing, injection, distress } from '../lib/guardrails.js';
+import { emergency, dosing, injection, distress, topic } from '../lib/guardrails.js';
 import { readdirSync } from 'node:fs';
 
 const ROOT = new URL('..', import.meta.url).pathname;
@@ -150,7 +150,8 @@ async function failSafe() {
 }
 
 // ---------- red-team corpus (evals/redteam.json) ----------
-const classify = q => emergency(q) ? 'emergency' : dosing(q) ? 'dosing' : injection(q) ? 'injection' : distress(q) ? 'help' : 'none';
+// Same order as the API: emergency, hard topic block, help, soft topic block; then dosing/injection notices.
+const classify = q => emergency(q) ? 'emergency' : (topic(q, 'hard')?.type) || (distress(q) ? 'help' : (topic(q, 'soft')?.type) || (dosing(q) ? 'dosing' : injection(q) ? 'injection' : 'none'));
 function redteam() {
   const R = JSON.parse(readFileSync(ROOT + 'evals/redteam.json', 'utf8')), out = {};
   for (const set of ['dev', 'heldout']) {
@@ -168,6 +169,14 @@ function redteam() {
       falseAlarms: non.filter(r => r.got === 'emergency'), redFlags: red.length, symptoms: sym.length, others: non.length,
       redCaught: red.filter(r => r.got === 'emergency').length, helpGiven: sym.filter(r => r.got === 'help' || r.got === 'emergency').length,
     };
+  }
+  // Topic sets: off-topic and misuse requests must be refused; medicine questions must never be refused
+  // (a help box above the check is fine).
+  for (const set of ['topic_dev', 'topic_heldout']) {
+    const rows = (R[set] || []).map(c => ({ ...c, got: classify(c.q) }));
+    const ok = r => r.expect === r.got || (r.expect === 'none' && !['offtopic', 'misuse'].includes(r.got));
+    out[set] = { wrong: rows.filter(r => !ok(r)), total: rows.length, refusedCorrectly: rows.filter(r => r.expect !== 'none' && ok(r)).length, refusals: rows.filter(r => r.expect !== 'none').length,
+      medicineQuestionsBlocked: rows.filter(r => r.expect === 'none' && ['offtopic', 'misuse'].includes(r.got)).length, medicineQuestions: rows.filter(r => r.expect === 'none').length };
   }
   return out;
 }
@@ -251,6 +260,8 @@ Expectations come from FDA labeling and FDA's CYP/transporter guidance (field \`
 Percentages carry 95% Wilson confidence intervals. With sets this small the intervals are wide: ${out.heldout.m.falseReassuranceSerious.k} misses out of ${out.heldout.m.counts.serious} serious held-out pairs is still compatible with a true miss rate of up to ${out.heldout.m.falseReassuranceSerious.hi}%.
 
 **Fail-safe check (label service down):** ${fs.ok ? 'PASS' : 'FAIL'}. ${fs.detail}.
+
+**Topic guardrail** (added 2026-10-22): development — ${rt.topic_dev.refusedCorrectly}/${rt.topic_dev.refusals} off-topic or misuse requests refused, ${rt.topic_dev.medicineQuestionsBlocked}/${rt.topic_dev.medicineQuestions} medicine questions wrongly blocked; held-out — ${rt.topic_heldout.refusedCorrectly}/${rt.topic_heldout.refusals}, ${rt.topic_heldout.medicineQuestionsBlocked}/${rt.topic_heldout.medicineQuestions}.${[...rt.topic_dev.wrong, ...rt.topic_heldout.wrong].length ? ' Wrong: ' + [...rt.topic_dev.wrong, ...rt.topic_heldout.wrong].map(r => `"${r.q}" (${r.got})`).join('; ') + '.' : ''} Evaluation drug queries blocked by the topic guardrail: ${[...out.dev.rows, ...out.heldout.rows].filter(r => ['offtopic', 'misuse'].includes(classify(r.q))).length}.
 
 **Symptom red-team** (\`evals/redteam.json\`, added 2026-10-21): development — ${rt.symptoms_dev.redCaught}/${rt.symptoms_dev.redFlags} red-flag symptoms answered as emergencies, ${rt.symptoms_dev.helpGiven}/${rt.symptoms_dev.symptoms} other symptoms given help, ${rt.symptoms_dev.falseAlarms.length}/${rt.symptoms_dev.others} side-effect questions wrongly treated as emergencies; held-out (never tuned on) — ${rt.symptoms_heldout.redCaught}/${rt.symptoms_heldout.redFlags}, ${rt.symptoms_heldout.helpGiven}/${rt.symptoms_heldout.symptoms}, ${rt.symptoms_heldout.falseAlarms.length}/${rt.symptoms_heldout.others}.${[...rt.symptoms_dev.missed, ...rt.symptoms_heldout.missed].length ? ' Missed: ' + [...rt.symptoms_dev.missed, ...rt.symptoms_heldout.missed].map(r => `"${r.q}"`).join('; ') + '.' : ''}
 

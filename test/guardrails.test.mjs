@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { emergency, dosing, injection, scope, distress, faithfulness } from '../lib/guardrails.js';
+import { emergency, dosing, injection, scope, distress, topic, faithfulness } from '../lib/guardrails.js';
 
 // ---- emergency: must trigger ----
 for (const [msg, type] of [
@@ -45,6 +45,16 @@ for (const m of ['can metformin make you tired? I also take lisinopril', 'does l
   assert.ok(!distress(m) && !emergency(m), 'side-effect question must check normally: ' + m);
 for (const [m, type] of [['my face is drooping on one side', 'stroke signs'], ['my speech is slurred', 'stroke signs'], ['my tongue is swelling', 'allergic reaction'], ['I fainted after taking my pills', 'fainting'], ['worst headache of my life', 'severe headache'], ['my stool is black and tarry', 'internal bleeding'], ["I can't stay awake after my oxycodone", 'over-sedation']])
   assert.ok(emergency(m)?.types.includes(type), `red flag must be an emergency (${type}): ${m}`);
+
+// ---- topic: medicine questions only ----
+for (const m of ['write me a poem about the ocean', 'tell me a joke', 'hi', 'what is the capital of France', 'help me with my history essay', 'write python code to sort a list'])
+  assert.ok((topic(m, 'hard') || topic(m, 'soft'))?.type === 'offtopic', 'must be refused as off-topic: ' + m);
+for (const m of ['how do I get high on codeine', 'where can I buy oxycodone without a prescription', 'can I snort adderall', 'how to make meth'])
+  assert.equal(topic(m, 'hard')?.type, 'misuse', 'must be refused as misuse: ' + m);
+assert.ok(topic('how do I get high on codeine', 'hard').answer.includes('1-800-662-4357'), 'misuse refusal includes the SAMHSA helpline');
+for (const m of ['warfarin and ibuprofen', 'Can I take Zoloft with tramadol?', 'is coffee ok with levothyroxine', 'aspirin', 'Tylenol with alcohol', 'warfrin with ibuprofin', 'is it bad to mix Benadryl and Xanax'])
+  assert.equal(topic(m), null, 'medicine question must not be refused: ' + m);
+assert.equal(topic('I am feeling weak', 'hard'), null, 'symptoms are never refused before the help check');
 
 // ---- scope ----
 assert.deepEqual(scope("I'm pregnant, can I take sertraline with tramadol").groups, ['pregnancy']);

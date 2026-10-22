@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "node test/dev.mjs",
     "dev:mock": "MOCK=1 node test/dev.mjs",
-    "test": "node test/engine.test.mjs && node test/guardrails.test.mjs",
+    "test": "node test/engine.test.mjs && node test/guardrails.test.mjs && node test/api.test.mjs",
     "eval": "node evals/run.mjs",
     "feedback": "node --env-file=.env.local tools/feedback.mjs",
     "gate": "node evals/gate.mjs",

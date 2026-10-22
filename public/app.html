@@ -49,6 +49,7 @@ main{display:grid;grid-template-columns:minmax(320px,440px) 1fr;height:calc(100%
 .sp dd{margin:0 0 2px;font-size:14px;line-height:1.45}
 .sp dt:first-of-type + dd{font-weight:700;font-size:15px}
 .sp.big dd{font-size:15px} .sp.big dt:first-of-type + dd{font-size:17px}
+.offtopic{white-space:pre-line;font-size:14.5px} .offtopic b{display:block;font-size:15.5px;margin-bottom:4px}
 .sos{white-space:pre-line;font-size:15px} .sos.help{margin-bottom:10px;padding:10px 12px;border:2px solid var(--contraindicated);white-space:normal} .sos.help b{color:var(--contraindicated)} .sos b{display:block;font-size:17px;color:var(--contraindicated);margin-bottom:6px}
 .dosing{margin-bottom:10px;padding:8px 10px;border:2px solid var(--major);background:var(--paper);font-size:13.5px;font-weight:700}
 .msg .f .plain{font-size:15px;font-weight:700;margin:4px 0 6px}
@@ -275,6 +276,8 @@ async function ask(message, silent) {
     const fixed = data.corrections?.length ? `<small>Read as: ${h(data.corrections.join(', '))}</small>` : '';
     const more = data.dropped?.length ? `<div class="dosing">Only 6 medicines can be checked at once. <b>Not checked: ${h(data.dropped.join(', '))}.</b> Please check them in a separate question.</div>` : '';
     const src = data.drugs?.some(d => d.source) ? `<small>Sources: ${data.drugs.filter(d => d.source).map(d => `<a href="${h(d.source.url)}" target="_blank" rel="noopener">${h(d.display)} label</a>`).join(' · ')}</small>` : '';
+    if (data.mode === 'misuse') { say(`<div class="sos help" role="alert"><b>Pharvel can’t help with that</b>${h(data.answer)}</div>`); busy = false; $('send').disabled = false; return; }
+    if (data.mode === 'offtopic') { say(`<div class="offtopic"><b>Medicine questions only</b>${h(data.answer)}</div>`); busy = false; $('send').disabled = false; return; }
     if (data.mode === 'help') { say(`<div class="sos help" role="alert"><b>If this is urgent</b>${h(data.helpText.urgent)}</div>${h(data.helpText.how)}${keep.length ? `<br><small>Your saved medicines (${h(keep.join(', '))}) were not re-checked. If you think a medicine is causing how you feel, tell a pharmacist or doctor which ones you take.</small>` : ''}`); busy = false; $('send').disabled = false; return; }
     if (data.mode === 'emergency') { say(`<div class="sos" role="alert"><b>Get help now</b>${h(data.answer)}</div>`, 'err'); busy = false; $('send').disabled = false; return; }
     const dups = (data.duplicates || []).map(d => `<div class="dosing"><b>Same medicine entered more than once:</b> ${h(d.typed.map(t => '“' + t + '”').join(' and '))} ${d.typed.length > 1 ? 'are all' : 'is'} ${h(d.name)}. Taking it from two products can mean a double dose — check with a pharmacist.</div>`).join('');

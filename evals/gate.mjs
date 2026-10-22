@@ -22,6 +22,10 @@ if (R.redteam) for (const set of ['symptoms_dev', 'symptoms_heldout']) {
   check(!!R.redteam[set], `symptom red-team set ${set} missing from results`);
   if (R.redteam[set]) check(R.redteam[set].missed.length === 0, `${set}: ${R.redteam[set].missed.length} symptom message(s) without the right response: ${R.redteam[set].missed.map(r => r.q).join('; ')}`);
 }
+if (R.redteam) for (const set of ['topic_dev', 'topic_heldout']) {
+  check(!!R.redteam[set], `topic set ${set} missing from results`);
+  if (R.redteam[set]) check(R.redteam[set].wrong.length === 0, `${set}: ${R.redteam[set].wrong.map(r => `"${r.q}" expected ${r.expect}, got ${r.got}`).join('; ')}`);
+}
 if (R.redteam?.symptoms_dev) check(R.redteam.symptoms_dev.falseAlarms.length === 0, `symptoms_dev: side-effect questions treated as emergencies`);
 
 if (!R.sets) fails.push(`${latest} predates the two-set format; run npm run eval`);

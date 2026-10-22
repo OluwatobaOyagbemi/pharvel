@@ -1,5 +1,5 @@
 import { analyze } from '../lib/engine.js';
-import { emergency, dosing, injection, scope, distress, DOSING_TEXT, HELP_TEXT } from '../lib/guardrails.js';
+import { emergency, dosing, injection, scope, distress, topic, DOSING_TEXT, HELP_TEXT, OFFTOPIC_TEXT } from '../lib/guardrails.js';
 import { store, day, secondsToMidnightUTC, anon } from '../lib/store.js';
 
 const FREE = (process.env.FREE_CHECKS_PER_DAY != null && process.env.FREE_CHECKS_PER_DAY !== '' ? Number(process.env.FREE_CHECKS_PER_DAY) : 20); // per visitor per UTC day
@@ -24,12 +24,24 @@ export default async function handler(req, res) {
     return res.status(200).json({ mode: 'emergency', emergency: sos.types, answer: sos.answer, drugs: [], pairs: [], findings: [], guardrails: ['emergency'] });
   }
 
+  // Guardrail 2: only medicine questions. Misuse requests and clear non-medicine tasks are refused before the help
+  // check; greetings and messages with nothing about medicines are refused after it (so symptoms still get help).
+  // Refusals never count against the free allowance.
+  // With saved medicines in the tray, a short follow-up ("and this?") may re-check them, but greetings never do.
+  const blocked = topic(message, 'hard') || (!distress(message) ? topic(message, keep.length ? 'greeting' : 'soft') : null);
+  if (blocked) {
+    store.incr('st:guard:' + blocked.type).catch(() => {});
+    return res.status(200).json({ mode: blocked.type, answer: blocked.answer, drugs: [], pairs: [], findings: [], guardrails: [blocked.type] });
+  }
+
   // Daily free allowance per visitor. The address is hashed before it touches the store; if the store is down, nobody is blocked.
   const ip = String(req.headers['x-forwarded-for'] || req.socket?.remoteAddress || '').split(',')[0].trim() || 'unknown';
   const who = await anon(ip), today = day(), resetsIn = secondsToMidnightUTC();
   let used = 0;
   try { used = await store.incr(`rl:${today}:${who}`, resetsIn + 60); } catch {}
   const free = { limit: FREE, remaining: Math.max(0, FREE - used), resetsIn };
+  // Replies that are not a medicine check (help only, off-topic) give the check back.
+  const refund = () => { store.incr(`rl:${today}:${who}`, resetsIn + 60, -1).catch(() => {}); free.remaining = Math.min(FREE, free.remaining + 1); };
   // A call for help is never blocked by the daily limit or a pause: it gets the urgent-help routes instead.
   if ((FREE === 0 || used > FREE) && distress(message)) return res.status(200).json({ mode: 'help', guardrails: ['help'], helpText: HELP_TEXT, answer: HELP_TEXT.urgent + '\n' + HELP_TEXT.how, drugs: [], pairs: [], findings: [], free });
   if (FREE === 0) return res.status(503).json({ error: 'Checks are paused while a problem is being fixed. Please try again later, and ask a pharmacist if you need an answer now.', free });
@@ -51,11 +63,13 @@ export default async function handler(req, res) {
     // because user text never reaches anything that follows instructions except as tagged data.
     result.guardrails = [];
     if (dosing(message)) { result.guardrails.push('dosing'); result.dosingNotice = DOSING_TEXT; result.answer = DOSING_TEXT + '\n' + result.answer; }
+    // Nothing in the message was a medicine, even after spelling correction: answer as off-topic.
+    if (!result.drugs.length && !keep.length && !distress(message)) { refund(); store.incr('st:guard:offtopic').catch(() => {}); return res.status(200).json({ mode: 'offtopic', answer: OFFTOPIC_TEXT + (result.unresolved?.length ? `\n(Not recognised as a medicine: ${result.unresolved.join(', ')}.)` : ''), drugs: [], pairs: [], findings: [], guardrails: ['offtopic'], free }); }
     if (injection(message)) result.guardrails.push('injection');
     if (distress(message)) {
       result.guardrails.push('help');
       // Someone describing symptoms without naming a medicine gets help, not a re-check of their saved list.
-      if (!result.messageDrugs) { store.incr('st:guard:help').catch(() => {}); return res.status(200).json({ mode: 'help', guardrails: result.guardrails, helpText: HELP_TEXT, answer: HELP_TEXT.urgent + '\n' + HELP_TEXT.how, drugs: [], pairs: [], findings: [], free, engineVersion: result.engineVersion }); }
+      if (!result.messageDrugs) { refund(); store.incr('st:guard:help').catch(() => {}); return res.status(200).json({ mode: 'help', guardrails: result.guardrails, helpText: HELP_TEXT, answer: HELP_TEXT.urgent + '\n' + HELP_TEXT.how, drugs: [], pairs: [], findings: [], free, engineVersion: result.engineVersion }); }
       result.helpNotice = HELP_TEXT.urgent; result.answer = HELP_TEXT.urgent + '\n' + result.answer;
     }
     const sc = scope(message);
